@@ -1,0 +1,62 @@
+Namespaces:
+  =: io.murano.apps
+  std: io.murano
+  res: io.murano.resources
+  sys: io.murano.system
+
+
+Name: ZabbixAgent
+
+Extends: std:Application
+
+Properties:
+  name:
+    Contract: $.string().notNull()
+  hostname:
+    Contract: $.string().notNull()
+  probe:
+    Contract: $.string().notNull()
+  server:
+    Contract: $.class(ZabbixServer).notNull()
+
+Methods:
+
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+  deploy:
+    Body:
+      - $._environment.reporter.report($this, 'Zabbix Agent is ready to be configured.')
+
+  setUpAgent:
+    Arguments:
+      instance:
+        Contract: $.class(res:Instance).notNull()
+    Body:
+      - $.server.deploy()
+      - $resources: new(sys:Resources)
+      - $securityGroupIngress:
+          - ToPort: 10050 
+            FromPort: 10050
+            IpProtocol: tcp
+            External: true
+      - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+
+      - $template: $resources.yaml('DeployZabbixAgent.template').bind(dict(
+            server => $.server.instance.ipAddresses[0],
+            hostname => $.hostname
+          ))
+      - $._environment.reporter.report($this, 'Deploying Zabbix Agent')
+      - $instance.agent.call($template, $resources)
+      - $._environment.reporter.report($this, 'Zabbix Agent is installed')
+
+      - $template: $resources.yaml('ConfigureProbe.template').bind(dict(
+            probe => $.probe,
+            server => $.server.instance.ipAddresses[0],
+            hostname => $.hostname,
+            instanceIp => $instance.ipAddresses[0]
+          ))
+      - $instance.agent.call($template, $resources)
+      - $._environment.reporter.report($this, 'Configuring monitoring')
+

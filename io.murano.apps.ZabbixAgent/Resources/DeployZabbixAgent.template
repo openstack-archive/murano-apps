@@ -1,0 +1,20 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Deploy Zabbix Agent
+
+Parameters:
+  server: $server
+  hostname: $hostname
+
+Body: |
+  return deploy('{0} {1}'.format(args.server, args.hostname)).stdout
+
+Scripts:
+  deploy:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: deployZabbixAgent.sh
+    Files: []
+    Options:
+      captureStdout: true
+      captureStderr: true

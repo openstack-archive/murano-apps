@@ -1,0 +1,25 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Configure Probe
+
+Parameters:
+  probe: $probe
+  server: $server
+  hostname: $hostname
+  instanceIp: $instanceIp
+
+Body: |
+  return deploy('{0} {1} {2} {3}'.format(args.probe,  args.server, args.hostname, args.instanceIp)).stdout
+
+Scripts:
+  deploy:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: launchConfiguring.sh
+    Files:
+      - <zabbixApi.py>
+      - <addProbe.py>
+    Options:
+      captureStdout: true
+      captureStderr: true
+
