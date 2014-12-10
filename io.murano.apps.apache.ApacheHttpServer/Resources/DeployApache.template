@@ -1,0 +1,19 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Deploy Apache
+
+Parameters:
+  enablePHP: $enablePHP
+
+Body: |
+  return apacheDeploy('{0}'.format(args.enablePHP)).stdout
+
+Scripts:
+  apacheDeploy:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: runApacheDeploy.sh
+    Files: []
+    Options:
+      captureStdout: true
+      captureStderr: true

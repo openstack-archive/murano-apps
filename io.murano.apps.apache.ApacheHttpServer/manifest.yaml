@@ -1,0 +1,16 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.apps.apache.ApacheHttpServer
+Name: Apache HTTP Server
+Description: |
+ The Apache HTTP Server Project is an effort to develop and maintain an
+ open-source HTTP server for modern operating systems including UNIX and
+ Windows NT. The goal of this project is to provide a secure, efficient and
+ extensible server that provides HTTP services in sync with the current HTTP
+ standards.
+ Apache httpd has been the most popular web server on the Internet since
+ April 1996, and celebrated its 17th birthday as a project this February.
+Author: 'Mirantis, Inc'
+Tags: [HTTP, Server, WebServer, HTML, Apache]
+Classes:
+ io.murano.apps.apache.ApacheHttpServer: ApacheHttpServer.yaml
