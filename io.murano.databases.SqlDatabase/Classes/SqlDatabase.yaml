@@ -1,0 +1,36 @@
+Namespaces:
+  =: io.murano.databases
+  std: io.murano
+
+Name: SqlDatabase
+
+Extends:
+  - std:Application
+
+Methods:
+
+  createDatabase:
+    Arguments:
+      - database:
+          Contract: $.string().notNull()
+
+  createUser:
+    Arguments:
+      - username:
+          Contract: $.string().notNull()
+      - password:
+          Contract: $.string().notNull()
+
+  assignUser:
+    Arguments:
+      - username:
+          Contract: $.string().notNull()
+      - database:
+          Contract: $.string().notNull()
+
+  getConnectionString:
+    Arguments:
+      - username:
+          Contract: $.string().notNull()
+      - password:
+          Contract: $.string().notNull()
