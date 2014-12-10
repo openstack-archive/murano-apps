@@ -1,0 +1,12 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.databases.MySql
+Name: MySQL
+Description: |
+ MySql is a relational database management system (RDBMS), and ships with
+ no GUI tools to administer MySQL databases or manage data contained within
+ the databases.
+Author: 'Mirantis, Inc'
+Tags: [Database, MySql, SQL, RDBMS]
+Classes:
+ io.murano.databases.MySql: MySql.yaml
