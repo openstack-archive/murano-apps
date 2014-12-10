@@ -1,0 +1,125 @@
+Namespaces:
+  =: io.murano.databases
+  std: io.murano
+  res: io.murano.resources
+  sys: io.murano.system
+
+Name: PostgreSql
+
+Extends:
+  - SqlDatabase
+
+Properties:
+  instance:
+    Contract: $.class(res:Instance).notNull()
+  name:
+    Contract: $.string().notNull()
+  database:
+    Contract: $.string()
+  username:
+    Contract: $.string()
+  password:
+    Contract: $.string()
+
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+  deploy:
+    Body:
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $._environment.reporter.report($this, 'Creating VM for PostgreSql')
+          - $securityGroupIngress:
+              - ToPort: 5432
+                FromPort: 5432
+                IpProtocol: tcp
+                External: true
+          - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+          - $.instance.deploy()
+          - $resources: new(sys:Resources)
+          # Deploy PostgreSql
+          - $._environment.reporter.report($this, 'Instance is created. Deploying PostgreSql')
+          - $template: $resources.yaml('DeployPostgreSql.template')
+          - $.instance.agent.call($template, $resources)
+          - $._environment.reporter.report($this, 'PostgreSql application is installed.')
+          - $.setAttr(deployed, true)
+          - $._environment.reporter.report($this, 'Creating database and user.')
+          - If: $.database != '' and $.database != null
+            Then:
+              - $.createDatabase($.database)
+              - $._environment.reporter.report($this, format('Database {0} created.', $.database))
+          - If: $.username != '' and $.username != null
+            Then:
+              - $.createUser($.username, $.password)
+              - If: $.database != '' and $.database != null
+                Then:
+                  - $.assignUser($.username, $.database)
+              - $._environment.reporter.report($this, format('User {0} created.', $.username))
+
+  createDatabase:
+    Arguments:
+      - database:
+          Contract: $.string().notNull()
+    Body:
+      - $.deploy()
+      - $._environment.reporter.report($this, format('Creating {0} database.', $database))
+      # Creating Database on PostgreSQL
+      - $resources: new(sys:Resources)
+      - $template: $resources.yaml('CreatePostgreSqlDatabase.template').bind(dict(
+            database => $database
+          ))
+      - $.instance.agent.call($template, $resources)
+      - $._environment.reporter.report($this, 'Database is created')
+
+  createUser:
+    Arguments:
+      - username:
+          Contract: $.string().notNull()
+      - password:
+          Contract: $.string().notNull()
+    Body:
+      - $.deploy()
+      - $._environment.reporter.report($this, format('Creating {0} user.', $username))
+      # Creating Database on PostgreSQL
+      - $resources: new(sys:Resources)
+      - $template: $resources.yaml('CreatePostgreSqlUser.template').bind(dict(
+            username => $username,
+            password => $password
+          ))
+      - $.instance.agent.call($template, $resources)
+      - $._environment.reporter.report($this, format('User {0} created', $username))
+
+  assignUser:
+    Arguments:
+      - username:
+          Contract: $.string().notNull()
+      - database:
+          Contract: $.string().notNull()
+    Body:
+      - $.deploy()
+      - $._environment.reporter.report($this, format('Assigning user {0} to database {1}.', $username, $database))
+      # Assigning user to PostgresQL database
+      - $resources: new(sys:Resources)
+      - $template: $resources.yaml('AssignUserPostgreSql.template').bind(dict(
+            username => $username,
+            database => $database
+          ))
+      - $.instance.agent.call($template, $resources)
+      - $._environment.reporter.report($this, format('User {0} assigned to database {1}.', $username, $database))
+
+  getConnectionString:
+    Arguments:
+      - username:
+          Contract: $.string().notNull()
+      - password:
+          Contract: $.string().notNull()
+    Body:
+      - If: $.instance.assignFloatingIp
+        Then:
+          - $host: $.instance.floatingIpAddress
+        Else:
+          - $host: $.instance.ipAddresses[0]
+      - Return: format('psql://{0}@{1}:{2}', $username, $password, $host)

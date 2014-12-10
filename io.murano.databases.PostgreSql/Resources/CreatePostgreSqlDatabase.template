@@ -1,0 +1,19 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Create PostgreSql database
+
+Parameters:
+  database: $database
+
+Body: |
+  return createDatabase(args.database).stdout
+
+Scripts:
+  createDatabase:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: createPostgreSqlDatabase.sh
+    Files: []
+    Options:
+      captureStdout: true
+      captureStderr: true

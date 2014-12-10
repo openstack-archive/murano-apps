@@ -1,0 +1,13 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.databases.PostgreSql
+Name: PostgreSQL
+Description: |
+ PostgreSQL is a powerful, open source object-relational database system.
+ It has more than 15 years of active development and a proven architecture
+ that has earned it a strong reputation for reliability, data integrity,
+ and correctness.
+Author: 'Mirantis, Inc'
+Tags: [Database, Postgre, SQL, RDBMS]
+Classes:
+ io.murano.databases.PostgreSql: PostgreSql.yaml

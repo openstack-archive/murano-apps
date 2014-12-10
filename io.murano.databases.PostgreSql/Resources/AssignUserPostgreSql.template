@@ -1,0 +1,20 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Assign user to PostgreSql database
+
+Parameters:
+  database: $database  
+  username: $username
+  
+Body: |
+  return assignUser('{0} {1}'.format(args.database, args.username)).stdout
+
+Scripts:
+  assignUser:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: assignPostgreSqlUser.sh
+    Files: []
+    Options:
+      captureStdout: true
+      captureStderr: true
