@@ -1,0 +1,10 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.apps.WordPress
+Name: WordPress
+Description: |
+ WordPress is a free and open source blogging tool and a content management system (CMS) based on PHP and MySQL.
+Author: 'Mirantis, Inc'
+Tags: [CMS, PHP, Web]
+Classes:
+ io.murano.apps.WordPress: WordPress.yaml
