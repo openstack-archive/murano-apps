@@ -1,0 +1,47 @@
+Version: 2
+
+Application:
+  ?:
+    type: io.murano.apps.ZabbixAgent
+  name: $.appConfiguration.name
+  hostname: $.appConfiguration.hostname
+  server: $.appConfiguration.server
+  probe: $.appConfiguration.probeMethod
+ 
+
+Forms:
+  - appConfiguration:
+      fields:
+        - name: name
+          type: string
+          label: Application Name
+          initial: ZabbixAgent
+          description: >-
+            Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
+            underline are allowed
+
+        - name: hostname
+          type: string
+          label: HostName
+          initial: zabbix
+          maxLength: 64
+          regexpValidator: '^[ a-zA-Z0-9_\.-]{1,}$'
+          description: >-
+            Unique, case sensitive hostname.
+            Required for active checks and must match hostname as configured on the server.
+       
+        - name: server
+          type: io.murano.apps.ZabbixServer
+          label: Zabbix Server
+          description: >-
+            Select zabbix server to monitor activity
+
+        - name: probeMethod
+          label: Probe Method
+          type: choice
+          choices:
+             - [HTTP, 'HTTP']
+             - [ICMP, 'ICMP']
+          initial: ICMP
+          description: >-
+            Choose probe method 

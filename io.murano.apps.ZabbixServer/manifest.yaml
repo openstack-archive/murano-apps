@@ -1,0 +1,11 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.apps.ZabbixServer
+Name: Zabbix Server
+Description: |
+ Zabbix server is the central process of Zabbix software.
+
+Author: 'Mirantis, Inc'
+Tags: [Monitoring]
+Classes:
+ io.murano.apps.ZabbixServer: ZabbixServer.yaml

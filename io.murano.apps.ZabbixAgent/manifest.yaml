@@ -1,0 +1,10 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.apps.ZabbixAgent
+Name: Zabbix Agent
+Description: |
+ Zabbix is the ultimate open source availability and performance monitoring solution. Zabbix offer advance monitoring, alerting, and visualization features today which are missing in other monitoring system, even some of the best commercial ones.
+Author: 'Mirantis, Inc'
+Tags: [Monitoring]
+Classes:
+ io.murano.apps.ZabbixAgent: ZabbixAgent.yaml
