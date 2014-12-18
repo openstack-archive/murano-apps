@@ -1,0 +1,19 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Deploy MySql
+
+Parameters:
+  appName: $appName
+
+Body: |
+  return deploy(args.appName).stdout
+
+Scripts:
+  deploy:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: deployMySql.sh
+    Files: []
+    Options:
+      captureStdout: true
+      captureStderr: true
