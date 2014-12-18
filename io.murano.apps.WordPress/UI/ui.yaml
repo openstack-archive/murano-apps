@@ -1,0 +1,67 @@
+Version: 2
+
+Application:
+  ?:
+    type: io.murano.apps.WordPress
+  name: $.appConfiguration.name
+  database: $.appConfiguration.database
+  server: $.appConfiguration.server
+  dbName: $.dbConfiguration.database
+  dbUser: $.dbConfiguration.username
+  dbPassword: $.dbConfiguration.password
+  monitoring: $.appConfiguration.zabbix
+  
+
+Forms:
+  - appConfiguration:
+      fields:
+        - name: name
+          type: string
+          label: Application Name
+          initial: 'WordPress'
+          description: >-
+            Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
+            underline are allowed
+        - name: database
+          type: io.murano.databases.MySql
+          label: Database Server
+          description: >-
+            Select a database server to host the application's database
+        - name: server
+          type: io.murano.apps.apache.ApacheHttpServer
+          label: HTTP Server
+          description: >-
+            Select an instance of Apache HTTP Server to run the app
+        - name: zabbix
+          type: io.murano.apps.ZabbixAgent
+          label: Monitoring
+          required: false
+          description: >-
+            Select an instance of monitoring system (optional)
+
+  - dbConfiguration:
+      fields:
+        - name: title
+          type: string
+          required: false
+          hidden: true
+          descriptionTitle: Database Configuration
+          description: Specify the properties of the database which will be created at the selected DB Server
+        - name: database
+          type: string
+          label: Database name
+          initial: wordpress 
+          description: >-
+            Please, provide database name that is going to be created
+        - name: username
+          type: string
+          initial: wp_user
+          label: Username
+          description: >-
+            Please, provide username that is going to be used to connect to the database
+        - name: password
+          type: password
+          label: Password
+          descriptionTitle: Password
+          description: >-
+            Please, provide password that is going to be used to connect to the database

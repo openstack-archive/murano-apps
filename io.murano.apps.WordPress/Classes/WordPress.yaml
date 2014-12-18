@@ -1,0 +1,68 @@
+Namespaces:
+  =: io.murano.apps
+  std: io.murano
+  sys: io.murano.system
+  db: io.murano.databases
+  srv: io.murano.apps.apache
+
+Name: WordPress
+
+Extends: std:Application
+
+Properties:
+  name:
+    Contract: $.string().notNull()
+  server:
+    Contract: $.class(srv:ApacheHttpServer).notNull()
+  database:
+    Contract: $.class(db:MySql).notNull()
+  dbName:
+    Contract: $.string().notNull()
+  dbUser:
+    Contract: $.string().notNull()
+  dbPassword:
+    Contract: $.string().notNull()
+  monitoring:
+    Contract: $.class(ZabbixAgent)
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+  deploy:
+    Body:
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $._environment.reporter.report($this, 'Ensuring Apache is deployed.')
+          - $.server.deploy()
+          - $resources: new(sys:Resources)
+
+          # Deploy Wordpress
+          - $template: $resources.yaml('DeployWordPress.template')
+          - $.server.instance.agent.call($template, $resources)
+          
+          # Configure access to MySql
+          - $._environment.reporter.report($this, 'Ensuring Database is deployed.')
+          - $.database.createDatabase($.dbName)
+          - $.database.createUser($.dbUser, $.dbPassword)
+          - $.database.assignUser($.dbUser, $.dbName)
+          - $._environment.reporter.report($this, 'Configure access to MySql.')
+          - $template: $resources.yaml('ConfigureAccessToMySql.template').bind(dict(
+                database => $.dbName,
+                username => $.dbUser,
+                password => $.dbPassword,
+                host => $.database.instance.ipAddresses[0]
+              ))
+          - $.server.instance.agent.call($template, $resources)
+
+          - If: $.monitoring != null
+            Then:
+              - $.monitoring.setUpAgent($.server.instance)
+          
+          - $._environment.reporter.report($this, 'Application is installed')
+          - If: $.server.instance.assignFloatingIp
+            Then:
+              - $address: $.server.instance.floatingIpAddress + '/wordpress'
+              - $._environment.reporter.report($this, format('Running at http://{0}', $address))
+          - $.setAttr(deployed, true)

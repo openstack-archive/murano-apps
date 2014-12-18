@@ -1,0 +1,22 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Configure database access credentails
+
+Parameters:
+  database: $database
+  username: $username
+  password: $password
+  host: $host
+
+Body: |
+  return configure('{0} {1} {2} {3}'.format(args.database, args.username, args.password, args.host)).stdout
+
+Scripts:
+  configure:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: configureAccessToMySql.sh
+    Files: []
+    Options:
+      captureStdout: true
+      captureStderr: true
