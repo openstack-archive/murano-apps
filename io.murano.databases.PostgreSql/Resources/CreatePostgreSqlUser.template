@@ -1,0 +1,20 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Create PostgreSql user
+
+Parameters:
+  username: $username
+  password: $password
+
+Body: |
+  return createUser('{0} {1}'.format(args.username, args.password)).stdout
+
+Scripts:
+  createUser:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: createPostgreSqlUser.sh
+    Files: []
+    Options:
+      captureStdout: true
+      captureStderr: true
