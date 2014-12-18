@@ -1,0 +1,49 @@
+Namespaces:
+  =: io.murano.apps.apache
+  std: io.murano
+  res: io.murano.resources
+  sys: io.murano.system
+
+
+Name: ApacheHttpServer
+
+Extends: std:Application
+
+Properties:
+  name:
+    Contract: $.string().notNull()
+
+  enablePHP:
+    Contract: $.bool()
+    Default: false
+
+  instance:
+    Contract: $.class(res:Instance).notNull()
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+  deploy:
+    Body:
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $._environment.reporter.report($this, 'Creating VM for Apache Server.')
+          - $securityGroupIngress:
+            - ToPort: 80
+              FromPort: 80
+              IpProtocol: tcp
+              External: true
+            - ToPort: 443
+              FromPort: 443
+              IpProtocol: tcp
+              External: true
+          - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+          - $.instance.deploy()
+          - $resources: new(sys:Resources)
+          - $template: $resources.yaml('DeployApache.template').bind(dict(enablePHP => $.enablePHP))
+          - $._environment.reporter.report($this, 'Instance is created. Deploying Apache')
+          - $.instance.agent.call($template, $resources)
+          - $._environment.reporter.report($this, 'Apache is installed.')
+          - $.setAttr(deployed, true)
