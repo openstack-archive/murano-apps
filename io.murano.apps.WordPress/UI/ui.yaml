@@ -6,10 +6,10 @@ Application:
   name: $.appConfiguration.name
   database: $.appConfiguration.database
   server: $.appConfiguration.server
+  monitoring: $.appConfiguration.zabbix
   dbName: $.dbConfiguration.database
   dbUser: $.dbConfiguration.username
   dbPassword: $.dbConfiguration.password
-  monitoring: $.appConfiguration.zabbix
   
 
 Forms:
@@ -26,7 +26,7 @@ Forms:
           type: io.murano.databases.MySql
           label: Database Server
           description: >-
-            Select a database server to host the application's database
+            Select a database server to host the application`s database
         - name: server
           type: io.murano.apps.apache.ApacheHttpServer
           label: HTTP Server

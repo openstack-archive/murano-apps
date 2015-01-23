@@ -11,6 +11,7 @@ Application:
     flavor: $.instanceConfiguration.flavor
     image: $.instanceConfiguration.osImage
     keyname: $.instanceConfiguration.keyPair
+    availabilityZone: $.instanceConfiguration.availabilityZone
     assignFloatingIp: $.appConfiguration.assignFloatingIP
 
 Forms:
@@ -66,9 +67,15 @@ Forms:
           description: Select availability zone where the application would be installed.
           required: false
         - name: unitNamingPattern
-          label: Hostname
           type: string
+          label: Instance Naming Pattern
           required: false
-          widgetMedia:
-            js: ['muranodashboard/js/support_placeholder.js']
-            css: {all: ['muranodashboard/css/support_placeholder.css']}
+          maxLength: 200
+          regexpValidator: '^[-_\w]+$'
+          errorMessages:
+            invalid: Just letters, numbers, underscores and hyphens are allowed.
+          helpText: Just letters, numbers, underscores and hyphens are allowed.
+          description: >-
+            Specify a string, that will be used in instance hostname.
+            Just A-Z, a-z, 0-9, dash and underline are allowed.
+
