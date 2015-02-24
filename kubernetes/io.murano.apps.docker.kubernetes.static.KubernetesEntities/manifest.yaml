@@ -1,6 +1,6 @@
 Format: 1.0
 Type: Library
-FullName: io.murano.apps.docker.kubernetes.static.KubernetesPod
+FullName: io.murano.apps.docker.kubernetes.static.KubernetesEntities
 Name: Kubernetes static entities
 Description: |
  Kubernes Pod - A collection of containers which will be scheduled onto the same node,
@@ -8,6 +8,6 @@ Description: |
 Author: 'Mirantis, Inc'
 Tags: [docker, kubernetes, pod]
 Classes:
- io.murano.apps.docker.kubernetes.static.Pod: KubernetesPod.yaml
+ io.murano.apps.docker.kubernetes.static.Pod: Pod.yaml
  io.murano.apps.docker.kubernetes.static.Service: Service.yaml
  io.murano.apps.docker.kubernetes.static.ReplicationController: ReplicationController.yaml
