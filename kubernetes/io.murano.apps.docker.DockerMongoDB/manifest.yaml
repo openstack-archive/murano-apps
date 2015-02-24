@@ -1,0 +1,10 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.apps.docker.DockerMongoDB
+Name: Docker MongoDB
+Description: |
+ MongoDB (from “humongous”) is a cross-platform document-oriented database. Classified as a NoSQL database, MongoDB eschews the traditional table-based relational database structure in favor of JSON-like documents with dynamic schemas.
+Author: 'Mirantis, Inc'
+Tags: [Docker, MongoDB]
+Classes:
+ io.murano.apps.docker.DockerMongoDB: DockerMongoDB.yaml

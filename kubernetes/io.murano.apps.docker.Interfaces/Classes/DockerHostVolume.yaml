@@ -1,0 +1,19 @@
+Namespaces:
+  =: io.murano.apps.docker
+
+Name: DockerHostVolume
+
+Extends: DockerVolume
+
+Properties:
+  path:
+    Contract: $.string.notNull()
+
+Methods:
+  getType:
+    Body:
+      Return: HostDir
+
+  getParameters:
+    Body:
+      Return: $.path

@@ -1,0 +1,14 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.apps.docker.kubernetes.KubernetesCluster
+Name: Kubernetes
+Description: |
+ Kubernetes is an open source system for managing containerized applications across multiple hosts,
+ providing basic mechanisms for deployment, maintenance, and scaling of applications.
+Author: 'Mirantis, Inc'
+Tags: [Docker, Kubernetes]
+Classes:
+ io.murano.apps.docker.kubernetes.KubernetesCluster: KubernetesCluster.yaml
+ io.murano.apps.docker.kubernetes.KubernetesMasterNode: KubernetesMasterNode.yaml
+ io.murano.apps.docker.kubernetes.KubernetesMinionNode: KubernetesMinionNode.yaml
+ io.murano.apps.docker.kubernetes.KubernetesNode: KubernetesNode.yaml

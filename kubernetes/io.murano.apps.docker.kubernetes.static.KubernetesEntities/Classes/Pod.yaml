@@ -1,0 +1,36 @@
+Namespaces:
+  =: io.murano.apps.docker.kubernetes.static
+  std: io.murano
+  sys: io.murano.system
+
+Name: Pod
+
+Properties:
+  kubernetesCluster:
+    Contract: $.class(KubernetesCluster).notNull()
+
+  podDefinition:
+    Contract: {}
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+  deploy:
+    Body:
+      - $.kubernetesCluster.deploy()
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $.deployPod()
+          - $.setAttr(deployed, true)
+
+              
+  deployPod:
+    Body:
+      - $resources: new(sys:Resources)
+      - $template: $resources.yaml('UpdatePod.template').bind(dict(
+            podDefinition => $.podDefinition,
+            isNew => true
+          ))
+      - $.kubernetesCluster.masterNode.instance.agent.call($template, $resources)

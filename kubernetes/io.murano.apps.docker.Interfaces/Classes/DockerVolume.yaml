@@ -1,0 +1,13 @@
+Namespaces:
+  =: io.murano.apps.docker
+
+Name: DockerVolume
+
+Properties:
+  name:
+    Contract: $.string().notNull()
+
+Methods:
+  getType:
+  
+  getParameters:

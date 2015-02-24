@@ -1,0 +1,44 @@
+Version: 2
+
+Application:
+  ?:
+    type: io.murano.apps.docker.kubernetes.KubernetesPod
+  name: $.appConfiguration.name
+  labels: $.appConfiguration.labels
+  kubernetesCluster: $.appConfiguration.kubernetesCluster
+  replicationFactor: $.appConfiguration.replicationFactor
+  exposePorts: $.appConfiguration.exposePorts
+
+
+Forms:
+  - appConfiguration:
+      fields:
+        - name: name
+          type: string
+          label: Application Name
+          required: true
+          description: >-
+            This name is used as Kubernetes ID and name label
+        - name: labels
+          type: string
+          label: Labels
+          required: false
+          description: >-
+            Comma separated list of labels
+        - name: kubernetesCluster
+          type: io.murano.apps.docker.kubernetes.KubernetesCluster
+          label: Kubernetes cluster
+          required: true
+          description: >-
+            Kubernetes service
+        - name: replicationFactor
+          type: integer
+          label: Replication Factor
+          initial: 2
+          required: false
+        - name: exposePorts
+          type: string
+          label: Expose Ports
+          required: false
+          description: >-
+            DICTIONARY HERE

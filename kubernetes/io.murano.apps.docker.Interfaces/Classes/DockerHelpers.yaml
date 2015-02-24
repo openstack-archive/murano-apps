@@ -1,0 +1,27 @@
+Namespaces:
+  =: io.murano.apps.docker
+
+Name: DockerHelpers
+
+Methods:
+  labels2Map:
+    Arguments:
+      labelsString: 
+        Contract: $.string().notNull()
+    Body:
+      - $result: {}
+      - For: t
+        In: $labelsString.replace(',', ';').split(';')
+        Do:
+          - $pair: $t.split('=')
+          - $key: $pair[0].trim()
+          - $result[$key]: $pair[1].trim()
+      - Return: $result
+
+  map2labels:
+    Arguments:
+      labelsMap: 
+        Contract: 
+          $.string().notNull(): $.string().notNull()
+    Body:
+      - Return: join(';', $labelsMap.select(list($, $labelsMap.get($))).select(join('=', $)))

@@ -1,0 +1,20 @@
+FormattVersion: 2.0.0
+Version: 1.0.0
+Name: Destroy Replication Controller
+
+Parameters:
+  serviceId: $serviceId
+
+Body: |
+  return destroyReplicationController('{0}'.format(args.serviceId).stdout
+
+Scripts:
+  destroyReplicationController:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: destroyReplicationController.sh
+    Files: []
+    Options:
+      captureStdout: true
+      captureStderr: true
+

@@ -1,0 +1,10 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.apps.docker.DockerStandaloneHost
+Name: Standalone Host
+Description: |
+ TODO.
+Author: 'Mirantis, Inc'
+Tags: [ Docker ]
+Classes:
+ io.murano.apps.docker.DockerStandaloneHost: DockerStandaloneHost.yaml

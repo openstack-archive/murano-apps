@@ -1,0 +1,14 @@
+Format: 1.0
+Type: Library
+FullName: io.murano.apps.docker.Interfaces
+Name: Docker Services Library
+Description: |
+ TODO
+Author: 'Mirantis, Inc'
+Tags: [Docker, Kubernetes]
+Classes:
+ io.murano.apps.docker.DockerContainerHost: DockerContainerHost.yaml
+ io.murano.apps.docker.DockerHelpers: DockerHelpers.yaml
+ io.murano.apps.docker.DockerHostVolume: DockerHostVolume.yaml
+ io.murano.apps.docker.DockerTempVolume: DockerTempVolume.yaml
+ io.murano.apps.docker.DockerVolume: DockerVolume.yaml

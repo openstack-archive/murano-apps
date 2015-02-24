@@ -1,0 +1,21 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Add ETCD member
+
+Parameters:
+  name: $name
+  ip: $ip
+
+Body: |
+  return setup('{0} {1}'.format(args.name, args.ip)).stdout
+
+Scripts:
+  setup:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: master-add-member.sh
+    Files:
+      - <master-etcd-config.conf>
+    Options:
+      captureStdout: true
+      captureStderr: true

@@ -1,0 +1,178 @@
+Namespaces:
+  =: io.murano.apps.docker
+  res: io.murano.resources
+
+Name: DockerStandaloneHost
+
+Extends: 
+  - DockerContainerHost
+
+Properties:  
+  name:
+    Contract: $.string().notNull()
+
+  instance:
+    Contract: $.class(res:LinuxMuranoInstance).notNull()
+
+  publicIp:
+    Contract: $.string()
+    Usage: Out
+
+  lastPort:
+    Contract: $.int()
+    Default: 1024
+    Usage: InOut
+
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()  
+  
+
+  deploy:
+    Body:
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $._environment.reporter.report($this, 'Setup Security Groups for Docker Server')
+          - $securityGroupIngress:
+              - ToPort: 22
+                FromPort: 22
+                IpProtocol: 'tcp'
+                External: True
+              - ToPort: 2375
+                FromPort: 2375
+                IpProtocol: 'tcp'
+                External: True
+          - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+          
+          - $._environment.reporter.report($this, 'Create VM for Docker Server')
+          - $.instance.deploy()
+          
+          - $._environment.reporter.report($this, 'Setting Up Docker Server')
+          - $resources: new(sys:Resources)
+          - $template: $resources.yaml('DeployDocker.template')
+          - $.instance.agent.call($template, $resources)
+          - $._environment.reporter.report($this, 'Docker Server is up and running')
+          
+          - $.publicIp: $.instance.floatingIpAddress
+          - $.setAttr(deployed, true)
+
+  addDockerApp:
+    Arguments:
+      name:
+        Contract: $.string().notNull()
+      instance:
+        Contract: $.class(res:Instance).notNull()
+      dockerImage:
+        Contract: $.string().notNull()
+      dockerEnv:
+        Contract: [$.string()]
+      dockerAppPorts:
+        Contract: []
+      dockerPortBindings:
+        Contract: {}
+      dockerVolumes:
+        Contract: {}
+
+    Body:
+      - $resources: new(sys:Resources)
+      - $._environment.reporter.report($this, 'Adding Docker Application')
+      - $template: $resources.yaml('dockerApp.hot').bind(dict(
+          dockerAppName => $name,
+          dockerServer => $instance.floatingIpAddress,
+          dockerImage => $dockerImage,
+          dockerEnv => $dockerEnv,
+          dockerAppPorts => $dockerAppPorts,
+          dockerPortBindings => $dockerPortBindings,
+          dockerVolumes => $dockerVolumes
+           ))
+      - $._environment.stack.updateTemplate($template)
+      - $._environment.stack.push()
+
+  hostContainer:
+    Arguments:
+      - name:
+          Contract: $.string().notNull()
+      - image:
+          Contract: $.string().notNull()
+      - commands:
+          Contract: 
+            - $.string().notNull()
+      - env:
+          Contract:
+            $.string().notNull(): $.string().notNull()
+      - ports:
+          Contract: 
+            - $.int().notNull()
+      - volumes:
+          Contract:
+            $.string().notNull(): $.class(DockerVolume).notNull()
+    Body:
+     - $.pullImage(instance => $.instance, image => $image)
+     - $._portBindings: {}
+     - $._result: {}
+     - $._securityGroupIngress: []
+     - For: port
+       In: $ports
+       Do:
+          - $allocatedPort: $.allocatePort()
+          - $patch:
+            - op: add
+              path: format('/{0}', $port)
+              value:
+                HostPort: $allocatedPort
+                HostIP: '0.0.0.0'
+          - $patch2:
+            - op: add
+              path: format('/{0}', $port)
+              value: $allocatedPort
+          - $._portBindings: $._portBindings.patch($patch)
+          - $._result: $._result.patch($patch2)
+          - $rule:
+              ToPort: $allocatedPort
+              FromPort: $allocatedPort
+              IpProtocol: 'tcp'
+              External: true
+          - $._securityGroupIngress: $._securityGroupIngress + list($rule)
+
+     - $._environment.securityGroupManager.addGroupIngress($._securityGroupIngress)
+     - $.addDockerApp(
+          name => $.name,
+          instance => $.instance,
+          image => $image,
+          env => $env,
+          ports => $ports,
+          portBindings => $._portBindings,
+          volumes => $volumes
+         )
+
+  pullImage:
+    Arguments:
+      instance:
+        Contract: $.class(res:Instance).notNull()
+      image:
+        Contract: $.string().notNull()
+    Body:
+      - $._environment.reporter.report($this, 'Pulling app image {0}'.format($image))
+      - $resources: new(sys:Resources)
+      - $template: $resources.yaml('PullImage.template').bind(dict(
+          image => $image
+         ))
+      - $instance.agent.call($template, $resources)
+      - $._environment.reporter.report($this, 'Image saved')
+
+  allocatePort:
+    Body:
+      - $.lastPort: $.lastPort + 1
+      - Return: $.lastPort
+
+  deleteContainer:
+    Arguments:
+      - name:
+          Contract: $.string().notNull()
+    Body:
+
+  getIp:
+    Body:
+      - Return: $.instance.ipAddresses[0]

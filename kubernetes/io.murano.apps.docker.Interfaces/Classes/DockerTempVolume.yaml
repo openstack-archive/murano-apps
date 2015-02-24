@@ -1,0 +1,15 @@
+Namespaces:
+  =: io.murano.apps.docker
+
+Name: DockerTempVolume
+
+Extends: DockerVolume
+
+Methods:
+  getType:
+    Body:
+      Return: TempVolume
+
+  getParameters:
+    Body:
+      Return: null

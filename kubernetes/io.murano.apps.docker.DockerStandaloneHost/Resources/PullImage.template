@@ -1,0 +1,18 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Pull Image
+
+Parameters:
+  image: $image
+
+Body: |
+  return deploy('{0}'.format(args.image)).stdout
+
+Scripts:
+  deploy:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: pullImage.sh
+    Options:
+      captureStdout: true
+      captureStderr: true

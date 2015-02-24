@@ -1,0 +1,23 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Update Service 
+
+Parameters:
+  serviceDefinition: $serviceDefinition
+  isNew: $isNew
+
+Body: |
+  import json
+  with open('/tmp/service.json', 'w') as f:
+    json.dump(args.serviceDefinition, f)
+  return updateService('{0}'.format(args.isNew)).stdout
+
+Scripts:
+  updateService:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: updateService.sh
+    Files: []
+    Options:
+      captureStdout: true
+      captureStderr: true

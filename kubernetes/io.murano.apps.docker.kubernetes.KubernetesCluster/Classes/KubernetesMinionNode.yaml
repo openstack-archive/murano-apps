@@ -1,0 +1,69 @@
+Namespaces:
+  =: io.murano.apps.docker.kubernetes
+  std: io.murano
+  res: io.murano.resources
+  sys: io.murano.system
+
+Name: KubernetesMinionNode
+
+Extends: KubernetesNode
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+      - $._cluster: $.find(KubernetesCluster).require()
+
+  deploy:
+    Body:
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $._environment.reporter.report($this, 'Creating Kubernetes Minion')
+          - $.super($.deploy())
+          - $.setupNode()
+          - $.setAttr(deployed, true)
+
+  setupNode:
+    Body:
+      - $._environment.reporter.report($, 'Configuring ETCD node {0}'.format($.instance.name))
+      - $resources: new(sys:Resources)
+      - $template: $resources.yaml('EtcdAddMember.template').bind(dict(
+            name => $.instance.name,
+            ip => $.getIp()
+          ))
+      - $clusterConfig: $._cluster.masterNode.instance.agent.call($template, $resources)
+
+      - $._environment.reporter.report($this, 'Setup Kubernetes API host')
+      - $template: $resources.yaml('MemberEtcdSetup.template').bind(dict(
+            name => $.instance.name,
+            ip => $.getIp(),
+            clusterConfig => $clusterConfig
+          ))
+      - $.instance.agent.call($template, $resources)
+
+      - $._environment.reporter.report($, 'Setup Kubernetes Minion on {0}'.format($.instance.name))
+      - $resources: new(sys:Resources)
+      - $template: $resources.yaml('KubeMinionSetup.template').bind(dict(
+            name => $.instance.name,
+            ip => $.getIp(),
+            masterIp => $._cluster.masterNode.getIp()
+          ))
+      - $.instance.agent.call($template, $resources)
+
+      - $template: $resources.yaml('KubeRegisterNode.template').bind(dict(
+            name => $.instance.name,
+            ip => $.getIp()
+          ))
+      - $._cluster.masterNode.instance.agent.call($template, $resources)
+
+  removeFromCluster:
+    Body:
+      - If: $.getAttr(deployed, false)
+        Then:
+          - $._environment.reporter.report($this, 'Deleting Kubernetes Minion')
+          - $resources: new(sys:Resources)
+          - $template: $resources.yaml('RemoveMinion.template').bind(dict(name=>$.getIp()))
+          - $._cluster.masterNode.instance.agent.call($template, $resources)
+          - $._environment.reporter.report($this, 'Node {0} deleted'.format($.getIp()))
+          - $.setAttr(deployed, false)
+

@@ -1,0 +1,19 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Deploy Tomcat
+
+Parameters:
+    appName: $appName
+
+Body: |
+  return getIp(args.appName).stdout
+
+Scripts:
+  getIp:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: Linux/getIp.sh
+    Files: []
+    Options:
+      captureStdout: true
+      captureStderr: true

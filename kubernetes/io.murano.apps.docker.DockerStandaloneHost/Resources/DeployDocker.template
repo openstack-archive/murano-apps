@@ -1,0 +1,18 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Deploy Docker
+
+Parameters:
+  appName: $appName
+
+Body: |
+  return deploy(args.appName).stdout
+
+Scripts:
+  deploy:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: dockerInstallUbuntu.sh
+    Options:
+      captureStdout: true
+      captureStderr: true

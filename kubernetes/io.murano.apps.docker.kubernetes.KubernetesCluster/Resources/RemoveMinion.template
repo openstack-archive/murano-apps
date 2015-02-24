@@ -1,0 +1,20 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Remove Minion
+
+Parameters:
+  name: $name
+
+Body: |
+  return removeMinion('{0}'.format(args.name)).stdout
+
+Scripts:
+  removeMinion:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: removeMinion.sh
+    Files: []
+    Options:
+      captureStdout: true
+      captureStderr: true
+

@@ -1,0 +1,24 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Setup Kubernetes Minion
+
+Parameters:
+  name: $name
+  ip: $ip
+  masterIp: $masterIp
+
+Body: |
+  return setup('{0} {1} {2}'.format(args.name, args.ip, args.masterIp)).stdout
+
+Scripts:
+  setup:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: minion-kube-setup.sh
+    Files:
+      - <kube-proxy.conf>
+      - <kubelet.conf>
+
+    Options:
+      captureStdout: true
+      captureStderr: true

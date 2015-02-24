@@ -1,0 +1,47 @@
+Namespaces:
+  =: io.murano.apps.docker.kubernetes
+  std: io.murano
+  res: io.murano.resources
+  sys: io.murano.system
+
+Name: KubernetesMasterNode
+
+Extends: KubernetesNode
+
+Properties:
+  portalNet:
+    Contract: $.string().notNull()
+    Default: '11.1.1.1/24'
+
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+  deploy:
+    Body:
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $._environment.reporter.report($this, 'Creating Kubernetes Master')
+          - $.super($.deploy())
+          - $.setupNode()
+          - $.setAttr(deployed, true)
+  
+  setupNode:
+    Body:
+      - $._environment.reporter.report($, 'Configuring ETCD muster node')
+      - $resources: new(sys:Resources)
+      - $template: $resources.yaml('MasterEtcdSetup.template').bind(dict(
+            name => $.instance.name,
+            ip => $.getIp()
+          ))
+      - $.instance.agent.call($template, $resources)
+
+      - $._environment.reporter.report($this, 'Setup Kubernetes API host')
+      - $template: $resources.yaml('KubeMasterSetup.template').bind(dict(
+            name => $.instance.name,
+            ip => $.getIp(),
+            portalNet => $.portalNet
+          ))
+      - $.instance.agent.call($template, $resources)

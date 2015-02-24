@@ -1,0 +1,23 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Update Replication Controller 
+
+Parameters:
+  controllerDefinition: $controllerDefinition
+  isNew: $isNew
+
+Body: |
+  import json
+  with open('/tmp/controller.json', 'w') as f:
+    json.dump(args.controllerDefinition, f)
+  return updateReplicationController('{0}'.format(args.isNew)).stdout
+
+Scripts:
+  updateReplicationController:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: updateReplicationController.sh
+    Files: []
+    Options:
+      captureStdout: true
+      captureStderr: true

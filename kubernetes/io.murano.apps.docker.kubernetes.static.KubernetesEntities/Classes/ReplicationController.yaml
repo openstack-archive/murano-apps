@@ -1,0 +1,39 @@
+Namespaces:
+  =: io.murano.apps.docker.kubernetes.static
+  std: io.murano
+  sys: io.murano.system
+
+Name: ReplicationController
+
+Properties:
+  kubernetesCluster:
+    Contract: $.class(KubernetesCluster).notNull()
+
+  replicationControllerDefinition:
+    Contract: {}
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+
+  deploy:
+    Body:
+      - $.kubernetesCluster.deploy()
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $.deployReplicationController()
+          - $.setAttr(deployed, true)
+
+              
+  deployReplicationController:
+    Body:
+      - $resources: new(sys:Resources)
+      
+      - $template: $resources.yaml('UpdateReplicationController.template').bind(dict(
+            controllerDefinition => $.replicationControllerDefinition,
+            isNew => true
+          ))
+      - $.kubernetesCluster.masterNode.instance.agent.call($template, $resources)
+

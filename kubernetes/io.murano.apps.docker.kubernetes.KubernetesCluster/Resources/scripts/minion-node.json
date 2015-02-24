@@ -1,0 +1,14 @@
+{
+  "id": "%%IP%%",
+  "kind": "Minion",
+  "apiVersion": "v1beta1",
+  "resources": {
+    "capacity": {
+      "cpu": 200,
+      "memory": 4145438720
+    },
+  },
+  "labels": {
+    "name": "%%NAME%%",
+  },
+}

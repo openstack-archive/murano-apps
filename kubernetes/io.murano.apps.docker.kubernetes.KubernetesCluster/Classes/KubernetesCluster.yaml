@@ -1,0 +1,66 @@
+Namespaces:
+  =: io.murano.apps.docker.kubernetes
+  std: io.murano
+  res: io.murano.resources
+  sys: io.murano.system
+
+Name: KubernetesCluster
+
+Extends: std:Application
+
+Properties:
+  name:
+    Contract: $.string().notNull()
+
+  masterNode:
+    Contract: $.class(KubernetesMasterNode).notNull()
+
+  minionNodes:
+    Contract:
+      - $.class(KubernetesMinionNode).notNull()
+
+  nodeCount:
+    Contract: $.int().notNull()
+      
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+  deploy:
+    Body:
+      - If: not $.getAttr(deployed, false)
+        Then:
+          #TODO(ddovbii): Check rules!
+          - $._environment.reporter.report($this, 'Creating VMs for Kubernetes cluster')
+          - $securityGroupIngress:
+              - ToPort: 4001
+                FromPort: 4001
+                IpProtocol: tcp
+                External: false
+              - ToPort: 7001
+                FromPort: 7001
+                IpProtocol: tcp
+                External: false
+              - ToPort: 10250
+                FromPort: 10250
+                IpProtocol: tcp
+                External: false
+              - ToPort: 8080
+                FromPort: 8080
+                IpProtocol: tcp
+                External: false
+          - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+          - $._environment.reporter.report($this, 'Setting up Kubernetes cluster')
+          - $.masterNode.deploy()
+          - $.setAttr(deployed, true)
+          
+          - Parallel:
+              - Do:
+                - $.minionNodes.take($.nodeCount).pselect($.deploy())
+              - Do:
+                - $.minionNodes.skip($.nodeCount).pselect($.removeFromCluster())
+
+  getIp:
+    Body:
+      Return: $.masterNode.getIp()

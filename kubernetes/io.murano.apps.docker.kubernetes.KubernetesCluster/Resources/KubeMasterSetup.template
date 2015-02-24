@@ -1,0 +1,27 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Setup Kubernetes Master
+
+Parameters:
+  name: $name
+  ip: $ip
+  portalNet: $portalNet
+
+Body: |
+  return setup('{0} {1} {2}'.format(args.name, args.ip, args.portalNet)).stdout
+
+Scripts:
+  setup:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: master-kube-setup.sh
+    Files:
+      - <kube-apiserver.conf>
+      - <kube-proxy.conf>
+      - <kube-scheduler.conf>
+      - <kubelet.conf>
+      - <kube-controller-manager.conf>
+
+    Options:
+      captureStdout: true
+      captureStderr: true

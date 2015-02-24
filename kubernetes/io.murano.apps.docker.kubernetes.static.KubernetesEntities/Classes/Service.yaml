@@ -1,0 +1,39 @@
+Namespaces:
+  =: io.murano.apps.docker.kubernetes.static
+  std: io.murano
+  sys: io.murano.system
+
+Name: Service
+
+Properties:
+  kubernetesCluster:
+    Contract: $.class(KubernetesCluster).notNull()
+
+  serviceDefinition:
+    Contract: {}
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+
+  deploy:
+    Body:
+      - $.kubernetesCluster.deploy()
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $.deployService()
+          - $.setAttr(deployed, true)
+
+              
+  deployService:
+    Body:
+      - $resources: new(sys:Resources)
+      
+      - $template: $resources.yaml('UpdateService.template').bind(dict(
+            serviceDefinition => $.serviceDefinition,
+            isNew => true
+          ))
+      - $.kubernetesCluster.masterNode.instance.agent.call($template, $resources)
+

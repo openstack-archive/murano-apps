@@ -1,0 +1,319 @@
+Namespaces:
+  =: io.murano.apps.docker.kubernetes
+  doc: io.murano.apps.docker
+  std: io.murano
+  sys: io.murano.system
+
+Name: KubernetesPod
+
+Extends: 
+  - doc:DockerContainerHost
+  - doc:DockerHelpers
+
+Properties:
+  name:
+    Contract: $.string().notNull()
+
+  kubernetesCluster:
+    Contract: $.class(KubernetesCluster).notNull()
+
+  labels:
+    Contract: $.string().notNull()  # convert to key-value map as soon as it will be possible to input it in UI
+    Default: ''
+
+  replicationFactor:
+    Contract: $.int().notNull()
+
+  exposePorts:
+    Contract: $.string().notNull()
+    Default: ''
+
+  exposePortsMap:
+    Contract: 
+      $.int().notNull(): $.int().notNull()
+    Usage: Runtime
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+      - $.exposePortsMap: $.convertPortMapping($.exposePorts)
+
+      - $podName: $.getPodName()
+      - $podDefinition: $.getAttr(podDefinition, null)
+      - If: $podDefinition = null
+        Then:
+          - $podDefinition:
+              id: $podName
+              kind: Pod
+              apiVersion: v1beta1
+              desiredState:
+                manifest:
+                  version: v1beta1
+                  id: $podName
+                  containers: []
+                  volumes: []
+              labels: $.getPodLabels($podName)
+                
+          - $.setAttr(podDefinition, $podDefinition)
+      - $._podDefinition: $podDefinition
+
+  convertPortMapping:
+    Arguments:
+      mappingString:
+        Contract: $.string().notNull()
+    Body:
+      - $result: {}
+      - For: t
+        In: $mappingString.replace(',', ';').split(';')
+        Do:
+          - $pair: $t.split('=')
+          - $key: int($pair[0].trim())
+          - $result[$key]: int($pair[0-1].trim()) # yaql 0.2.x doesn't support unary operators
+      - Return: $result
+
+  deploy:
+    Body:
+      - $.kubernetesCluster.deploy()
+      - $lastPodDeployId: $.getAttr(lastPodDeployId, null)
+      - $lastPodChangeId: $.getAttr(lastPodChangeId, null)
+      - If: $lastPodDeployId != $lastPodChangeId
+        Then: 
+          - $.deployPod()
+          - $.setAttr(lastPodDeployId, $lastPodChangeId)
+
+      - $previouslyExposedPorts: $.getAttr(exposedPorts, dict())
+      - For: mapping
+        In: $previouslyExposedPorts.where(not $ in $this.exposePortsMap)
+        Do: $.destroyService(servicePort => $mapping)
+
+      - For: mapping
+        In: $.exposePortsMap
+        Do:
+          - $previousMapping: $previouslyExposedPorts.get($mapping)
+          - If: $previousMapping != $.exposePortsMap.get($mapping)
+            Then:
+              - $.deployService(
+                    servicePort => $mapping,
+                    containerPort => $.exposePortsMap.get($mapping),
+                    isNew => $previousMapping = null
+                  )
+      - $.setAttr(exposedPorts, $.exposePortsMap)
+
+      - $previousReplicationFactor: $.getAttr(replicationFactor, 0)
+      - If: $previousReplicationFactor != $.replicationFactor
+        Then:
+          - If: $.replicationFactor > 0
+            Then: $.deployReplicationController()
+            Else: $.destroyReplicationController()
+          - $.setAttr(replicationFactor, $.replicationFactor)
+              
+  deployPod:
+    Body:
+      - $isNew: $.getAttr(lastPodDeployId, null) = null
+      - $resources: new(sys:Resources)
+      - $template: $resources.yaml('UpdatePod.template').bind(dict(
+            podDefinition => $._podDefinition,
+            isNew => $isNew
+          ))
+      - $.kubernetesCluster.masterNode.instance.agent.call($template, $resources)
+
+  deployService:
+    Arguments:
+      - servicePort:
+          Contract: $.int().notNull()
+      - containerPort:
+          Contract: $.int().notNull()
+      - isNew:
+          Contract: $.bool().notNull()
+    Body:
+      - $definition: $.buildServiceDefinition(servicePort => $servicePort, containerPort => $containerPort)
+      - $resources: new(sys:Resources)
+      
+      - $template: $resources.yaml('UpdateService.template').bind(dict(
+            serviceDefinition => $definition,
+            isNew => $isNew
+          ))
+      - $.kubernetesCluster.masterNode.instance.agent.call($template, $resources)
+
+  destroyService:
+    Arguments:
+      - servicePort:
+          Contract: $.int().notNull()
+    Body:
+      - $id: $.getServiceId($servicePort)
+      - $resources: new(sys:Resources)
+      
+      - $template: $resources.yaml('DestroyService.template').bind(dict(serviceId => $id))
+      - $.kubernetesCluster.masterNode.instance.agent.call($template, $resources)
+
+  deployReplicationController:
+    Body:
+      - $definition: $.buildReplicationControllerDefinition()
+      - $isNew: $.getAttr(replicationFactor, 0) = 0
+      - $resources: new(sys:Resources)
+      
+      - $template: $resources.yaml('UpdateReplicationController.template').bind(dict(
+            controllerDefinition => $definition,
+            isNew => $isNew
+          ))
+      - $.kubernetesCluster.masterNode.instance.agent.call($template, $resources)
+
+  destroyReplicationController:
+    Body:
+      - $id: $.getReplicationControllerId()
+      - $resources: new(sys:Resources)
+      
+      - $template: $resources.yaml('DestroyReplicationController.template').bind(dict(serviceId => $id))
+      - $.kubernetesCluster.masterNode.instance.agent.call($template, $resources)
+
+  getPodName:
+    Body:
+      - $name: $.getAttr(podName, null)
+      - If: $name = null
+        Then:
+          - $name: toLower(format('pod-{0}', randomName()))
+          - $.setAttr(podName, $name)
+      - Return: $name
+
+  getPodLabels:
+    Arguments:
+      - podName:
+          Contract: $.string().notNull()
+          Contract: $.string().notNull()
+    Body:
+      Return: $.labels2Map(toLower($.labels)).mergeWith(dict(id => $podName))
+
+  getReplicationControllerId:
+    Body:
+      - Return: $.getPodName().replace('pod-', 'rc-')
+
+  getServiceId:
+    Arguments:
+      - servicePort:
+          Contract: $.int().notNull()
+    Body:
+      - Return: $.getPodName().replace('pod-', format('svc-{0}-', $servicePort))
+
+  buildServiceDefinition:
+    Arguments:
+      - servicePort:
+          Contract: $.int().notNull()
+      - containerPort:
+          Contract: $.int().notNull()
+    Body:
+      - Return:
+          id: $.getServiceId($servicePort)
+          kind: Service
+          apiVersion: v1beta1
+          port: $servicePort
+          containerPort: $containerPort
+          selector:
+            id: $.getPodName()
+
+  buildReplicationControllerDefinition:
+    Body:
+      Return:
+        id: $.getReplicationControllerId()
+        kind: ReplicationController
+        apiVersion: v1beta1
+        desiredState:
+          replicas: $.replicationFactor
+          replicaSelector:
+            id: $.getPodName()
+          podTemplate:
+            desiredState: $._podDefinition.desiredState
+            labels: $._podDefinition.labels
+
+  deleteContainer:
+    Arguments:
+      - name:
+          Contract: $.string().notNull()
+    Body:
+      - $lenBefore: len($._podDefinition.desiredState.manifest.containers) + len($._podDefinition.desiredState.manifest.volumes)
+      - $newContainers: $._podDefinition.desiredState.manifest.containers.where($.name != $name)
+      - $newVolumes: $._podDefinition.desiredState.manifest.volumes.where(
+            $.name in $._podDefinition.desiredState.manifest.containers.volumeMounts.name)
+      - If: len($newContainers) + len($newVolumes) != $lenBefore
+        Then:
+          - $._podDefinition.desiredState.manifest.containers: $newContainers
+          - $._podDefinition.desiredState.manifest.volumes: $newVolumes
+          - $.setAttr(lastPodChangeId, randomName())
+          - $.setAttr(podDefinition, $._podDefinition)
+ 
+  hostContainer:
+    Arguments:
+      - name:
+          Contract: $.string().notNull()
+      - image:
+          Contract: $.string().notNull()
+      - commands:
+          Contract: 
+            - $.string().notNull()
+      - env:
+          Contract:
+            $.string().notNull(): $.string().notNull()
+      - ports:
+          Contract: 
+            - $.int().notNull()
+      - volumes:
+          Contract:
+            $.string().notNull(): $.class(doc:DockerVolume).notNull()
+    Body:
+      - $.deleteContainer($name)
+      - $container:
+          name: toLower($name)
+          image: $image
+          command: $commands
+          cpu: 1000
+          ports: $ports.select(dict(containerPort => $, hostPort => $))
+          volumeMounts: $volumes.select(dict(name => $this.generateVolumeName($env.get($)), mountPath => $))
+          env: $env.select(dict(key => $, value => $env.get($)))
+      
+      - $newVolumes: $volumes.where(not $this.generateVolumeName($) in $._podDefinition.desiredState.volumes.name).
+          select($this.buildVolumeEntry($volumes.get($)))
+
+      - $diff:
+          desiredState:
+            manifest:
+              containers: [$container]
+              volumes: $newVolumes
+      
+      - $.setAttr(lastPodChangeId, randomName())
+      - $._podDefinition: $._podDefinition.mergeWith($diff)
+      - $.setAttr(podDefinition, $._podDefinition)
+
+  generateVolumeName:
+    Arguments:
+      - volume:
+          Contract: $.class(doc:DockerVolume).notNull()
+    Body:
+      Return: toLower($volume.name)
+  
+  buildVolumeEntry:
+    Arguments:
+      - volume:
+          Contract: $.class(doc:DockerVolume).notNull()
+    Body:
+      - $type: $volume.getType()
+      - Value: $type
+        Match: 
+          HostDir:
+            - $spec:
+                hostDir:
+                  path: $volume.getParameters()
+          TempVolume:
+            - $spec:
+                emptyDir: {}
+        Default:
+          - Throw: UnknownDockerVolumeType
+            Message: format('Unknown docker volume type {0}', $type)
+      - Return:
+          name: $.generateVolumeName($volume)
+          source: $spec
+
+  getIp:
+    Body:
+      Return: $.kubernetesCluster.getIp()
+
