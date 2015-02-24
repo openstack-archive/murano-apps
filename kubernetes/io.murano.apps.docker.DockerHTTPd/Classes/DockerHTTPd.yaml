@@ -35,6 +35,6 @@ Methods:
               )
           - $.host.deploy()
           
-          - $._environment.reporter.report($this, 'Application Ngix available at {0}:{1}'.format($.host.getIp(), $.port))
+          - $._environment.reporter.report($this, 'Application HTTPd available at {0}:{1}'.format($.host.getIp(), $.port))
           - $.setAttr(deployed, true)
 

@@ -1,4 +1,4 @@
-# Google Keubernetes for Murano
+# Google Kubernetes for Murano
 
 Packages in this folder are required to deploy both Google Kubernetes and applications 
 on top of it.
@@ -23,6 +23,5 @@ io.murano.apps.docker.kubernetes.static.KubernetesEntities – Kubernetes
 instances that can be constructed from a JSON definition – Pod, Service 
 and ReplicationController	
 
-io.murano.apps.docker.DockerHttpD – Apache web server in Docker container that can be 
+io.murano.apps.docker.DockerHTTPd – Apache web server in Docker container that can be 
 hosted on Kubernetes
-

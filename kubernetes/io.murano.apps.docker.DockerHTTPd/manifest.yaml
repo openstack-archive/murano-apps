@@ -7,4 +7,4 @@ Description: |
 Author: 'Mirantis, Inc'
 Tags: [docker, application, HTTPd]
 Classes:
- io.murano.apps.docker.DockerHTTPd: DockerHTTPd.murano
+ io.murano.apps.docker.DockerHTTPd: DockerHTTPd.yaml
