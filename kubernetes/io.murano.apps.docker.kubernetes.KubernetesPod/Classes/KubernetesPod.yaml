@@ -255,13 +255,24 @@ Methods:
           Contract:
             $.string().notNull(): $.string().notNull()
       - ports:
-          Contract: 
+          Contract:
             - $.int().notNull()
       - volumes:
           Contract:
             $.string().notNull(): $.class(doc:DockerVolume).notNull()
     Body:
       - $.deleteContainer($name)
+
+      - For: port
+        In: $ports
+        Do:
+          - $securityGroupIngress:
+              - ToPort: $port
+                FromPort: $port
+                IpProtocol: tcp
+                External: true
+          - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+
       - $container:
           name: toLower($name)
           image: $image
@@ -270,7 +281,7 @@ Methods:
           ports: $ports.select(dict(containerPort => $, hostPort => $))
           volumeMounts: $volumes.select(dict(name => $this.generateVolumeName($env.get($)), mountPath => $))
           env: $env.select(dict(key => $, value => $env.get($)))
-      
+
       - $newVolumes: $volumes.where(not $this.generateVolumeName($) in $._podDefinition.desiredState.volumes.name).
           select($this.buildVolumeEntry($volumes.get($)))
 
