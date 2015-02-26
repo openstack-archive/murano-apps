@@ -18,9 +18,10 @@ Properties:
   minionNodes:
     Contract:
       - $.class(KubernetesMinionNode).notNull()
+      - 1
 
   nodeCount:
-    Contract: $.int().notNull()
+    Contract: $.int().notNull().check($ > 0)
       
 Methods:
   initialize:

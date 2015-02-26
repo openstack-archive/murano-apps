@@ -26,6 +26,9 @@ Forms:
         - name: port
           type: integer
           label: Port
+          minValue: 1
+          maxValue: 65535
+          initial: 27017
           description: >-
             Select a port to run the app
 

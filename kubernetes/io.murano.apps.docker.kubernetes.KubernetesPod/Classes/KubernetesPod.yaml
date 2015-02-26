@@ -22,7 +22,7 @@ Properties:
     Default: ''
 
   replicationFactor:
-    Contract: $.int().notNull()
+    Contract: $.int().notNull().check($ >= 0)
 
   exposePorts:
     Contract: $.string().notNull()
@@ -30,7 +30,7 @@ Properties:
 
   exposePortsMap:
     Contract: 
-      $.int().notNull(): $.int().notNull()
+      $.int().notNull().check($ > 0 and $ < 65536): $.int().notNull().check($ > 0 and $ < 65536)
     Usage: Runtime
 
 Methods:
