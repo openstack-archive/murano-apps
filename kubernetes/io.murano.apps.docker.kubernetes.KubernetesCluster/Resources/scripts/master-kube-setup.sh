@@ -15,6 +15,7 @@ service kube-apiserver stop
 
 #Create log folder for Kubernetes services
 mkdir /var/log/kubernetes
+mkdir -p /var/run/murano-kubernetes
 
 #Preapre service configs
 #sed -i.bkp "s/%%PORTAL_NET%%/$3/g" kube-apiserver.conf

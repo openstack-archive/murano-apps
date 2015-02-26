@@ -14,7 +14,7 @@ Methods:
   getIp:
     Body:
       Return: $.instance.ipAddresses[0]
-      
+
   deploy:
     Body:
       - $.instance.deploy()

@@ -8,10 +8,12 @@ Parameters:
 
 Body: |
   import json
-  with open('/tmp/service.json', 'w') as f:
+  import uuid
+  fileName = '/var/run/murano-kubernetes/' + str(uuid.uuid4()) + '.json'
+  with open(fileName, 'w') as f:
     json.dump(args.serviceDefinition, f)
-  return updateService('{0}'.format(args.isNew)).stdout
-
+      
+  return updateService('{0} {1} {2} {3}'.format(args.isNew, args.serviceDefinition['id'], args.serviceDefinition['kind'], fileName )).stdout
 Scripts:
   updateService:
     Type: Application

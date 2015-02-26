@@ -21,6 +21,7 @@ else
 fi
 #Create log folder for Kubernetes services
 mkdir /var/log/kubernetes
+mkdir -p /var/run/murano-kubernetes
 
 #Preapre service configs
 

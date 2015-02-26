@@ -8,9 +8,12 @@ Parameters:
 
 Body: |
   import json
-  with open('/tmp/pod.json', 'w') as f:
+  import uuid
+  fileName = '/var/run/murano-kubernetes/' + str(uuid.uuid4()) + '.json'
+  with open(fileName, 'w') as f:
     json.dump(args.podDefinition, f)
-  return updatePod('{0}'.format(args.isNew)).stdout
+
+  return updatePod('{0} {1} {2} {3}'.format(args.isNew, args.podDefinition['id'], args.podDefinition['kind'], fileName )).stdout
 
 Scripts:
   updatePod:

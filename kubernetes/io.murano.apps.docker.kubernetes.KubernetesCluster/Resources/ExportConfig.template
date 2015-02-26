@@ -1,13 +1,13 @@
 FormatVersion: 2.0.0
 Version: 1.0.0
-Name: Export Config 
+Name: Export Config
 
 Parameters:
   name: $name
 
 Body: |
    log=setup('{0}'.format(args.name)).stdout
-   filename='/var/run/murano-kubernetes/application.zip.b64'
+   filename='/var/run/murano-kubernetes/application.tgz.b64'
    with open(filename,'r') as f:
      content=f.read()
      return {'log': log, 'content': content}

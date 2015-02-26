@@ -22,7 +22,8 @@ Properties:
 
   nodeCount:
     Contract: $.int().notNull().check($ > 0)
-      
+    Usage: InOut
+
 Methods:
   initialize:
     Body:
@@ -32,7 +33,6 @@ Methods:
     Body:
       - If: not $.getAttr(deployed, false)
         Then:
-          #TODO(ddovbii): Check rules!
           - $._environment.reporter.report($this, 'Creating VMs for Kubernetes cluster')
           - $securityGroupIngress:
               - ToPort: 4001
@@ -55,12 +55,37 @@ Methods:
           - $._environment.reporter.report($this, 'Setting up Kubernetes cluster')
           - $.masterNode.deploy()
           - $.setAttr(deployed, true)
-          
+
           - Parallel:
               - Do:
                 - $.minionNodes.take($.nodeCount).pselect($.deploy())
               - Do:
                 - $.minionNodes.skip($.nodeCount).pselect($.removeFromCluster())
+
+  scaleUP:
+    Usage: Action
+    Body:
+      - $._environment.reporter.report($this, 'Scaling up Kubernetes containers cluster up')
+
+      - If: $.nodeCount < len($.minionNodes):
+        Then:
+          - $minion: $.minionNodes[$.nodeCount]
+          - $._environment.reporter.report($this, 'Creating a new VM')
+          - $minion.deploy()
+          - $.nodeCount: $.nodeCount + 1
+          - $._environment.reporter.report($this, 'Scaling Kubernetes containers cluster complete')
+
+
+  exportConfig:
+    Usage: Action
+    Body:
+      - $._environment.reporter.report($this, 'Action exportConfig is called')
+      - $resources: new(sys:Resources)
+      - $template: $resources.yaml('ExportConfig.template')
+      - $result: $.masterNode.instance.agent.call($template, $resources)
+      - $._environment.reporter.report($this, 'Got archive from Kubernetes')
+      - Return: new(std:File, base64Content=>$result.content,
+                    filename => 'application.tar.gz')
 
   getIp:
     Body:

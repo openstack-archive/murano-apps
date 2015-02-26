@@ -34,7 +34,6 @@ Application:
   minionNodes: repeat($minionNode, $.appConfiguration.maxMinionCount)
   nodeCount: $.appConfiguration.minionCount
 
-
 Forms:
   - appConfiguration:
       fields:

@@ -27,10 +27,10 @@ Methods:
           - $.super($.deploy())
           - $.setupNode()
           - $.setAttr(deployed, true)
-  
+
   setupNode:
     Body:
-      - $._environment.reporter.report($, 'Configuring ETCD muster node')
+      - $._environment.reporter.report($, 'Configuring ETCD master node')
       - $resources: new(sys:Resources)
       - $template: $resources.yaml('MasterEtcdSetup.template').bind(dict(
             name => $.instance.name,
