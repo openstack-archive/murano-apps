@@ -69,6 +69,9 @@ Methods:
         In: $mappingString.replace(',', ';').split(';')
         Do:
           - $pair: $t.split('=')
+          - If: len($pair) != 2
+            Then:
+              Continue:
           - $key: int($pair[0].trim())
           - $result[$key]: int($pair[0-1].trim()) # yaql 0.2.x doesn't support unary operators
       - Return: $result
@@ -180,7 +183,6 @@ Methods:
   getPodLabels:
     Arguments:
       - podName:
-          Contract: $.string().notNull()
           Contract: $.string().notNull()
     Body:
       Return: $.labels2Map(toLower($.labels)).mergeWith(dict(id => $podName))
