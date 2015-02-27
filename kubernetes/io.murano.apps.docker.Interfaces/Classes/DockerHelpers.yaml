@@ -14,6 +14,9 @@ Methods:
         In: $labelsString.replace(',', ';').split(';')
         Do:
           - $pair: $t.split('=')
+          - If: len($pair) < 2
+            Then:
+              Continue:
           - $key: $pair[0].trim()
           - $result[$key]: $pair[1].trim()
       - Return: $result
