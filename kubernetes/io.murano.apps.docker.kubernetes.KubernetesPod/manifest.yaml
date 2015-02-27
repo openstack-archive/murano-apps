@@ -1,7 +1,7 @@
 Format: 1.0
 Type: Application
 FullName: io.murano.apps.docker.kubernetes.KubernetesPod
-Name: Kubernetes POD
+Name: Kubernetes Pod
 Description: |
  Kubernes Pod - A collection of containers which will be scheduled onto the same node,
  which share and an IP and port space, and which can be created/destroyed together.

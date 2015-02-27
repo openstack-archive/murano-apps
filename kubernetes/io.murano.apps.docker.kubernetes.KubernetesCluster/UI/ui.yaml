@@ -3,7 +3,7 @@ Templates:
   masterNode:
     ?:
       type: io.murano.apps.docker.kubernetes.KubernetesMasterNode
-    portalNet: $.appConfiguration.portalNet
+#    portalNet: $.appConfiguration.portalNet
     instance:
       ?:
         type: io.murano.resources.LinuxMuranoInstance
@@ -47,24 +47,26 @@ Forms:
             underline are allowed
         - name: minionCount
           type: integer
-          label: Current minion Count
+          label: Initial/current number of minions
           initial: 3
+          minValue: 1
           required: true
           description: >-
             Select number of minions
         - name: maxMinionCount
           type: integer
-          label: Maximum minion Count
+          label: Maximum number of minions
           initial: 3
           required: true
+          minValue: 1
           description: >-
             Select number of minions
-        - name: portalNet
-          type: string
-          initial: '11.1.1.1/24'
-          label: Select portalNet
-          description: >-             
-             TODO
+#        - name: portalNet
+#          type: string
+#          initial: '11.1.1.1/24'
+#          label: Select portalNet
+#          description: >-
+#             TODO
         - name: assignFloatingIP
           type: boolean
           initial: true

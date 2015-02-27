@@ -33,12 +33,15 @@ Forms:
             Kubernetes service
         - name: replicationFactor
           type: integer
-          label: Replication Factor
+          label: Replication Factor (0 = disabled)
           initial: 2
-          required: false
+          required: true
+          minValue: 0
         - name: exposePorts
           type: string
           label: Expose Ports
           required: false
           description: >-
-            DICTIONARY HERE
+            List of ports to expose for the Pod in a form of either 
+            "port1;port2" or 
+            "publicPort1=containerPort1;publicPort2=containerPort2"
