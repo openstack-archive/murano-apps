@@ -1,6 +1,8 @@
 Namespaces:
   =: io.murano.apps.docker
   res: io.murano.resources
+  std: io.murano
+  sys: io.murano.system
 
 Name: DockerStandaloneHost
 
@@ -140,11 +142,11 @@ Methods:
      - $.addDockerApp(
           name => $.name,
           instance => $.instance,
-          image => $image,
-          env => $env,
-          ports => $ports,
-          portBindings => $._portBindings,
-          volumes => $volumes
+          dockerImage => $image,
+          dockerEnv => $env,
+          dockerAppPorts => $ports,
+          dockerPortBindings => $._portBindings,
+          dockerVolumes => $volumes
          )
 
   pullImage:
