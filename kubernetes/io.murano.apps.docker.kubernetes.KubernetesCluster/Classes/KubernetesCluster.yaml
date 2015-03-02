@@ -65,7 +65,7 @@ Methods:
   scaleUP:
     Usage: Action
     Body:
-      - $._environment.reporter.report($this, 'Scaling up Kubernetes containers cluster up')
+      - $._environment.reporter.report($this, 'Scaling up Kubernetes containers cluster')
 
       - If: $.nodeCount < len($.minionNodes):
         Then:
@@ -75,6 +75,17 @@ Methods:
           - $.nodeCount: $.nodeCount + 1
           - $._environment.reporter.report($this, 'Scaling Kubernetes containers cluster complete')
 
+  scaleDown:
+    Usage: Action
+    Body:
+      - $._environment.reporter.report($this, 'Scaling Kubernetes containers cluster down')
+
+      - If: $.nodeCount > 0
+        Then:
+          - $minion: $.minionNodes[$.nodeCount - 1]
+          - $minion.removeFromCluster()
+          - $.nodeCount: $.nodeCount - 1
+          - $._environment.reporter.report($this, 'Scaling Kubernetes containers cluster complete')
 
   exportConfig:
     Usage: Action
