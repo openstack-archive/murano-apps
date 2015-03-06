@@ -67,7 +67,7 @@ Methods:
     Body:
       - $._environment.reporter.report($this, 'Scaling up Kubernetes containers cluster')
 
-      - If: $.nodeCount < len($.minionNodes):
+      - If: $.nodeCount < len($.minionNodes)
         Then:
           - $minion: $.minionNodes[$.nodeCount]
           - $._environment.reporter.report($this, 'Creating a new VM')
