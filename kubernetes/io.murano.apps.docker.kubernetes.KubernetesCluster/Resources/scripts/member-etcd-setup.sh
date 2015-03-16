@@ -7,16 +7,14 @@
 service etcd stop
 
 mkdir /var/lib/etcd
-first=`cat member-etcd-config-p1.conf`
-echo -n $first > member-etcd-config.conf
-echo -n " " >> member-etcd-config.conf
-echo -n  $3 >> member-etcd-config.conf
-cat member-etcd-config-p2.conf >> member-etcd-config.conf
+sed -i.bkp "s/%%NAME%%/$1/g" default_scripts/etcd-member
+sed -i.bkp "s/%%IP%%/$2/g" default_scripts/etcd-member
+sed -i.bkp "s#%%CLUSTER_CONFIG%%#$3#g" default_scripts/etcd-member
 
-sed -i.bkp "s/%%NAME%%/$1/g" member-etcd-config.conf
-sed -i.bkp "s/%%IP%%/$2/g" member-etcd-config.conf
-
-cp -f member-etcd-config.conf /etc/default/etcd
+cp -f default_scripts/etcd-member /etc/default/etcd
+cp init_conf/etcd.conf /etc/init/
+chmod +x initd_scripts/etcd
+cp initd_scripts/etcd /etc/init.d/
 
 service etcd start
 

@@ -3,6 +3,8 @@ Namespaces:
   std: io.murano
   res: io.murano.resources
   sys: io.murano.system
+  docker: io.murano.apps.docker
+
 
 Name: KubernetesCluster
 
@@ -22,12 +24,42 @@ Properties:
 
   nodeCount:
     Contract: $.int().notNull().check($ > 0)
-    Usage: InOut
+
+  gatewayCount:
+    Contract: $.int().notNull()
+
+  gatewayNodes:
+    Contract:
+      - $.class(KubernetesGatewayNode).notNull()
+
+  serviceEndpoints:
+    Contract:
+      - port: $.int().notNull().check($ > 0)
+        address: $.string().notNull()
+        scope: $.string().notNull().check($ in list(public, cloud, internal))
+        applicationPort: $.class(docker:ApplicationPort).notNull()
+        applicationName: $.string().notNull()
+        podId: $.string().notNull()
+        name: $.string().notNull()
+    Default: []
+    Usage: Out
+
 
 Methods:
   initialize:
     Body:
       - $._environment: $.find(std:Environment).require()
+      - $._services: {}
+      - For: endpoint
+        In: $.serviceEndpoints
+        Do:
+          - $port: $endpoint.port
+          - $._services[$port]:
+              applicationName: $endpoint.applicationName
+              applicationPort: $endpoint.applicationPort
+              podId: $endpoint.podId
+              name: $endpoint.name
+
 
   deploy:
     Body:
@@ -51,53 +83,317 @@ Methods:
                 FromPort: 8080
                 IpProtocol: tcp
                 External: false
+              - ToPort: 2380
+                FromPort: 2380
+                IpProtocol: tcp
+                External: false
+              - ToPort: 8285
+                FromPort: 8285
+                IpProtocol: udp
+                External: false
           - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
-          - $._environment.reporter.report($this, 'Setting up Kubernetes cluster')
-          - $.masterNode.deploy()
           - $.setAttr(deployed, true)
 
+          - $._environment.reporter.report($this, 'Setting up Kubernetes cluster')
           - Parallel:
-              - Do:
-                - $.minionNodes.take($.nodeCount).pselect($.deploy())
-              - Do:
-                - $.minionNodes.skip($.nodeCount).pselect($.removeFromCluster())
+              - Do: $.masterNode.deployInstance()
+              - Do: $.minionNodes.take($.nodeCount).pselect($.deployInstance())
+              - Do: $.gatewayNodes.take($.gatewayCount).pselect($.deployInstance())
 
-  scaleUP:
+          - $.masterNode.setupEtcd()
+          - $.minionNodes.take($.nodeCount).select($.setupEtcd())
+          - $.gatewayNodes.take($.gatewayCount).select($.setupEtcd())
+
+          - $.masterNode.setupNode()
+          - Parallel:
+              - Do: $.minionNodes.take($.nodeCount).pselect($.setupNode())
+              - Do: $.minionNodes.skip($.nodeCount).pselect($.removeFromCluster())
+              - Do: $.gatewayNodes.take($.gatewayCount).pselect($.setupNode())
+      - $._deployServices()
+
+
+  getIp:
+    Body:
+      Return: $.masterNode.getIp()
+
+
+  createPod:
+    Arguments:
+      - definition:
+          Contract: {}
+      - isNew:
+          Contract: $.bool().notNull()
+          Default: true
+    Body:
+      - $.deploy()
+      - $resources: new(sys:Resources)
+      - $template: $resources.yaml('UpdatePod.template').bind(dict(
+            podDefinition => $definition,
+            isNew => $isNew
+          ))
+      - $.masterNode.instance.agent.call($template, $resources)
+
+
+  createReplicationController:
+    Arguments:
+      - definition:
+          Contract: {}
+      - isNew:
+          Contract: $.bool().notNull()
+          Default: true
+    Body:
+      - $.deploy()
+      - $resources: new(sys:Resources)
+      - $template: $resources.yaml('UpdateReplicationController.template').bind(dict(
+            controllerDefinition => $definition,
+            isNew => $isNew
+          ))
+      - $.masterNode.instance.agent.call($template, $resources)
+
+
+  destroyReplicationController:
+    Arguments:
+      - id:
+          Contract: $.string().notNull()
+    Body:
+      - $.deploy()
+      - $resources: new(sys:Resources)
+      - $template: $resources.yaml('DestroyReplicationController.template').bind(dict(rcId => $id))
+      - $.kubernetesCluster.masterNode.instance.agent.call($template, $resources)
+
+
+  createServices:
+    Arguments:
+      - applicationName:
+          Contract: $.string().notNull()
+      - applicationPorts:
+          Contract:
+            - $.class(docker:ApplicationPort)
+      - podId:
+          Contract: $.string().notNull()
+    Body:
+      - $._destroyService($applicationName, $podId)
+      - For: applicationPort
+        In: $applicationPorts.where($.scope in list(public, host))
+        Do:
+          - $allocatedPort: $._findUnusedPort($applicationPort.port)
+          - $._services[$allocatedPort]:
+              applicationName: $applicationName
+              applicationPort: $applicationPort
+              podId: $podId
+              name: format('svc-{0}', randomName())
+      - $.deploy()
+
+
+  _destroyService:
+    Arguments:
+      - applicationName:
+          Contract: $.string().notNull()
+      - podId:
+          Contract: $.string().notNull()
+    Body:
+      - $services: {}
+      - For: port
+        In: $._services.keys()
+        Do:
+          - $record: $._services.get($port)
+          - If: $record.applicationName != $applicationName or $record.podId != $podId
+            Then:
+              $services[$port]: $record
+      - $._services: $services
+
+
+  destroyService:
+    Arguments:
+      - applicationName:
+          Contract: $.string().notNull()
+      - podId:
+          Contract: $.string().notNull()
+    Body:
+      - $._destroyService($applicationName, $podId)
+      - $.deploy()
+
+
+  _deployServices:
+    Body:
+      - $services: $._services
+      - $endpoints: []
+      - $skipPorts: []
+      - $resources: new(sys:Resources)
+      - $prevNodeCount: $.getAttr(lastNodeCount, -1)
+      - $prevGatewayCount: $.getAttr(lastGatewayCount, -1)
+      - $gatewayModeChanged: $prevGatewayCount != $.gatewayCount and $prevGatewayCount * $.gatewayCount = 0
+      - $serviceEndpoints: {}
+
+      - For: deployedRecord
+        In: $.serviceEndpoints.where($.scope = cloud)
+        Do:
+          - $port: $deployedRecord.port
+          - If: not $port in $services.keys()
+            Then:
+              - $template: $resources.yaml('DestroyService.template').bind(dict(
+                    serviceId => $deployedRecord.name
+                  ))
+              - $.masterNode.instance.agent.call($template, $resources)
+            Else:
+              $serviceEndpoints[$port]: $deployedRecord
+
+      - For: port
+        In: $services.keys()
+        Do:
+          - $runtimeRecord: $services.get($port)
+          - $deployedRecord: $serviceEndpoints.get($port)
+          - $portChanged: $deployedRecord = null
+          - If: not $portChanged
+            Then:
+              $portChanged: $deployedRecord.podId != $runtimeRecord.podId or
+                $runtimeRecord.applicationPort.scope = public and (
+                $gatewayModeChanged or $.gatewayCount = 0 and $prevNodeCount != nodeCount)
+
+          - If: $portChanged
+            Then:
+              - $serviceDefinition: $._buildServiceDefinition(
+                    $runtimeRecord.name,
+                    $port,
+                    $runtimeRecord.applicationPort.port,
+                    $runtimeRecord.podId,
+                    $.gatewayCount = 0
+                  )
+
+              - $template: $resources.yaml('UpdateService.template').bind(dict(
+                    serviceDefinition => $serviceDefinition,
+                    isNew => $deployedRecord = null
+                  ))
+              - If: $runtimeRecord.applicationPort.scope = public
+                Then:
+                  - $securityGroupIngress:
+                      - ToPort: $port
+                        FromPort: $port
+                        IpProtocol: toLower($runtimeRecord.applicationPort.protocol)
+                        External: true
+                  - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+
+              - $serviceIp: $.masterNode.instance.agent.call($template, $resources)
+            Else:
+              - $serviceIp: $deployedRecord.address
+
+          - $endpoint:
+              port: $port
+              address: $serviceIp
+              scope: internal
+              applicationPort: $runtimeRecord.applicationPort
+              applicationName: $runtimeRecord.applicationName
+              podId: $runtimeRecord.podId
+              name: $runtimeRecord.name
+          - $endpoints: $endpoints + list($endpoint)
+
+          - If: $runtimeRecord.applicationPort.scope = public
+            Then:
+              - If: $.gatewayCount > 0
+                Then:
+                  $nodes: $.gatewayNodes.take($.gatewayCount)
+                Else:
+                  $nodes: $.minionNodes.take($.nodeCount)
+
+              - For: t
+                In: $nodes
+                Do:
+                  - $endpoint.address: $t.getIp()
+                  - $endpoint.scope: cloud
+                  - $endpoints: $endpoints + list($endpoint)
+                  - If: $t.instance.floatingIpAddress != null
+                    Then:
+                    - $endpoint.address: $t.instance.floatingIpAddress
+                    - $endpoint.scope: public
+                    - $endpoints: $endpoints + list($endpoint)
+      - $.serviceEndpoints: $endpoints
+      - $._environment.stack.push()
+
+
+  _findUnusedPort:
+    Arguments:
+      - initial:
+          Contract: $.int().notNull()
+    Body:
+      - If: not $initial in $._services.keys()
+        Then:
+          Return: $initial
+      - $port: 1025
+      - While: $port in $._services.keys()
+        Do:
+          $port: $port + 1
+      - Return: $port
+
+
+  _buildServiceDefinition:
+    Arguments:
+      - serviceName:
+          Contract: $.string().notNull()
+      - servicePort:
+          Contract: $.int().notNull()
+      - containerPort:
+          Contract: $.int().notNull()
+      - podId:
+          Contract: $.string().notNull()
+      - withDodeIps:
+          Contract: $.bool().notNull()
+    Body:
+      - $result:
+          id: $serviceName
+          kind: Service
+          apiVersion: v1beta1
+          port: $servicePort
+          containerPort: $containerPort
+          selector:
+            id: $podId
+      - If: $withDodeIps
+        Then:
+          - $result.publicIPs: $.minionNodes.take($.nodeCount).select($.getIp())
+      - Return: $result
+
+  scaleUp:
     Usage: Action
     Body:
-      - $._environment.reporter.report($this, 'Scaling up Kubernetes containers cluster')
-
       - If: $.nodeCount < len($.minionNodes)
         Then:
-          - $minion: $.minionNodes[$.nodeCount]
-          - $._environment.reporter.report($this, 'Creating a new VM')
-          - $minion.deploy()
+          - $._environment.reporter.report($this, 'Scaling up Kubernetes cluster')
           - $.nodeCount: $.nodeCount + 1
-          - $._environment.reporter.report($this, 'Scaling Kubernetes containers cluster complete')
+          - $.deploy()
 
   scaleDown:
     Usage: Action
     Body:
-      - $._environment.reporter.report($this, 'Scaling Kubernetes containers cluster down')
+      - If: $.nodeCount > 1
+        Then:
+          - $._environment.reporter.report($this, 'Scaling Kubernetes cluster down')
+          - $.nodeCount: $.nodeCount - 1
+          - $.deploy()
 
+  scaleGatewaysUp:
+    Usage: Action
+    Body:
+      - If: $.nodeCount < len($.gatewayNodes)
+        Then:
+          - $._environment.reporter.report($this, 'Adding new gateway node')
+          - $.nodeCount: $.gatewayCount + 1
+          - $.deploy()
+
+  scaleGatewaysUp:
+    Usage: Action
+    Body:
       - If: $.nodeCount > 0
         Then:
-          - $minion: $.minionNodes[$.nodeCount - 1]
-          - $minion.removeFromCluster()
-          - $.nodeCount: $.nodeCount - 1
-          - $._environment.reporter.report($this, 'Scaling Kubernetes containers cluster complete')
+          - $._environment.reporter.report($this, 'Removing gateway node')
+          - $.nodeCount: $.gatewayCount - 1
+          - $.deploy()
 
   exportConfig:
     Usage: Action
     Body:
-      - $._environment.reporter.report($this, 'Action exportConfig is called')
+      - $._environment.reporter.report($this, 'Action exportConfig called')
       - $resources: new(sys:Resources)
       - $template: $resources.yaml('ExportConfig.template')
       - $result: $.masterNode.instance.agent.call($template, $resources)
       - $._environment.reporter.report($this, 'Got archive from Kubernetes')
       - Return: new(std:File, base64Content=>$result.content,
                     filename => 'application.tar.gz')
-
-  getIp:
-    Body:
-      Return: $.masterNode.getIp()

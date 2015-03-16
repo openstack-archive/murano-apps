@@ -1,0 +1,24 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Setup HAProxy
+
+Parameters:
+  masterIp: $masterIp
+
+Body: |
+  setup(args.masterIp)
+
+Scripts:
+  setup:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: haproxy-setup.sh
+    Files:
+      - default_scripts/haproxy
+      - init_conf/confd.conf
+      - haproxy.tmpl
+      - haproxy.toml
+
+    Options:
+      captureStdout: true
+      captureStderr: true

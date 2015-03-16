@@ -1,6 +1,6 @@
 FormatVersion: 2.0.0
 Version: 1.0.0
-Name: Add ETCD member
+Name: Add etcd member
 
 Parameters:
   name: $name
@@ -14,8 +14,8 @@ Scripts:
     Type: Application
     Version: 1.0.0
     EntryPoint: master-add-member.sh
-    Files:
-      - <master-etcd-config.conf>
+    Files: []
+
     Options:
       captureStdout: true
       captureStderr: true

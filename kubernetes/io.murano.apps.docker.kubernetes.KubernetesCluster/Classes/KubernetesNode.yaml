@@ -6,15 +6,22 @@ Namespaces:
 
 Name: KubernetesNode
 
+
 Properties:
   instance:
     Contract: $.class(res:LinuxMuranoInstance).notNull()
+
 
 Methods:
   getIp:
     Body:
       Return: $.instance.ipAddresses[0]
 
-  deploy:
+
+  deployInstance:
     Body:
       - $.instance.deploy()
+
+
+  setupEtcd:
+  setupNode:

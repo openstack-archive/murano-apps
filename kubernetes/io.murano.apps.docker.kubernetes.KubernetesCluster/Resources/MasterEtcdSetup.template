@@ -1,6 +1,6 @@
 FormatVersion: 2.0.0
 Version: 1.0.0
-Name: Setup ETCD Master
+Name: Setup etcd Master
 
 Parameters:
   name: $name
@@ -15,7 +15,9 @@ Scripts:
     Version: 1.0.0
     EntryPoint: master-etcd-setup.sh
     Files:
-      - <master-etcd-config.conf>
+      - default_scripts/etcd-master
+      - init_conf/etcd.conf
+      - initd_scripts/etcd
 
     Options:
       captureStdout: true

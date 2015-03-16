@@ -7,6 +7,4 @@
 sed -i.bkp "s/%%NAME%%/$1/g" minion-node.json
 sed -i.bkp "s/%%IP%%/$2/g" minion-node.json
 
-/opt/bin/kubectl -f create minion-node.json
-
-/opt/bin/kubectl delete node 127.0.0.1
+/opt/bin/kubectl create -f minion-node.json

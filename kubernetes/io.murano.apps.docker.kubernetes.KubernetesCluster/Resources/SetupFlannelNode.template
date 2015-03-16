@@ -1,0 +1,22 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Setup Flannel
+
+Parameters:
+
+Body: |
+  setupFlannel()
+
+Scripts:
+  setupFlannel:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: setupFlannelNode.sh
+    Files:
+      - init_conf/flanneld.conf
+      - initd_scripts/flanneld
+      - default_scripts/flanneld
+
+    Options:
+      captureStdout: true
+      captureStderr: true

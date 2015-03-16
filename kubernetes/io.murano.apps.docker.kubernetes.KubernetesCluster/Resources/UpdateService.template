@@ -1,6 +1,6 @@
 FormatVersion: 2.0.0
 Version: 1.0.0
-Name: Update Service 
+Name: Update Service
 
 Parameters:
   serviceDefinition: $serviceDefinition
@@ -12,13 +12,24 @@ Body: |
   fileName = '/var/run/murano-kubernetes/' + str(uuid.uuid4()) + '.json'
   with open(fileName, 'w') as f:
     json.dump(args.serviceDefinition, f)
-      
-  return updateService('{0} {1} {2} {3}'.format(args.isNew, args.serviceDefinition['id'], args.serviceDefinition['kind'], fileName )).stdout
+
+  updateService('{0} {1} {2} {3}'.format(args.isNew, args.serviceDefinition['id'], args.serviceDefinition['kind'], fileName))
+  return getServiceIp(args.serviceDefinition['id']).stdout
+
 Scripts:
   updateService:
     Type: Application
     Version: 1.0.0
     EntryPoint: updateService.sh
+    Files: []
+    Options:
+      captureStdout: true
+      captureStderr: true
+
+  getServiceIp:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: getServiceIp.sh
     Files: []
     Options:
       captureStdout: true

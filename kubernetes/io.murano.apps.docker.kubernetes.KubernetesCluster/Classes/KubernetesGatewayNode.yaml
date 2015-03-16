@@ -4,7 +4,7 @@ Namespaces:
   res: io.murano.resources
   sys: io.murano.system
 
-Name: KubernetesMinionNode
+Name: KubernetesGatewayNode
 
 Extends: KubernetesNode
 
@@ -14,15 +14,13 @@ Methods:
       - $._environment: $.find(std:Environment).require()
       - $._cluster: $.find(KubernetesCluster).require()
 
-
   deployInstance:
     Body:
       - If: not $.getAttr(deployed, false)
         Then:
-          - $._environment.reporter.report($this, 'Creating Kubernetes Minion')
+          - $._environment.reporter.report($this, 'Creating Gateway node for Kubernetes services')
           - $.super($.deployInstance())
           - $.setAttr(deployed, true)
-
 
   setupEtcd:
     Body:
@@ -49,10 +47,8 @@ Methods:
       - $template: $resources.yaml('SetupFlannelNode.template')
       - $.instance.agent.call($template, $resources)
 
-      - $._environment.reporter.report($, 'Setup Kubernetes Minion on {0}'.format($.instance.name))
-      - $template: $resources.yaml('KubeMinionSetup.template').bind(dict(
-            name => $.instance.name,
-            ip => $.getIp(),
+      - $._environment.reporter.report($, 'Setup Load Balancer on {0}'.format($.instance.name))
+      - $template: $resources.yaml('HAProxySetup.template').bind(dict(
             masterIp => $._cluster.masterNode.getIp()
           ))
       - $.instance.agent.call($template, $resources)
@@ -62,7 +58,6 @@ Methods:
             ip => $.getIp()
           ))
       - $._cluster.masterNode.instance.agent.call($template, $resources)
-
 
   removeFromCluster:
     Body:
@@ -74,3 +69,4 @@ Methods:
           - $._cluster.masterNode.instance.agent.call($template, $resources)
           - $._environment.reporter.report($this, 'Node {0} deleted'.format($.getIp()))
           - $.setAttr(deployed, false)
+

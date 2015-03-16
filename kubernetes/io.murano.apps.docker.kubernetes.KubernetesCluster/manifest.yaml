@@ -11,4 +11,5 @@ Classes:
  io.murano.apps.docker.kubernetes.KubernetesCluster: KubernetesCluster.yaml
  io.murano.apps.docker.kubernetes.KubernetesMasterNode: KubernetesMasterNode.yaml
  io.murano.apps.docker.kubernetes.KubernetesMinionNode: KubernetesMinionNode.yaml
+ io.murano.apps.docker.kubernetes.KubernetesGatewayNode: KubernetesGatewayNode.yaml
  io.murano.apps.docker.kubernetes.KubernetesNode: KubernetesNode.yaml

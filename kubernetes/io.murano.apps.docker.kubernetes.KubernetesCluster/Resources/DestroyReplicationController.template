@@ -3,10 +3,10 @@ Version: 1.0.0
 Name: Destroy Replication Controller
 
 Parameters:
-  serviceId: $serviceId
+  rcId: $rcId
 
 Body: |
-  return destroyReplicationController('{0}'.format(args.serviceId).stdout
+  return destroyReplicationController(args.rcId).stdout
 
 Scripts:
   destroyReplicationController:

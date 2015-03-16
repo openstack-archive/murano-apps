@@ -16,8 +16,12 @@ Scripts:
     Version: 1.0.0
     EntryPoint: minion-kube-setup.sh
     Files:
-      - <kube-proxy.conf>
-      - <kubelet.conf>
+      - default_scripts/kube-proxy
+      - default_scripts/kubelet
+      - init_conf/kubelet.conf
+      - init_conf/kube-proxy.conf
+      - initd_scripts/kubelet
+      - initd_scripts/kube-proxy
 
     Options:
       captureStdout: true

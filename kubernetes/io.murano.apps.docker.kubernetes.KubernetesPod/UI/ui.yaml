@@ -7,7 +7,6 @@ Application:
   labels: $.appConfiguration.labels
   kubernetesCluster: $.appConfiguration.kubernetesCluster
   replicationFactor: $.appConfiguration.replicationFactor
-  exposePorts: $.appConfiguration.exposePorts
 
 
 Forms:
@@ -37,11 +36,3 @@ Forms:
           initial: 2
           required: true
           minValue: 0
-        - name: exposePorts
-          type: string
-          label: Expose Ports
-          required: false
-          description: >-
-            List of ports to expose for the Pod in a form of either 
-            "port1;port2" or 
-            "publicPort1=containerPort1;publicPort2=containerPort2"

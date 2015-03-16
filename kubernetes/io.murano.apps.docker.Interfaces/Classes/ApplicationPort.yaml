@@ -1,0 +1,17 @@
+Namespaces:
+  =: io.murano.apps.docker
+  std: io.murano
+
+Name: ApplicationPort
+
+Properties:
+  port:
+    Contract: $.int().notNull().check($ > 0 and $ < 65536)
+
+  scope:
+    Contract: $.string().notNull().check($ in list(public, private, host, node))
+    Default: private
+
+  protocol:
+    Contract: $.string().notNull()
+    Default: TCP

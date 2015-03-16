@@ -3,7 +3,6 @@ Templates:
   masterNode:
     ?:
       type: io.murano.apps.docker.kubernetes.KubernetesMasterNode
-#    portalNet: $.appConfiguration.portalNet
     instance:
       ?:
         type: io.murano.resources.LinuxMuranoInstance
@@ -26,6 +25,18 @@ Templates:
       assignFloatingIp: $.appConfiguration.assignFloatingIP
       keyname: $.instanceConfiguration.keyPair
 
+  gatewayNode:
+    ?:
+      type: io.murano.apps.docker.kubernetes.KubernetesGatewayNode
+    instance:
+      ?:
+        type: io.murano.resources.LinuxMuranoInstance
+      name: generateHostname($.appConfiguration.gatewayNamingPattern, $index)
+      flavor: $.instanceConfiguration.flavor
+      image: $.instanceConfiguration.osImage
+      assignFloatingIp: $.appConfiguration.assignGatewayFloatingIP
+      keyname: $.instanceConfiguration.keyPair
+
 Application:
   ?:
     type: io.murano.apps.docker.kubernetes.KubernetesCluster
@@ -33,6 +44,9 @@ Application:
   masterNode: $masterNode
   minionNodes: repeat($minionNode, $.appConfiguration.maxMinionCount)
   nodeCount: $.appConfiguration.minionCount
+  gatewayCount: $.appConfiguration.gatewayCount
+  gatewayNodes: repeat($gatewayNode, $.appConfiguration.maxGatewayCount)
+
 
 Forms:
   - appConfiguration:
@@ -59,30 +73,59 @@ Forms:
           required: true
           minValue: 1
           description: >-
-            Select number of minions
-#        - name: portalNet
-#          type: string
-#          initial: '11.1.1.1/24'
-#          label: Select portalNet
-#          description: >-
-#             TODO
+            Select maximum number of minions
         - name: assignFloatingIP
           type: boolean
           initial: true
-          label: Assign Floating IP
+          label: Assign floating IP for Kubernetes nodes
           description: >-
-             Select to true to assign floating IP automatically
+             Check to assign floating IP to Kubernetes nodes
           initial: false
           required: false
         - name: unitNamingPattern
           type: string
-          initial: 'kube-0#'
+          initial: 'kube-#'
           required: false
           regexpValidator: '^(([a-zA-Z0-9#][a-zA-Z0-9-#]*[a-zA-Z0-9#])\.)*([A-Za-z0-9#]|[A-Za-z0-9#][A-Za-z0-9-#]*[A-Za-z0-9#])$'
-          label: Hostname
+          label: Kubernetes node hostname pattern
           widgetMedia:
             js: ['muranodashboard/js/support_placeholder.js']
             css: {all: ['muranodashboard/css/support_placeholder.css']}
+
+        - name: gatewayCount
+          type: integer
+          label: Initial/current number of gateway nodes
+          initial: 1
+          minValue: 0
+          required: true
+          description: >-
+            External traffic will be routed through gateway nodes
+        - name: maxGatewayCount
+          type: integer
+          label: Maximum number of gateway nodes
+          initial: 2
+          required: true
+          minValue: 0
+          description: >-
+            Maximum number of gateway nodes
+        - name: assignGatewayFloatingIP
+          type: boolean
+          initial: true
+          label: Assign floating IP for gateway nodes
+          description: >-
+             Check to assign floating IP to gateway nodes
+          initial: false
+          required: false
+        - name: gatewayNamingPattern
+          type: string
+          initial: 'gateway-#'
+          required: false
+          regexpValidator: '^(([a-zA-Z0-9#][a-zA-Z0-9-#]*[a-zA-Z0-9#])\.)*([A-Za-z0-9#]|[A-Za-z0-9#][A-Za-z0-9-#]*[A-Za-z0-9#])$'
+          label: Gateway hostname pattern
+          widgetMedia:
+            js: ['muranodashboard/js/support_placeholder.js']
+            css: {all: ['muranodashboard/css/support_placeholder.css']}
+
   - instanceConfiguration:
       fields:
         - name: title

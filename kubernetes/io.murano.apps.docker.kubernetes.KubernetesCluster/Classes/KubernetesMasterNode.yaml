@@ -8,40 +8,46 @@ Name: KubernetesMasterNode
 
 Extends: KubernetesNode
 
-Properties:
-  portalNet:
-    Contract: $.string().notNull()
-    Default: '11.1.1.1/24'
-
-
 Methods:
   initialize:
     Body:
       - $._environment: $.find(std:Environment).require()
 
-  deploy:
+
+  deployInstance:
     Body:
       - If: not $.getAttr(deployed, false)
         Then:
           - $._environment.reporter.report($this, 'Creating Kubernetes Master')
-          - $.super($.deploy())
-          - $.setupNode()
+          - $.super($.deployInstance())
           - $.setAttr(deployed, true)
+
+
+  setupEtcd:
+    Body:
+      - If: not $.getAttr(etcdConfigured, false)
+        Then:
+          - $._environment.reporter.report($, 'Configuring etcd master node')
+          - $resources: new(sys:Resources)
+          - $template: $resources.yaml('MasterEtcdSetup.template').bind(dict(
+                name => $.instance.name,
+                ip => $.getIp()
+              ))
+          - $.instance.agent.call($template, $resources)
+          - $.setAttr(etcdConfigured, true)
+
 
   setupNode:
     Body:
-      - $._environment.reporter.report($, 'Configuring ETCD master node')
       - $resources: new(sys:Resources)
-      - $template: $resources.yaml('MasterEtcdSetup.template').bind(dict(
-            name => $.instance.name,
-            ip => $.getIp()
-          ))
+      - $._environment.reporter.report($this, 'Setup Flannel network on master node')
+      - $template: $resources.yaml('SetupFlannelMaster.template')
       - $.instance.agent.call($template, $resources)
 
       - $._environment.reporter.report($this, 'Setup Kubernetes API host')
+      - $resources: new(sys:Resources)
       - $template: $resources.yaml('KubeMasterSetup.template').bind(dict(
             name => $.instance.name,
-            ip => $.getIp(),
-            portalNet => $.portalNet
+            ip => $.getIp()
           ))
       - $.instance.agent.call($template, $resources)

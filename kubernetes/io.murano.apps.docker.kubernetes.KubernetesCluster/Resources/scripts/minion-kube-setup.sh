@@ -4,37 +4,22 @@
 # $2 - IP
 # $3 - MASTER_IP
 
-if [ "$3" != "$2" ]; then
- service kube-proxy stop
- service kube-scheduler stop
- service kube-controller-manager stop
- service kubelet stop
- service kube-apiserver stop
-
- #Disable managmenets services on a minion
- chmod -x /etc/init.d/kube-controller-manager
- chmod -x /etc/init.d/kube-apiserver
- chmod -x /etc/init.d/kube-scheduler
-else
- service kube-proxy stop
- service kubelet stop
-fi
-#Create log folder for Kubernetes services
 mkdir /var/log/kubernetes
 mkdir -p /var/run/murano-kubernetes
 
-#Preapre service configs
+sed -i.bkp "s/%%MASTER_IP%%/$3/g" default_scripts/kube-proxy
+sed -i.bkp "s/%%MASTER_IP%%/$3/g" default_scripts/kubelet
+sed -i.bkp "s/%%IP%%/$2/g" default_scripts/kubelet
 
-sed -i.bkp "s/%%MASTER_IP%%/$3/g" kube-proxy.conf
+cp init_conf/kubelet.conf /etc/init/
+cp init_conf/kube-proxy.conf /etc/init/
 
-#sed -i.bkp "s/%%MASTER_IP%%/$3/g" kube-scheduler.conf
-#sed -i.bkp "s/%%IP%%/$2/g" kube-scheduler.conf
-sed -i.bkp "s/%%IP%%/$2/g" kubelet.conf
+chmod +x initd_scripts/*
+cp initd_scripts/kubelet /etc/init.d/
+cp initd_scripts/kube-proxy /etc/init.d/
 
-
-cp -f kube-proxy.conf /etc/default/kube-proxy
-cp -f kubelet.conf /etc/default/kubelet
-
+cp -f default_scripts/kube-proxy /etc/default
+cp -f default_scripts/kubelet /etc/default/
 
 service kubelet start
 service kube-proxy start

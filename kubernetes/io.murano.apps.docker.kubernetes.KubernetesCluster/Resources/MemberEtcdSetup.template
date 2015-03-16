@@ -1,6 +1,6 @@
 FormatVersion: 2.0.0
 Version: 1.0.0
-Name: Setup ETCD Member
+Name: Setup etcd Member
 
 Parameters:
   name: $name
@@ -13,11 +13,13 @@ Scripts:
   setup:
     Type: Application
     Version: 1.0.0
-    EntryPoint: <member-etcd-setup-wrapper.sh>
+    EntryPoint: member-etcd-setup.sh
     Files:
-      - <member-etcd-config-p1.conf>
-      - <member-etcd-config-p2.conf>
-      - <member-etcd-setup.sh>
+      - default_scripts/etcd-member
+      - init_conf/etcd.conf
+      - initd_scripts/etcd
+
+
     Options:
       captureStdout: true
       captureStderr: true

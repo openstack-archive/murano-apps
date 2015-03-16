@@ -9,10 +9,16 @@ Extends: std:Application
 Properties:
   name:
     Contract: $.string().notNull()
+
   host:
     Contract: $.class(DockerContainerHost).notNull()
+
   port:
     Contract: $.int().check($ > 0 and $ < 65536)
+
+  publish:
+    Contract: $.bool().notNull()
+    Default: true
 
 
 Methods:
@@ -20,21 +26,23 @@ Methods:
     Body:
       - $._environment: $.find(std:Environment).require()
 
+
   deploy:
     Body:
       - If: not $.getAttr(deployed, false)
         Then:
-          - $._environment.reporter.report($this, 'Installing Application')
-          - $.host.hostContainer(
-                name => $.name,
-                image => httpd,
-                commands => list(),
-                env => dict(),
-                ports => list($.port),
-                volumes => dict()
-              )
-          - $.host.deploy()
-          
-          - $._environment.reporter.report($this, 'Application HTTPd available at {0}:{1}'.format($.host.getIp(), $.port))
-          - $.setAttr(deployed, true)
+          - $._environment.reporter.report($this, 'Installing HTTPd')
+          - $ports:
+              - port: $.port
+                scope: switch($.publish, $ => public, not $ => host)
 
+          - $endpoints: $.host.hostContainer(
+                applicationName => $.name,
+                image => httpd,
+                ports => $ports
+              ).where($.scope = public).select(format('http://{0}:{1}', $.address, $.port))
+
+          - If: $.publish
+            Then: $._environment.reporter.report($this, 'Application HTTPd is available at {0}'.format(join(', ', $endpoints)))
+            Else: $._environment.reporter.report($this, 'Application HTTPd has deployed but is not accessible from outside')
+          - $.setAttr(deployed, true)

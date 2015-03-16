@@ -12,3 +12,4 @@ Classes:
  io.murano.apps.docker.DockerHostVolume: DockerHostVolume.yaml
  io.murano.apps.docker.DockerTempVolume: DockerTempVolume.yaml
  io.murano.apps.docker.DockerVolume: DockerVolume.yaml
+ io.murano.apps.docker.ApplicationPort: ApplicationPort.yaml

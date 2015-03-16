@@ -5,10 +5,9 @@ Name: Setup Kubernetes Master
 Parameters:
   name: $name
   ip: $ip
-  portalNet: $portalNet
 
 Body: |
-  return setup('{0} {1} {2}'.format(args.name, args.ip, args.portalNet)).stdout
+  return setup('{0} {1}'.format(args.name, args.ip)).stdout
 
 Scripts:
   setup:
@@ -16,11 +15,15 @@ Scripts:
     Version: 1.0.0
     EntryPoint: master-kube-setup.sh
     Files:
-      - <kube-apiserver.conf>
-      - <kube-proxy.conf>
-      - <kube-scheduler.conf>
-      - <kubelet.conf>
-      - <kube-controller-manager.conf>
+      - init_conf/kube-apiserver.conf
+      - init_conf/kube-controller-manager.conf
+      - init_conf/kube-scheduler.conf
+      - initd_scripts/kube-apiserver
+      - initd_scripts/kube-controller-manager
+      - initd_scripts/kube-scheduler
+      - default_scripts/kube-apiserver
+      - default_scripts/kube-scheduler
+      - default_scripts/kube-controller-manager
 
     Options:
       captureStdout: true

@@ -2,7 +2,6 @@
 
 # $1 - NAME
 # $2 - IP
-# $3 - PORTAL_NET
 
 service kube-proxy stop
 service kube-scheduler stop
@@ -17,28 +16,25 @@ service kube-apiserver stop
 mkdir /var/log/kubernetes
 mkdir -p /var/run/murano-kubernetes
 
-#Preapre service configs
-#sed -i.bkp "s/%%PORTAL_NET%%/$3/g" kube-apiserver.conf
+sed -i.bkp "s/%%MASTER_IP%%/$2/g" default_scripts/kube-scheduler
+sed -i.bkp "s/%%IP%%/$2/g" default_scripts/kube-scheduler
 
-#sed -i.bkp "s/%%MASTER_IP%%/$2/g" kube-proxy.conf
+cp -f default_scripts/kube-apiserver /etc/default/
+cp -f default_scripts/kube-scheduler /etc/default/
+cp -f default_scripts/kube-controller-manager /etc/default/
 
-sed -i.bkp "s/%%MASTER_IP%%/$2/g" kube-scheduler.conf
-sed -i.bkp "s/%%IP%%/$2/g" kube-scheduler.conf
+cp init_conf/kube-apiserver.conf /etc/init/
+cp init_conf/kube-controller-manager.conf /etc/init/
+cp init_conf/kube-scheduler.conf /etc/init/
 
-#sed -i.bkp "s/%%IP%%/$2/g" kubelet.conf
-
-
-cp -f kube-apiserver.conf /etc/default/kube-apiserver
-#cp -f kube-proxy.conf /etc/default/kube-proxy
-cp -f kube-scheduler.conf /etc/default/kube-scheduler
-#cp -f kubelet.conf /etc/default/kubelet
-cp -f kube-controller-manager.conf /etc/default/kube-controller-manager
+chmod +x initd_scripts/*
+cp initd_scripts/kube-apiserver /etc/init.d/
+cp initd_scripts/kube-controller-manager /etc/init.d/
+cp initd_scripts/kube-scheduler /etc/init.d/
 
 service kube-apiserver start
 service kube-scheduler start
 service kube-controller-manager start
-#service kubelet start
-#service kube-proxy start
 
 /opt/bin/kubectl delete node 127.0.0.1
 
