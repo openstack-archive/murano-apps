@@ -17,6 +17,7 @@ Templates:
   minionNode:
     ?:
       type: io.murano.apps.docker.kubernetes.KubernetesMinionNode
+    enableMonitoring: $.appConfiguration.enableMonitoring
     instance:
       ?:
         type: io.murano.resources.LinuxMuranoInstance
@@ -66,13 +67,18 @@ Forms:
 #          label: Select portalNet
 #          description: >-
 #             TODO
+        - name: enableMonitoring
+          type: boolean
+          initial: true
+          label: Enable cAdvisor monitoring
+          description: >-
+             Select to true to use cAdvisor
         - name: assignFloatingIP
           type: boolean
           initial: true
           label: Assign Floating IP
           description: >-
              Select to true to assign floating IP automatically
-          initial: false
           required: false
         - name: unitNamingPattern
           type: string
