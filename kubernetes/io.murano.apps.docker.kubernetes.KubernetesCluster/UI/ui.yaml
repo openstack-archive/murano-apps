@@ -24,6 +24,8 @@ Templates:
       image: $.instanceConfiguration.osImage
       assignFloatingIp: $.appConfiguration.assignFloatingIP
       keyname: $.instanceConfiguration.keyPair
+    enableMonitoring: $.appConfiguration.enableMonitoring
+
 
   gatewayNode:
     ?:
@@ -91,6 +93,14 @@ Forms:
           widgetMedia:
             js: ['muranodashboard/js/support_placeholder.js']
             css: {all: ['muranodashboard/css/support_placeholder.css']}
+        - name: enableMonitoring
+          type: boolean
+          initial: true
+          required: false
+          label: Enable cAdvisor monitoring
+          description: >-
+            Check to enable cAdvisor monitoring
+
 
         - name: gatewayCount
           type: integer
