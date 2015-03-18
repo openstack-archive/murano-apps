@@ -8,10 +8,6 @@ Name: KubernetesMinionNode
 
 Extends: KubernetesNode
 
-Properties:
-  enableMonitoring:
-    Contract: $.bool().notNull()
-
 Methods:
   initialize:
     Body:
@@ -46,23 +42,11 @@ Methods:
       - $.instance.agent.call($template, $resources)
 
       - $._environment.reporter.report($, 'Setup Kubernetes Minion on {0}'.format($.instance.name))
-
-      - If: $.enableMonitoring
-        Then:
-          - $._environment.reporter.report($this, 'Adding access to cAdvisor')
-          - $securityGroupIngress:
-              - ToPort: 4194
-                FromPort: 4194
-                IpProtocol: tcp
-                External: false
-          - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
-
       - $resources: new(sys:Resources)
       - $template: $resources.yaml('KubeMinionSetup.template').bind(dict(
             name => $.instance.name,
             ip => $.getIp(),
-            masterIp => $._cluster.masterNode.getIp(),
-            enableMonitoring => $.enableMonitoring
+            masterIp => $._cluster.masterNode.getIp()
           ))
       - $.instance.agent.call($template, $resources)
 
