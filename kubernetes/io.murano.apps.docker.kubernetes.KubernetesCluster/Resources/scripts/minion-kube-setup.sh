@@ -3,6 +3,7 @@
 # $1 - NAME
 # $2 - IP
 # $3 - MASTER_IP
+# $4 - IS_CA_ENABLED
 
 if [ "$3" != "$2" ]; then
  service kube-proxy stop
@@ -35,6 +36,15 @@ sed -i.bkp "s/%%IP%%/$2/g" kubelet.conf
 cp -f kube-proxy.conf /etc/default/kube-proxy
 cp -f kubelet.conf /etc/default/kubelet
 
+if [ "$4" == "True" ]; then
+ #Create directory for manifests used by kubelet
+ mkdir /etc/kubernetes
+ mkdir /etc/kubernetes/manifests
+ cp -f cadvisor.manifest /etc/kubernetes/manifests
+ #Add path to kubelet parameters
+ sed -i 's/kubernetes"/kubernetes \\/g' /etc/default/kubelet
+ sed -i '/--log_dir*/a --config=/etc/kubernetes/manifests"' /etc/default/kubelet
+fi
 
 service kubelet start
 service kube-proxy start
