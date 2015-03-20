@@ -82,7 +82,7 @@ Methods:
               - ToPort: 8080
                 FromPort: 8080
                 IpProtocol: tcp
-                External: false
+                External: true 
               - ToPort: 2380
                 FromPort: 2380
                 IpProtocol: tcp
