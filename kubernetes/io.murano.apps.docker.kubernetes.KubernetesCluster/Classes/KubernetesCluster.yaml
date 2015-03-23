@@ -255,6 +255,7 @@ Methods:
               - $serviceDefinition: $._buildServiceDefinition(
                     $runtimeRecord.name,
                     $port,
+                    $runtimeRecord.applicationPort.protocol,
                     $runtimeRecord.applicationPort.port,
                     $runtimeRecord.podId,
                     $.gatewayCount = 0
@@ -331,6 +332,8 @@ Methods:
           Contract: $.string().notNull()
       - servicePort:
           Contract: $.int().notNull()
+      - protocol:
+          Contract: $.string().notNull()
       - containerPort:
           Contract: $.int().notNull()
       - podId:
@@ -344,11 +347,15 @@ Methods:
           apiVersion: v1beta1
           port: $servicePort
           containerPort: $containerPort
+          protocol: TCP
           selector:
             id: $podId
       - If: $withDodeIps
         Then:
           - $result.publicIPs: $.minionNodes.take($.nodeCount).select($.getIp())
+      - If: $protocol = UDP
+        Then:
+          - $result.protocol: UDP
       - Return: $result
 
   scaleUp:
