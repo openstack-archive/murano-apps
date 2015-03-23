@@ -136,7 +136,7 @@ Methods:
   _buildVolumeEntry:
     Arguments:
       - volume:
-          Contract: $.class(doc:DockerVolume).notNull()
+          Contract: $.class(docker:DockerVolume).notNull()
     Body:
       - $type: $volume.getType()
       - Value: $type
