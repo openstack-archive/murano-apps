@@ -220,8 +220,8 @@ Methods:
       - $endpoints: []
       - $skipPorts: []
       - $resources: new(sys:Resources)
-      - $prevNodeCount: $.getAttr(lastNodeCount, -1)
-      - $prevGatewayCount: $.getAttr(lastGatewayCount, -1)
+      - $prevNodeCount: $.getAttr(lastNodeCount, 0-1) # 0-1 instead of -1 because YAQL 0.2 doesn't understand unary operators
+      - $prevGatewayCount: $.getAttr(lastGatewayCount, 0-1)
       - $gatewayModeChanged: $prevGatewayCount != $.gatewayCount and $prevGatewayCount * $.gatewayCount = 0
       - $serviceEndpoints: {}
 
