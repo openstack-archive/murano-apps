@@ -1,14 +1,14 @@
 resources:
-  $dockerAppName:
+  $dockerResourceName:
     type: "DockerInc::Docker::Container"
     properties:
-      dockerEndpoint: $tcp://{dockerServer}:2375
+      docker_endpoint: $tcp://{dockerServer}:2375
       image: $dockerImage
       env:
         $dockerEnv
-      portSpecs:
+      port_specs:
         $dockerAppPorts
-      portBindings:
+      port_bindings:
         $dockerPortBindings
       volumes:
         $dockerVolumes
