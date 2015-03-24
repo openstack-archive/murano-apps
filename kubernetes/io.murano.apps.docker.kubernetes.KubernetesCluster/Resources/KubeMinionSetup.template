@@ -6,9 +6,10 @@ Parameters:
   name: $name
   ip: $ip
   masterIp: $masterIp
+  enableMonitoring: $enableMonitoring
 
 Body: |
-  return setup('{0} {1} {2}'.format(args.name, args.ip, args.masterIp)).stdout
+  return setup('{0} {1} {2} {3}'.format(args.name, args.ip, args.masterIp, args.enableMonitoring)).stdout
 
 Scripts:
   setup:
@@ -22,6 +23,7 @@ Scripts:
       - init_conf/kube-proxy.conf
       - initd_scripts/kubelet
       - initd_scripts/kube-proxy
+      - cadvisor.manifest
 
     Options:
       captureStdout: true
