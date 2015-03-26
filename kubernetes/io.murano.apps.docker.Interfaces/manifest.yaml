@@ -3,7 +3,8 @@ Type: Library
 FullName: io.murano.apps.docker.Interfaces
 Name: Docker Services Library
 Description: |
- TODO
+ The library provides all necessary interface classes for Docker
+and Kubernetes Services
 Author: 'Mirantis, Inc'
 Tags: [Docker, Kubernetes]
 Classes:

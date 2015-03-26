@@ -91,11 +91,11 @@ Methods:
           image: $image
           command: $commands
           ports: $ports.select($this._getPortDefinition($))
-          volumeMounts: $volumes.keys().select(dict(name => $this._generateVolumeName($env.get($)), mountPath => $))
+          volumeMounts: $volumes.keys().select(dict(name => $this._generateVolumeName($volumes.get($)), mountPath => $))
           env: $env.keys().select(dict(key => $, value => $env.get($)))
 
-      - $newVolumes: $volumes.keys().where(not $this._generateVolumeName($) in $._podDefinition.desiredState.volumes.name).
-          select($this._buildVolumeEntry($volumes.get($)))
+      - $newVolumes: $volumes.values().where(not $this._generateVolumeName($) in $this._podDefinition.desiredState.volumes.name).
+          select($this._buildVolumeEntry($))
 
       - $diff:
           desiredState:
@@ -214,7 +214,7 @@ Methods:
                     definition => $rcDefinition, isNew => $prevReplicationFactor = 0)
           - If: $.replicationFactor = 0 and $prevReplicationFactor > 0
             Then:
-              - $.kubernetesCluster.destroyReplicationController($.__getReplicationControllerId())
+              - $.kubernetesCluster.destroyReplicationController($._getReplicationControllerId())
           - $.setAttr(lastReplicationFactor, $.replicationFactor)
 
   _buildReplicationControllerDefinition:
