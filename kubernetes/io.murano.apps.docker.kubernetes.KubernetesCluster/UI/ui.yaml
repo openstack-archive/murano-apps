@@ -8,7 +8,7 @@ Templates:
         type: io.murano.resources.LinuxMuranoInstance
       name: generateHostname($.appConfiguration.unitNamingPattern, 1)
       flavor: $.instanceConfiguration.flavor
-      image: $.instanceConfiguration.osImage
+      image: 'ubuntu14.04-x64-kubernetes'
       assignFloatingIp: $.appConfiguration.assignFloatingIP
       keyname: $.instanceConfiguration.keyPair
       availabilityZone: $.instanceConfiguration.availabilityZone
@@ -21,7 +21,7 @@ Templates:
         type: io.murano.resources.LinuxMuranoInstance
       name: generateHostname($.appConfiguration.unitNamingPattern, $index + 1)
       flavor: $.instanceConfiguration.flavor
-      image: $.instanceConfiguration.osImage
+      image: 'ubuntu14.04-x64-kubernetes'
       assignFloatingIp: $.appConfiguration.assignFloatingIP
       keyname: $.instanceConfiguration.keyPair
     enableMonitoring: $.appConfiguration.enableMonitoring
@@ -35,7 +35,7 @@ Templates:
         type: io.murano.resources.LinuxMuranoInstance
       name: generateHostname($.appConfiguration.gatewayNamingPattern, $index)
       flavor: $.instanceConfiguration.flavor
-      image: $.instanceConfiguration.osImage
+      image: 'ubuntu14.04-x64-kubernetes'
       assignFloatingIp: $.appConfiguration.assignGatewayFloatingIP
       keyname: $.instanceConfiguration.keyPair
 
@@ -48,6 +48,7 @@ Application:
   nodeCount: $.appConfiguration.minionCount
   gatewayCount: $.appConfiguration.gatewayCount
   gatewayNodes: repeat($gatewayNode, $.appConfiguration.maxGatewayCount)
+  dockerRegistry: $.appConfiguration.dockerRegistry
 
 
 Forms:
@@ -55,15 +56,15 @@ Forms:
       fields:
         - name: name
           type: string
-          label: Application Name
-          initial: Kubernetes Cluster
+          label: Cluster Name
+          initial: KubernetesCluster
           description: >-
             Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
             underline are allowed
         - name: minionCount
           type: integer
           label: Initial/current number of minions
-          initial: 3
+          initial: 2
           minValue: 1
           required: true
           description: >-
@@ -79,10 +80,9 @@ Forms:
         - name: assignFloatingIP
           type: boolean
           initial: true
-          label: Assign floating IP for Kubernetes nodes
+          label: Assign floating IP to Kubernetes nodes
           description: >-
              Check to assign floating IP to Kubernetes nodes
-          initial: false
           required: false
         - name: unitNamingPattern
           type: string
@@ -121,10 +121,9 @@ Forms:
         - name: assignGatewayFloatingIP
           type: boolean
           initial: true
-          label: Assign floating IP for gateway nodes
+          label: Assign floating IP to gateway nodes
           description: >-
              Check to assign floating IP to gateway nodes
-          initial: false
           required: false
         - name: gatewayNamingPattern
           type: string
@@ -135,6 +134,12 @@ Forms:
           widgetMedia:
             js: ['muranodashboard/js/support_placeholder.js']
             css: {all: ['muranodashboard/css/support_placeholder.css']}
+        - name: dockerRegistry
+          type: string
+          label: Custom Docker registry URL
+          description: >-
+            URL of docker repository mirror to use or empty for default repository
+          required: false
 
   - instanceConfiguration:
       fields:
@@ -150,13 +155,6 @@ Forms:
             Select registered in Openstack flavor. Consider that application performance
             depends on this parameter.
           required: false
-        - name: osImage
-          type: image
-          imageType: linux
-          label: Instance image
-          description: >-
-            Select valid image for the application. Image should already be prepared and
-            registered in glance.
         - name: keyPair
           type: keypair
           label: Key Pair

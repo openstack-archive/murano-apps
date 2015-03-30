@@ -3,10 +3,10 @@ Version: 1.0.0
 Name: Remove Minion
 
 Parameters:
-  name: $name
+  nodeId: $nodeId
 
 Body: |
-  return removeMinion('{0}'.format(args.name)).stdout
+  return removeMinion('{0}'.format(args.nodeId)).stdout
 
 Scripts:
   removeMinion:

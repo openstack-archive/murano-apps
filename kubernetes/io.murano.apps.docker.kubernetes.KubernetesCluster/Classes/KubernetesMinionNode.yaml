@@ -11,6 +11,8 @@ Extends: KubernetesNode
 Properties:
   enableMonitoring:
     Contract: $.bool().notNull()
+    Default: false
+
 
 Methods:
   initialize:
@@ -21,71 +23,80 @@ Methods:
 
   deployInstance:
     Body:
-      - If: not $.getAttr(deployed, false)
+      - If: not $.getAttr(instanceDeployed, false)
         Then:
           - $._environment.reporter.report($this, 'Creating Kubernetes Minion')
           - $.super($.deployInstance())
-          - $.setAttr(deployed, true)
+          - $.setAttr(instanceDeployed, true)
 
 
   setupEtcd:
     Body:
-      - $._environment.reporter.report($, 'Configuring etcd node {0}'.format($.instance.name))
-      - $resources: new(sys:Resources)
-      - $template: $resources.yaml('EtcdAddMember.template').bind(dict(
-            name => $.instance.name,
-            ip => $.getIp()
-          ))
-      - $clusterConfig: $._cluster.masterNode.instance.agent.call($template, $resources)
+      - If: not $.getAttr(etcdConfigured, false)
+        Then:
+          - $._environment.reporter.report($, 'Configuring etcd node {0}'.format($.instance.name))
+          - $resources: new(sys:Resources)
+          - $template: $resources.yaml('EtcdAddMember.template').bind(dict(
+                name => $.instance.name,
+                ip => $.getIp()
+              ))
+          - $clusterConfig: $._cluster.masterNode.instance.agent.call($template, $resources)
 
-      - $template: $resources.yaml('MemberEtcdSetup.template').bind(dict(
-            name => $.instance.name,
-            ip => $.getIp(),
-            clusterConfig => $clusterConfig
-          ))
-      - $.instance.agent.call($template, $resources)
+          - $template: $resources.yaml('MemberEtcdSetup.template').bind(dict(
+                name => $.instance.name,
+                ip => $.getIp(),
+                clusterConfig => $clusterConfig
+              ))
+          - $.instance.agent.call($template, $resources)
+          - $.setAttr(etcdConfigured, true)
 
 
   setupNode:
     Body:
-      - $._environment.reporter.report($this, 'Setup Flannel network on {0}'.format($.instance.name))
-      - $resources: new(sys:Resources)
-      - $template: $resources.yaml('SetupFlannelNode.template')
-      - $.instance.agent.call($template, $resources)
-
-      - If: $.enableMonitoring
+      - If: not $.getAttr(nodeConfigured, false)
         Then:
-          - $._environment.reporter.report($this, 'Adding access to cAdvisor')
-          - $securityGroupIngress:
-              - ToPort: 4194
-                FromPort: 4194
-                IpProtocol: tcp
-                External: true
-          - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+          - $._environment.reporter.report($this, 'Setup Flannel network on {0}'.format($.instance.name))
+          - $resources: new(sys:Resources)
+          - $template: $resources.yaml('SetupFlannelNode.template')
+          - $.instance.agent.call($template, $resources)
 
-      - $._environment.reporter.report($, 'Setup Kubernetes Minion on {0}'.format($.instance.name))
-      - $template: $resources.yaml('KubeMinionSetup.template').bind(dict(
-            name => $.instance.name,
-            ip => $.getIp(),
-            masterIp => $._cluster.masterNode.getIp(),
-            enableMonitoring => $.enableMonitoring
-          ))
-      - $.instance.agent.call($template, $resources)
+          - If: $.enableMonitoring
+            Then:
+              - $._environment.reporter.report($this, 'Adding access to cAdvisor')
+              - $securityGroupIngress:
+                  - ToPort: 4194
+                    FromPort: 4194
+                    IpProtocol: tcp
+                    External: true
+              - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
 
-      - $template: $resources.yaml('KubeRegisterNode.template').bind(dict(
-            name => $.instance.name,
-            ip => $.getIp()
-          ))
-      - $._cluster.masterNode.instance.agent.call($template, $resources)
+          - $._environment.reporter.report($, 'Setup Kubernetes Minion on {0}'.format($.instance.name))
+          - $template: $resources.yaml('KubeMinionSetup.template').bind(dict(
+                name => $.instance.name,
+                ip => $.getIp(),
+                masterIp => $._cluster.masterNode.getIp(),
+                enableMonitoring => $.enableMonitoring,
+                dockerRegistry => $._cluster.dockerRegistry
+              ))
+          - $.instance.agent.call($template, $resources)
+
+          - $template: $resources.yaml('KubeRegisterNode.template').bind(dict(
+                name => $.instance.name,
+                nodeId => $.getIp()
+              ))
+          - $._cluster.masterNode.instance.agent.call($template, $resources)
+          - $.setAttr(nodeConfigured, true)
 
 
   removeFromCluster:
     Body:
-      - If: $.getAttr(deployed, false)
+      - If: $.getAttr(nodeConfigured, false)
         Then:
           - $._environment.reporter.report($this, 'Deleting Kubernetes Minion')
           - $resources: new(sys:Resources)
-          - $template: $resources.yaml('RemoveMinion.template').bind(dict(name=>$.getIp()))
+          - $template: $resources.yaml('RemoveMinion.template').bind(dict(
+                nodeId => $.getIp()
+              ))
           - $._cluster.masterNode.instance.agent.call($template, $resources)
-          - $._environment.reporter.report($this, 'Node {0} deleted'.format($.getIp()))
-          - $.setAttr(deployed, false)
+          - $._environment.reporter.report($this, 'Node {0} deleted'.format($.instance.name))
+          - $.setAttr(nodeConfigured, false)

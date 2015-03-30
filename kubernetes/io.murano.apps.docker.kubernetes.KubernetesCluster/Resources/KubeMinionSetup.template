@@ -7,9 +7,12 @@ Parameters:
   ip: $ip
   masterIp: $masterIp
   enableMonitoring: $enableMonitoring
+  dockerRegistry: $dockerRegistry
 
 Body: |
-  return setup('{0} {1} {2} {3}'.format(args.name, args.ip, args.masterIp, args.enableMonitoring)).stdout
+  if args.dockerRegistry:
+    setupRegistry(args.dockerRegistry)
+  setup('{0} {1} {2} {3}'.format(args.name, args.ip, args.masterIp, args.enableMonitoring))
 
 Scripts:
   setup:
@@ -25,6 +28,15 @@ Scripts:
       - initd_scripts/kube-proxy
       - cadvisor.manifest
 
+    Options:
+      captureStdout: true
+      captureStderr: true
+
+  setupRegistry:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: setupDockerRegistry.sh
+    Files: []
     Options:
       captureStdout: true
       captureStderr: true

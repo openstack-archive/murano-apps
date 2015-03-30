@@ -6,9 +6,9 @@
     "capacity": {
       "cpu": 200,
       "memory": 4145438720
-    },
+    }
   },
   "labels": {
-    "name": "%%NAME%%",
-  },
+    "name": "%%NAME%%"
+  }
 }

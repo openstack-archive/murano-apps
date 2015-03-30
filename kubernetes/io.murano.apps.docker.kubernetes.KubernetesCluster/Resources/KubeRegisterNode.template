@@ -4,10 +4,10 @@ Name: Register Kubernetes Node
 
 Parameters:
   name: $name
-  ip: $ip
+  nodeId: $nodeId
 
 Body: |
-  return register('{0} {1}'.format(args.name, args.ip)).stdout
+  return register('{0} {1}'.format(args.name, args.nodeId)).stdout
 
 Scripts:
   register:
@@ -15,7 +15,7 @@ Scripts:
     Version: 1.0.0
     EntryPoint: kube-add-node.sh
     Files:
-      - <minion-node.json>
+      - minion-node.json
 
     Options:
       captureStdout: true

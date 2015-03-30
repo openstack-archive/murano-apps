@@ -6,7 +6,7 @@ Application:
   name: $.appConfiguration.name
   labels: $.appConfiguration.labels
   kubernetesCluster: $.appConfiguration.kubernetesCluster
-  replicationFactor: $.appConfiguration.replicationFactor
+  replicas: $.appConfiguration.replicas
 
 
 Forms:
@@ -14,7 +14,7 @@ Forms:
       fields:
         - name: name
           type: string
-          label: Application Name
+          label: Pod Name
           required: true
           description: >-
             This name is used as Kubernetes ID and name label
@@ -30,9 +30,9 @@ Forms:
           required: true
           description: >-
             Kubernetes service
-        - name: replicationFactor
+        - name: replicas
           type: integer
-          label: Replication Factor (0 = disabled)
+          label: Replicas (0 = disabled)
           initial: 2
           required: true
           minValue: 0

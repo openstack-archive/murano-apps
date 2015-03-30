@@ -11,3 +11,9 @@ Methods:
   getType:
   
   getParameters:
+
+  getRepresentation:
+    Body:
+      Return:
+        type: $.getType()
+        parameters: $.getParameters()

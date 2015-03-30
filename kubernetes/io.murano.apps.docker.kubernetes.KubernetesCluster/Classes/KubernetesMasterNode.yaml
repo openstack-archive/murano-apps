@@ -16,11 +16,11 @@ Methods:
 
   deployInstance:
     Body:
-      - If: not $.getAttr(deployed, false)
+      - If: not $.getAttr(instanceDeployed, false)
         Then:
           - $._environment.reporter.report($this, 'Creating Kubernetes Master')
           - $.super($.deployInstance())
-          - $.setAttr(deployed, true)
+          - $.setAttr(instanceDeployed, true)
 
 
   setupEtcd:
@@ -39,15 +39,18 @@ Methods:
 
   setupNode:
     Body:
-      - $resources: new(sys:Resources)
-      - $._environment.reporter.report($this, 'Setup Flannel network on master node')
-      - $template: $resources.yaml('SetupFlannelMaster.template')
-      - $.instance.agent.call($template, $resources)
+      - If: not $.getAttr(nodeConfigured, false)
+        Then:
+          - $resources: new(sys:Resources)
+          - $._environment.reporter.report($this, 'Setup Flannel network on master node')
+          - $template: $resources.yaml('SetupFlannelMaster.template')
+          - $.instance.agent.call($template, $resources)
 
-      - $._environment.reporter.report($this, 'Setup Kubernetes API host')
-      - $resources: new(sys:Resources)
-      - $template: $resources.yaml('KubeMasterSetup.template').bind(dict(
-            name => $.instance.name,
-            ip => $.getIp()
-          ))
-      - $.instance.agent.call($template, $resources)
+          - $._environment.reporter.report($this, 'Setup Kubernetes API host')
+          - $resources: new(sys:Resources)
+          - $template: $resources.yaml('KubeMasterSetup.template').bind(dict(
+                name => $.instance.name,
+                ip => $.getIp()
+              ))
+          - $.instance.agent.call($template, $resources)
+          - $.setAttr(nodeConfigured, true)

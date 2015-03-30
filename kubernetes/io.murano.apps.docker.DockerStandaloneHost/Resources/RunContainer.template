@@ -1,0 +1,32 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Run container
+
+Parameters:
+  appName: $appName
+  portMap: $portMap
+  volumeMap: $volumeMap
+  env: $env
+  image: $image
+  commands: $commands
+
+Body: |
+  options = ['-d', '--name ' + args.appName]
+  for container_port, host_port in args.portMap.iteritems():
+    options.append('-p {0}:{1}'.format(host_port, container_port))
+  for host_dir, container_dir in args.volumeMap.iteritems():
+    options.append("-v '{0}':'{1}'".format(host_dir, container_dir))
+  for key, value in args.env.iteritems():
+    options.append("-e '{0}'='{1}'".format(key, value))
+  runDockerCommand('run {0} {1} {2}'.format(' '.join(options), args.image, ' '.join(args.commands)).rstrip())
+
+  return runDockerCommand('inspect -f={{.NetworkSettings.IPAddress}} ' + args.appName).stdout
+
+Scripts:
+  runDockerCommand:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: runDockerCommand.sh
+    Options:
+      captureStdout: true
+      captureStderr: true

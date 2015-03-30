@@ -1,13 +1,13 @@
 Format: 1.0
 Type: Application
 FullName: io.murano.apps.docker.DockerStandaloneHost
-Name: Standalone Host
+Name: Docker Standalone Host
 Description: |
  Docker is an open platform for developers and sysadmins to build, ship, and run
-distributed applications. Consisting of Docker Engine, a portable, lightweight
-runtime and packaging tool, and Docker Hub, a cloud service for sharing applications
-and automating workflows, Docker enables apps to be quickly assembled from components
-and eliminates the friction between development, QA, and production environments. 
+ distributed applications. Consisting of Docker Engine, a portable, lightweight
+ runtime and packaging tool, and Docker Hub, a cloud service for sharing applications
+ and automating workflows, Docker enables apps to be quickly assembled from components
+ and eliminates the friction between development, QA, and production environments.
 Author: 'Mirantis, Inc'
 Tags: [ Docker ]
 Classes:

@@ -1,0 +1,91 @@
+Namespaces:
+  =: io.murano.apps.docker
+  std: io.murano
+
+Name: DockerApplication
+
+Extends: std:Application
+
+Properties:
+  host:
+    Contract: $.class(DockerContainerHost).notNull()
+
+  applicationEndpoints:
+    Contract:
+      - port: $.int().notNull().check($ > 0)
+        address: $.string().notNull()
+        scope: $.string().notNull().check($ in list(public, cloud, internal, host))
+        portScope: $.string().notNull().check($ in list(public, cloud, internal, host))
+        containerPort: $.int().notNull().check($ > 0)
+        protocol: $.string().notNull().check($ in list(TCP, UDP))
+    Usage: Out
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+
+  deploy:
+    Body:
+      - $._environment.reporter.report($this, 'Waiting for the host to be ready')
+      - $.host.deploy()
+      - $container: $.getContainer()
+      - $repr: $._getContainerRepresentation($container)
+      - If: $.getAttr(container, null) != $repr
+        Then:
+          - $.onInstallationStart()
+          - $.applicationEndpoints: $.host.hostContainer($container)
+          - $.setAttr(container, $repr)
+      - $.onInstallationFinish()
+
+
+  getConnectionTo:
+    Arguments:
+      - application:
+          Contract: $.class(DockerApplication).notNull()
+      - port:
+          Contract: $.int().notNull().check($ > 0)
+      - protocol:
+          Contract: $.string().notNull().check($ in list(TCP, UDP))
+          Default: TCP
+    Body:
+      - $scopes: [cloud, public]
+      - If: $.host = $application.host
+        Then:
+          - $scopes: list(host, internal) + $scopes
+        Else:
+          - If: $.host.getInternalScopeId() = $application.host.getInternalScopeId()
+            Then:
+              - $scopes: list(internal) + $scope
+      - For: s
+        In: $scopes
+        Do:
+          - $endpoints: $application.applicationEndpoints.where(true).where(
+              $.scope = $s and $.containerPort = $port and $.protocol = $protocol)
+          - If: len($endpoints) > 0
+            Then:
+              - $index: int(len($endpoints) * random())
+              - $endpoint: $endpoints[$index]
+              - Return:
+                  host: $endpoint.address
+                  port: $endpoint.port
+
+
+  _getContainerRepresentation:
+    Arguments:
+      - container:
+          Contract: $.class(DockerContainer).notNull()
+    Body:
+      Return: $container.getRepresentation()
+
+
+  getContainer:
+
+
+  onInstallationStart:
+    Body:
+
+
+  onInstallationFinish:
+    Body:

@@ -4,12 +4,13 @@ Application:
   ?:
     type: io.murano.apps.docker.DockerStandaloneHost
   name: $.appConfiguration.name
+  dockerRegistry: $.appConfiguration.dockerRegistry
   instance:
     ?:
       type: io.murano.resources.LinuxMuranoInstance
     name: generateHostname($.instanceConfiguration.unitNamingPattern, 1)
     flavor: $.instanceConfiguration.flavor
-    image: $.instanceConfiguration.osImage
+    image: 'ubuntu14.04-x64-docker'
     keyname: $.instanceConfiguration.keyPair
     assignFloatingIp: $.appConfiguration.assignFloatingIP
     availabilityZone: $.instanceConfiguration.availabilityZone
@@ -29,10 +30,16 @@ Forms:
           label: Assign Floating IP
           description: >-
              Select to true to assign floating IP automatically
-          initial: false
+          initial: true
           required: false
           widgetMedia:
             css: {all: ['muranodashboard/css/checkbox.css']}
+        - name: dockerRegistry
+          type: string
+          label: Custom Docker registry URL
+          description: >-
+            URL of docker repository mirror to use or empty for default repository
+          required: false
 
   - instanceConfiguration:
       fields:
@@ -48,13 +55,6 @@ Forms:
             Select registered in Openstack flavor. Consider that application performance
             depends on this parameter.
           required: false
-        - name: osImage
-          type: image
-          imageType: linux
-          label: Instance image
-          description: >-
-            Select a valid image for the application. Image should already be prepared and
-            registered in glance.
         - name: keyPair
           type: keypair
           label: Key Pair

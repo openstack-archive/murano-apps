@@ -21,7 +21,7 @@ Properties:
     Contract: $.string().notNull()  # convert to key-value map as soon as it will be possible to input it in UI
     Default: ''
 
-  replicationFactor:
+  replicas:
     Contract: $.int().notNull().check($ >= 0)
 
 
@@ -48,7 +48,6 @@ Methods:
 
           - $.setAttr(lastPodDeployed, $podDefinition)
       - $._podDefinition: $podDefinition
-      - $.setAttr(lastReplicationFactor, $.getAttr(lastReplicationFactor, $.replicationFactor))
 
   _getPodName:
     Body:
@@ -63,53 +62,35 @@ Methods:
 
   hostContainer:
     Arguments:
-      - applicationName:
-          Contract: $.string().notNull()
-      - image:
-          Contract: $.string().notNull()
-      - commands:
-          Contract:
-            - $.string().notNull()
-          Default: []
-      - env:
-          Contract:
-            $.string().notNull(): $.string().notNull()
-          Default: {}
-      - ports:
-          Contract:
-            - $.class(docker:ApplicationPort)
-          Default: []
-      - volumes:
-          Contract:
-            $.string().notNull(): $.class(docker:DockerVolume).notNull()
-          Default: {}
+      - container:
+          Contract: $.class(docker:DockerContainer)
     Body:
-      - $._deleteContainer($applicationName)
+      - $._deleteContainer($container.name)
 
-      - $container:
-          name: toLower($applicationName)
-          image: $image
-          command: $commands
-          ports: $ports.select($this._getPortDefinition($))
-          volumeMounts: $volumes.keys().select(dict(name => $this._generateVolumeName($volumes.get($)), mountPath => $))
-          env: $env.keys().select(dict(key => $, value => $env.get($)))
+      - $containerDef:
+          name: toLower($container.name)
+          image: $container.image
+          command: $container.commands
+          ports: $container.ports.select($this._getPortDefinition($))
+          volumeMounts: $container.volumes.keys().select(dict(name => $this._generateVolumeName($container.volumes.get($)), mountPath => $))
+          env: $container.env.keys().select(dict(key => $, value => $container.env.get($)))
 
-      - $newVolumes: $volumes.values().where(not $this._generateVolumeName($) in $this._podDefinition.desiredState.volumes.name).
+      - $newVolumes: $container.volumes.values().where(not $this._generateVolumeName($) in $this._podDefinition.desiredState.volumes.name).
           select($this._buildVolumeEntry($))
 
       - $diff:
           desiredState:
             manifest:
-              containers: [$container]
+              containers: [$containerDef]
               volumes: $newVolumes
       - $._podDefinition: $._podDefinition.mergeWith($diff)
       - $.deploy()
       - $._environment.reporter.report($, 'Creating services for Pod {0}'.format($.name))
       - $.kubernetesCluster.createServices(
-            applicationName => $applicationName,
-            applicationPorts => $ports,
+            applicationName => $container.name,
+            applicationPorts => $container.ports,
             podId => $._getPodName())
-      - Return: $.getEndpoints($applicationName)
+      - Return: $.getEndpoints($container.name)
 
 
   getEndpoints:
@@ -193,7 +174,7 @@ Methods:
   deploy:
     Body:
       - $prevPod: $.getAttr(lastPodDeployed, null)
-      - $prevReplicationFactor: $.getAttr(lastReplicationFactor, 0)
+      - $prevReplicas: $.getAttr(lastReplicas, 0)
 
       - $podDefinition: $._podDefinition
       - If: $prevPod != $podDefinition
@@ -204,18 +185,19 @@ Methods:
           - $.setAttr(lastPodDeployed, $podDefinition)
           - $.setAttr(deployed, true)
 
-      - If: $.replicationFactor != $prevReplicationFactor or $prevPod != $podDefinition
+      - If: $.replicas != $prevReplicas or $prevPod != $podDefinition
         Then:
-          - If: $.replicationFactor > 0
+          - If: $.replicas > 0
             Then:
               - $._environment.reporter.report($, 'Deploying Replication Controller for Pod {0}'.format($.name))
               - $rcDefinition: $._buildReplicationControllerDefinition($podDefinition)
               - $.kubernetesCluster.createReplicationController(
-                    definition => $rcDefinition, isNew => $prevReplicationFactor = 0)
-          - If: $.replicationFactor = 0 and $prevReplicationFactor > 0
+                    definition => $rcDefinition, isNew => $prevReplicas = 0)
+          - If: $.replicas = 0 and $prevReplicas > 0
             Then:
               - $.kubernetesCluster.destroyReplicationController($._getReplicationControllerId())
-          - $.setAttr(lastReplicationFactor, $.replicationFactor)
+          - $.setAttr(lastReplicas, $.replicas)
+      - $._environment.reporter.report($, 'Pod {0} is ready'.format($.name))
 
   _buildReplicationControllerDefinition:
     Arguments:
@@ -227,7 +209,7 @@ Methods:
         kind: ReplicationController
         apiVersion: v1beta1
         desiredState:
-          replicas: $.replicationFactor
+          replicas: $.replicas
           replicaSelector:
             id: $._getPodName()
           podTemplate:
@@ -236,4 +218,8 @@ Methods:
 
   _getReplicationControllerId:
     Body:
-      - Return: $._getPodName().replace('pod-', 'rc-')
+      - Return: $._getPodName()
+
+  getInternalScopeId:
+    Body:
+      Return: $.kubernetesCluster.id()

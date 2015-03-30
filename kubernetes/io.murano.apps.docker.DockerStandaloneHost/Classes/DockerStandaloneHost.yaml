@@ -16,13 +16,24 @@ Properties:
   instance:
     Contract: $.class(res:LinuxMuranoInstance).notNull()
 
+  dockerRegistry:
+    Contract: $.string()
+
   applicationEndpoints:
     Contract:
       - port: $.int().notNull().check($ > 0)
         address: $.string().notNull()
-        scope: $.string().notNull().check($ in list(public, cloud, internal))
-        applicationPort: $.class(ApplicationPort).notNull()
+        scope: $.string().notNull().check($ in list(public, cloud, internal, host))
+        portScope: $.string().notNull().check($ in list(public, cloud, internal, host))
+        containerPort: $.int().notNull().check($ > 0)
         applicationName: $.string().notNull()
+        protocol: $.string().notNull().check($ in list(TCP, UDP))
+    Default: []
+    Usage: Out
+
+  containers:
+    Contract:
+      - $.string().notNull()
     Default: []
     Usage: Out
 
@@ -37,63 +48,38 @@ Methods:
     Body:
       - If: not $.getAttr(deployed, false)
         Then:
-          - $._environment.reporter.report($this, 'Setup Security Groups for Docker Server')
-          - $securityGroupIngress:
-              - ToPort: 2375
-                FromPort: 2375
-                IpProtocol: tcp
-                External: true
-          - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
-          
           - $._environment.reporter.report($this, 'Create VM for Docker Server')
           - $.instance.deploy()
-          
-          - $._environment.reporter.report($this, 'Setting Up Docker Server')
-          - $resources: new(sys:Resources)
-          - $template: $resources.yaml('DeployDocker.template')
-          - $.instance.agent.call($template, $resources)
+          - If: $.dockerRegistry != null and $.dockerRegistry != ''
+            Then:
+              - $._environment.reporter.report($this, 'Configuring Docker registry')
+              - $resources: new(sys:Resources)
+              - $template: $resources.yaml('SetupDockerRegistry.template').bind(dict(
+                    dockerRegistry => $.dockerRegistry
+                  ))
+              - $.instance.agent.call($template, $resources)
           - $._environment.reporter.report($this, 'Docker Server is up and running')
-          
           - $.setAttr(deployed, true)
 
 
   hostContainer:
     Arguments:
-      - applicationName:
-          Contract: $.string().notNull()
-      - image:
-          Contract: $.string().notNull()
-      - commands:
-          Contract:
-            - $.string().notNull()
-          Default: []
-      - env:
-          Contract:
-            $.string().notNull(): $.string().notNull()
-          Default: {}
-      - ports:
-          Contract:
-            - $.class(ApplicationPort)
-          Default: []
-      - volumes:
-          Contract:
-            $.string().notNull(): $.class(DockerVolume).notNull()
-          Default: {}
+      - container:
+          Contract: $.class(DockerContainer).notNull()
     Body:
       - $.deploy()
+      - $.deleteContainer($container.name)
       - $portBindings: {}
       - $newEndpoints: []
-      - $._pullImage(instance => $.instance, image => $image)
+      - $._pullImage(image => $container.image)
       - For: applicationPort
-        In: $ports
+        In: $container.ports
         Do:
-          - If: $applicationPort.scope != private
+          - If: $applicationPort.scope != host
             Then:
-              - $hostPort: $._acquirePort($applicationPort, $applicationName)
-              - $containerPort: $applicationPort.port
-              - $portBindings[$containerPort]:
-                  HostPort: $hostPort
-                  HostIP: '0.0.0.0'
+              - $hostPort: $._acquirePort($applicationPort, $container.name)
+              - $containerPort: $._getPortSpec($applicationPort)
+              - $portBindings[$hostPort]: $containerPort
               - If: $applicationPort.scope = public
                 Then:
                   - $rule:
@@ -104,10 +90,12 @@ Methods:
                   - $._environment.securityGroupManager.addGroupIngress($rule)
               - $record:
                   port: $hostPort
-                  address: $.getIp()
+                  address: $.instance.ipAddresses[0]
                   scope: cloud
-                  applicationPort: $applicationPort
-                  applicationName: $applicationName
+                  containerPort: $applicationPort.port
+                  portScope: $applicationPort.scope
+                  protocol: $applicationPort.protocol
+                  applicationName: $container.name
               - $newEndpoints: $newEndpoints + list($record)
               - If: $applicationPort.scope = public and $.instance.floatingIpAddress != null
                 Then:
@@ -117,9 +105,9 @@ Methods:
 
       - $volumeMap: {}
       - For: path
-        In: $volumes
+        In: $container.volumes
         Do:
-          - $volume: $volumes.get($path)
+          - $volume: $container.volumes.get($path)
           - If: $volume.getType() = HostDir
             Then:
               - $hostDir: $volume.getParameters()
@@ -127,20 +115,32 @@ Methods:
 
       - $._environment.reporter.report($this, 'Adding Docker Application')
       - $resources: new(sys:Resources)
-      - $template: $resources.yaml('dockerApp.hot').bind(dict(
-            dockerResourceName => $._getResourceName($applicationName),
-            dockerServer => $.getIp(),
-            dockerImage => $image,
-            dockerEnv => $env,
-            dockerAppPorts => list($ports.select($this._getPortSpec($))),
-            dockerPortBindings => $portBindings,
-            dockerVolumes => $volumeMap
+      - $template: $resources.yaml('RunContainer.template').bind(dict(
+            appName => $container.name,
+            image => $container.image,
+            env => $container.env,
+            portMap => $portBindings,
+            volumeMap => $volumeMap,
+            commands => $container.commands
           ))
-      - $._removeApplicationEndpoints($applicationName)
-      - $.applicationEndpoints: $.applicationEndpoints + $newEndpoints
-      - $._environment.stack.updateTemplate($template)
+      - $._removeApplicationEndpoints($container.name)
+      - $privateIp: $.instance.agent.call($template, $resources)
+      - $record:
+          port: $applicationPort.port
+          address: $privateIp
+          scope: host
+          containerPort: $applicationPort.port
+          portScope: $applicationPort.scope
+          protocol: $applicationPort.protocol
+          applicationName: $container.name
+      - $newEndpoints: $newEndpoints + list($record)
       - $._environment.stack.push()
-      - Return: $.getEndpoints($applicationName)
+
+      - If: not $container.name in $.containers
+        Then:
+          - $.containers: $.containers + list($container.name)
+      - $.applicationEndpoints: $.applicationEndpoints + $newEndpoints
+      - Return: $.getEndpoints($container.name)
 
 
   getEndpoints:
@@ -165,8 +165,6 @@ Methods:
 
   _pullImage:
     Arguments:
-      - instance:
-          Contract: $.class(res:Instance).notNull()
       - image:
           Contract: $.string().notNull()
     Body:
@@ -175,7 +173,7 @@ Methods:
       - $template: $resources.yaml('PullImage.template').bind(dict(
           image => $image
          ))
-      - $instance.agent.call($template, $resources)
+      - $.instance.agent.call($template, $resources)
       - $._environment.reporter.report($this, 'Image saved')
 
 
@@ -260,18 +258,20 @@ Methods:
       - name:
           Contract: $.string().notNull()
     Body:
-      - $._environment.reporter.report($this, 'Deleting container {0}'.format($name))
-      - $._removeApplicationEndpoints($name)
-      - $._releaseApplicationPorts($name)
-      - $patch:
-          - op: remove
-            path: format('/resources/{0}', $._getResourceName($name))
-      - $stack: $._environment.stack.current()
-      - $stack: $stack.patch($patch)
-      - $._environment.stack.setTemplate($stack)
-      - $._environment.stack.push()
-      - $._environment.reporter.report($this, 'Container {0} deleted'.format($name))
+      - If: $name in $.containers
+        Then:
+          - $._environment.reporter.report($this, 'Deleting container {0}'.format($name))
+          - $._removeApplicationEndpoints($name)
+          - $._releaseApplicationPorts($name)
+          - $.containers: $.containers.where($ != $name)
+          - $resources: new(sys:Resources)
+          - $template: $resources.yaml('RemoveContainer.template').bind(dict(
+              name => $name
+             ))
+          - $.instance.agent.call($template, $resources)
+          - $._environment.reporter.report($this, 'Container {0} deleted'.format($name))
 
-  getIp:
+
+  getInternalScopeId:
     Body:
-      - Return: $.instance.ipAddresses[0]
+      Return: $.id()

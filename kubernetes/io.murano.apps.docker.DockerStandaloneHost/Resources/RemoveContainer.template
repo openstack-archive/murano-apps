@@ -1,12 +1,12 @@
 FormatVersion: 2.0.0
 Version: 1.0.0
-Name: Pull image
+Name: Remove container
 
 Parameters:
-  image: $image
+  name: $name
 
 Body: |
-  runDockerCommand('pull {0}'.format(args.image))
+  runDockerCommand('rm -f {0}'.format(args.name))
 
 Scripts:
   runDockerCommand:
@@ -14,5 +14,6 @@ Scripts:
     Version: 1.0.0
     EntryPoint: runDockerCommand.sh
     Options:
-      captureStdout: true
-      captureStderr: true
+      captureStdout: false
+      captureStderr: false
+      verifyExitcode: false

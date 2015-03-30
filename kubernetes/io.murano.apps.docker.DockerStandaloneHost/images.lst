@@ -1,0 +1,10 @@
+Images:
+- Name: 'ubuntu14.04-x64-docker'
+  Hash: 'f1688ab306415289280d3946984e1583'
+  Meta:
+    title: 'ubuntu14.04-x64-docker'
+    type: 'linux'
+  DiskFormat: 'qcow2'
+  ContainerFormat: 'bare'
+  Url: 'http://murano-files.mirantis.com/ubuntu14.04-x64-docker.qcow2'
+
