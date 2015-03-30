@@ -2,11 +2,14 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.apps.docker.DockerHTTPd
+    type: io.murano.apps.docker.DockerGlassFish
   name: $.appConfiguration.name
-  host: $.appConfiguration.host 
-  port: $.appConfiguration.port
+  host: $.appConfiguration.host
+  adminPort: $.appConfiguration.port
+  httpPort: $.appConfiguration.httpPort
+  httpsPort: $.appConfiguration.httpsPort
   publish: $.appConfiguration.publish
+  password: $.appConfiguration.password
 
 
 Forms:
@@ -15,10 +18,15 @@ Forms:
         - name: name
           type: string
           label: Application Name
-          initial: 'DockerHTTPd'
+          initial: 'DockerGlassFish'
           description: >-
             Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
             underline are allowed
+        - name: password
+          type: password
+          required: true
+          label: GlassFish Admin Password
+          description: Password for admin user in GlassFish
         - name: host
           type:
             - io.murano.apps.docker.kubernetes.KubernetesPod
@@ -31,13 +39,27 @@ Forms:
           label: Port
           minValue: 1
           maxValue: 65535
-          initial: 80
+          initial: 4848
           description: >-
             Select a port to run the app
+        - name: httpPort
+          type: integer
+          label: HTTP Port
+          minValue: 1
+          maxValue: 65535
+          initial: 8080
+          description: >-
+            Select a http port
+        - name: httpsPort
+          type: integer
+          label: HTTPS Port
+          minValue: 1
+          maxValue: 65535
+          initial: 8181
+          description: >-
+            Select a https port
         - name: publish
           type: boolean
-          initial: false
           label: Make application accessible from outside
-          initial: true
-          required: false
-
+          initial: false
+          required: true

@@ -6,7 +6,7 @@ Application:
   name: $.appConfiguration.name
   host: $.appConfiguration.host 
   port: $.appConfiguration.port
-
+  publish: $.appConfiguration.publish
 
 Forms:
   - appConfiguration:
@@ -19,10 +19,12 @@ Forms:
             Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
             underline are allowed
         - name: host
-          type: io.murano.apps.docker.kubernetes.KubernetesPod
+          type:
+            - io.murano.apps.docker.kubernetes.KubernetesPod
+            - io.murano.apps.docker.DockerStandaloneHost
           label: Container Host
           description: >-
-            Select an instance of Docker contaniner to run the app
+            Select an instance of Docker contaniner hosting provider to run the app
         - name: port
           type: integer
           label: Port
@@ -31,4 +33,8 @@ Forms:
           initial: 27017
           description: >-
             Select a port to run the app
-
+        - name: publish
+          type: boolean
+          label: Make application accessible from outside
+          initial: false
+          required: true

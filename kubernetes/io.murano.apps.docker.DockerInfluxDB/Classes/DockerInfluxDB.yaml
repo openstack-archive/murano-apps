@@ -1,0 +1,69 @@
+Namespaces:
+  =: io.murano.apps.docker
+  std: io.murano
+
+Name: DockerInfluxDB
+
+Extends: DockerApplication
+
+Properties:
+  name:
+    Contract: $.string().notNull()
+
+  interfacePort:
+    Contract: $.int().check($ > 0 and $ < 65536)
+    Default: 8083
+
+  apiPort:
+    Contract: $.int().check($ > 0 and $ < 65536)
+    Default: 8086
+
+  publish:
+    Contract: $.bool().notNull()
+    Default: true
+
+  preCreateDB:
+    Contract: $.string()
+
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+      - $._scope: switch($.publish, $ => public, not $ => internal)
+
+
+  getContainer:
+    Body:
+      Return:
+        name: $.name
+        image: 'tutum/influxdb'
+        env:
+          PRE_CREATE_DB: $.preCreateDB
+        ports:
+          - port: $.port
+            scope: $._scope
+          - port: $.portApi
+            scope: $._scope
+          - port: 8090
+            scope: internal
+          - port: 8099
+            scope: internal
+
+
+  onInstallationStart:
+    Body:
+      - $._environment.reporter.report($this, 'Installing InfluxDB')
+
+
+  onInstallationFinish:
+    Body:
+      - If: $.publish
+        Then:
+          - $endpoints: $.applicationEndpoints.
+              where($.scope = $this._scope and $.containerPort = $this.interfacePort).
+              select(format('http://{0}:{1}', $.address, $.port))
+
+          - $._environment.reporter.report($this, 'InfluxDB {0} is available at {1}'.format($.name, join(', ', $endpoints)))
+        Else:
+          - $._environment.reporter.report($this, 'InfluxDB {0} has deployed but is not accessible from outside'.format($.name))

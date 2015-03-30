@@ -2,11 +2,12 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.apps.docker.DockerHTTPd
+    type: io.murano.apps.docker.DockerTomcat
   name: $.appConfiguration.name
-  host: $.appConfiguration.host 
+  host: $.appConfiguration.host
   port: $.appConfiguration.port
   publish: $.appConfiguration.publish
+  password: $.appConfiguration.password
 
 
 Forms:
@@ -15,10 +16,15 @@ Forms:
         - name: name
           type: string
           label: Application Name
-          initial: 'DockerHTTPd'
+          initial: 'DockerTomcat'
           description: >-
             Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
             underline are allowed
+        - name: password
+          type: password
+          required: true
+          label: Admin Password
+          description: Password for admin user in Tomcat
         - name: host
           type:
             - io.murano.apps.docker.kubernetes.KubernetesPod
@@ -31,13 +37,11 @@ Forms:
           label: Port
           minValue: 1
           maxValue: 65535
-          initial: 80
+          initial: 8080
           description: >-
             Select a port to run the app
         - name: publish
           type: boolean
-          initial: false
           label: Make application accessible from outside
-          initial: true
-          required: false
-
+          initial: false
+          required: true

@@ -2,7 +2,7 @@ Namespaces:
   =: io.murano.apps.docker
   std: io.murano
 
-Name: DockerHTTPd
+Name: DockerHTTPdSite
 
 Extends: DockerApplication
 
@@ -11,12 +11,15 @@ Properties:
     Contract: $.string().notNull()
 
   port:
-    Contract: $.int().check($ > 0 and $ < 65536)
+    Contract: $.int().notNull().check($ > 0 and $ < 65536)
     Default: 80
 
   publish:
     Contract: $.bool().notNull()
     Default: true
+
+  siteRepo:
+    Contract: $.string().notNull()
 
 
 Methods:
@@ -30,7 +33,9 @@ Methods:
     Body:
       Return:
         name: $.name
-        image: httpd
+        image: 'stanlagun/httpdgitsite'
+        env:
+          APP_URL: $.siteRepo
         ports:
           - port: $.port
             scope: $._scope
@@ -38,7 +43,7 @@ Methods:
 
   onInstallationStart:
     Body:
-      - $._environment.reporter.report($this, 'Installing HTTPd')
+      - $._environment.reporter.report($this, 'Installing HTTPd and site from ' + $.siteRepo)
 
 
   onInstallationFinish:
@@ -46,6 +51,6 @@ Methods:
       - If: $.publish
         Then:
           - $endpoints: $.applicationEndpoints.where($.scope = $this._scope).select(format('http://{0}:{1}', $.address, $.port))
-          - $._environment.reporter.report($this, 'HTTPd {0} is available at {1}'.format($.name, join(', ', $endpoints)))
+          - $._environment.reporter.report($this, 'HTTPd application {0} is available at {1}'.format($.name, join(', ', $endpoints)))
         Else:
-          - $._environment.reporter.report($this, 'HTTPd {0} has deployed but is not accessible from outside'.format($.name))
+          - $._environment.reporter.report($this, 'HTTPD application {0} has deployed but is not accessible from outside'.format($.name))

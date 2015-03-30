@@ -1,0 +1,13 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.apps.docker.DockerMariaDB
+Name: Docker MariaDB
+Description: |
+ MariaDB strives to be the logical choice for database professionals looking for a robust, scalable, and reliable
+ SQL server. To accomplish this, the MariaDB Foundation work closely and cooperatively with the larger community
+ of users and developers in the true spirit of Free and open source software, and release software in a manner
+ that balances predictability with reliability.
+Author: 'Mirantis, Inc'
+Tags: [docker, application, MariaDB]
+Classes:
+ io.murano.apps.docker.DockerMariaDB: DockerMariaDB.yaml

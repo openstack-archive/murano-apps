@@ -4,37 +4,53 @@ Namespaces:
 
 Name: DockerMongoDB
 
-Extends: std:Application
+Extends: DockerApplication
 
 Properties:
   name:
     Contract: $.string().notNull()
-  host:
-    Contract: $.class(DockerContainerHost).notNull()
+
   port:
     Contract: $.int().check($ > 0 and $ < 65536)
+    Default: 27017
+
+  publish:
+    Contract: $.bool().notNull()
+    Default: true
+
+  password:
+    Contract: $.string().notNull()
 
 
 Methods:
   initialize:
     Body:
       - $._environment: $.find(std:Environment).require()
+      - $._scope: switch($.publish, $ => public, not $ => internal)
 
-  deploy:
+
+  getContainer:
     Body:
-      - If: not $.getAttr(deployed, false)
-        Then:
-          - $._environment.reporter.report($this, 'Installing Application')
-          - $.host.hostContainer(
-                name => $.name,
-                image => mongo,
-                commands => list(),
-                env => dict(),
-                ports => list($.port),
-                volumes => dict()
-              )
-          - $.host.deploy()
-          
-          - $._environment.reporter.report($this, 'Application MongoDB available at {0}:{1}'.format($.host.getIp(), $.port))
-          - $.setAttr(deployed, true)
+      Return:
+        name: $.name
+        image: mongo
+        ports:
+          - port: $.port
+            scope: $._scope
 
+
+  onInstallationStart:
+    Body:
+      - $._environment.reporter.report($this, 'Installing MongoDB')
+
+
+  onInstallationFinish:
+    Body:
+      - If: $.publish
+        Then:
+          - $endpoints: $.applicationEndpoints.where($.scope = $this._scope).
+              select(format('{0}:{1}', $.address, $.port))
+
+          - $._environment.reporter.report($this, 'MongoDB {0} is available at {1}'.format($.name, join(', ', $endpoints)))
+        Else:
+          - $._environment.reporter.report($this, 'MongoDB {0} has deployed but is not accessible from outside'.format($.name))

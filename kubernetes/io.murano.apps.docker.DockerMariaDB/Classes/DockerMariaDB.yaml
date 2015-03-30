@@ -2,7 +2,7 @@ Namespaces:
   =: io.murano.apps.docker
   std: io.murano
 
-Name: DockerHTTPd
+Name: DockerMariaDB
 
 Extends: DockerApplication
 
@@ -12,11 +12,14 @@ Properties:
 
   port:
     Contract: $.int().check($ > 0 and $ < 65536)
-    Default: 80
+    Default: 3306
 
   publish:
     Contract: $.bool().notNull()
     Default: true
+
+  password:
+    Contract: $.string().notNull()
 
 
 Methods:
@@ -30,7 +33,9 @@ Methods:
     Body:
       Return:
         name: $.name
-        image: httpd
+        image: 'tutum/mariadb'
+        env:
+          MARIADB_PASS: $.password
         ports:
           - port: $.port
             scope: $._scope
@@ -38,14 +43,16 @@ Methods:
 
   onInstallationStart:
     Body:
-      - $._environment.reporter.report($this, 'Installing HTTPd')
+      - $._environment.reporter.report($this, 'Installing MariaDB')
 
 
   onInstallationFinish:
     Body:
       - If: $.publish
         Then:
-          - $endpoints: $.applicationEndpoints.where($.scope = $this._scope).select(format('http://{0}:{1}', $.address, $.port))
-          - $._environment.reporter.report($this, 'HTTPd {0} is available at {1}'.format($.name, join(', ', $endpoints)))
+          - $endpoints: $.applicationEndpoints.where($.scope = $this._scope).
+              select(format('{0}:{1}', $.address, $.port))
+
+          - $._environment.reporter.report($this, 'MariaDB {0} is available at {1}'.format($.name, join(', ', $endpoints)))
         Else:
-          - $._environment.reporter.report($this, 'HTTPd {0} has deployed but is not accessible from outside'.format($.name))
+          - $._environment.reporter.report($this, 'MariaDB {0} has deployed but is not accessible from outside'.format($.name))

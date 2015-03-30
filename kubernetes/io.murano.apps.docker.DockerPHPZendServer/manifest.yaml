@@ -1,0 +1,10 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.apps.docker.DockerPHPZendServer
+Name: Docker PHP-ZendServer
+Description: |
+ Zend Server provides a complete, reliable and secure PHP stack, bundling over 80 of the most popular PHP extensions and libraries. Whether on Apache, nginx or IIS - Zend Server provides you with a consistent PHP environment across all major operating systems, for both development and production.
+Author: 'Mirantis, Inc'
+Tags: [docker, application, PHPZendServer]
+Classes:
+ io.murano.apps.docker.DockerPHPZendServer: DockerPHPZendServer.yaml

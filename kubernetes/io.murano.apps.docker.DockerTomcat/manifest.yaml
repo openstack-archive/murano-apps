@@ -1,0 +1,10 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.apps.docker.DockerTomcat
+Name: Docker Tomcat
+Description: |
+ Apache Tomcat (or simply Tomcat) is an open source web server and servlet container developed by the Apache Software Foundation (ASF). Tomcat implements the Java Servlet and the JavaServer Pages (JSP) specifications from Oracle, and provides a “pure Java” HTTP web server environment for Java code to run in. 
+Author: 'Mirantis, Inc'
+Tags: [docker, application, Tomcat]
+Classes:
+ io.murano.apps.docker.DockerTomcat: DockerTomcat.yaml

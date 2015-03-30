@@ -1,0 +1,10 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.apps.docker.DockerHTTPdSite
+Name: Docker HTTPd Site
+Description: |
+ Deploys a site from a git URL using Apache HTTPd as the web server.
+Author: 'Mirantis, Inc'
+Tags: [docker, application, httpd]
+Classes:
+ io.murano.apps.docker.DockerHTTPdSite: DockerHTTPdSite.yaml

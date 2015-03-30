@@ -1,0 +1,10 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.apps.docker.DockerNginx
+Name: Docker Nginx
+Description: |
+ Nginx (pronounced “engine-x”) is an open source reverse proxy server for HTTP, HTTPS, SMTP, POP3, and IMAP protocols, as well as a load balancer, HTTP cache, and a web server (origin server). 
+Author: 'Mirantis, Inc'
+Tags: [docker, application, Nginx]
+Classes:
+ io.murano.apps.docker.DockerNginx: DockerNginx.yaml

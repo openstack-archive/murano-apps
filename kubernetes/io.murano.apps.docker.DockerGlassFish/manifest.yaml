@@ -1,0 +1,10 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.apps.docker.DockerGlassFish
+Name: Docker GlassFish
+Description: |
+ Oracle GlassFish Server is the world's first implementation of the Java Platform, Enterprise Edition (Java EE) 6 specification.  Built using the GlassFish Server Open Source Edition, Oracle GlassFish Server delivers a flexible, lightweight, and production-ready Java EE 6 application server.
+Author: 'Mirantis, Inc'
+Tags: [docker, application, GlassFish]
+Classes:
+ io.murano.apps.docker.DockerGlassFish: DockerGlassFish.yaml

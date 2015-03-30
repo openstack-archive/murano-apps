@@ -1,0 +1,10 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.apps.docker.DockerGrafana
+Name: Docker Grafana
+Description: |
+ Grafana is a frontend for Graphite, InfluxDB and OpenTSDB with powerfull visualization features for time series data. You will need either a Graphite, InfluxDB or OpenTSDB server for Grafana to be of any use.
+Author: 'Mirantis, Inc'
+Tags: [docker, application, Grafana]
+Classes:
+ io.murano.apps.docker.DockerGrafana: DockerGrafana.yaml

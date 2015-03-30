@@ -2,12 +2,13 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.apps.docker.DockerHTTPd
+    type: io.murano.apps.docker.DockerMariaDB
   name: $.appConfiguration.name
   host: $.appConfiguration.host 
   port: $.appConfiguration.port
   publish: $.appConfiguration.publish
-
+  password: $.appConfiguration.password
+  
 
 Forms:
   - appConfiguration:
@@ -15,7 +16,7 @@ Forms:
         - name: name
           type: string
           label: Application Name
-          initial: 'DockerHTTPd'
+          initial: 'DockerMariaDB'
           description: >-
             Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
             underline are allowed
@@ -26,18 +27,22 @@ Forms:
           label: Container Host
           description: >-
             Select an instance of Docker contaniner hosting provider to run the app
+        - name: password
+          type: password
+          required: true
+          label: MySQL Password
+          description: >-
+            Password for root user in MySQL
         - name: port
           type: integer
           label: Port
           minValue: 1
           maxValue: 65535
-          initial: 80
+          initial: 3306
           description: >-
             Select a port to run the app
         - name: publish
           type: boolean
-          initial: false
           label: Make application accessible from outside
-          initial: true
-          required: false
-
+          initial: false
+          required: true

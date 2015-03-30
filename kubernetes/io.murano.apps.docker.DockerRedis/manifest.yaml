@@ -1,0 +1,10 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.apps.docker.DockerRedis
+Name: Docker Redis
+Description: |
+ Redis is an open-source, networked, in-memory, key-value data store with optional durability. It is written in ANSI C and the name Redis means REmote DIctionary Server.
+Author: 'Mirantis, Inc'
+Tags: [docker, application, Redis]
+Classes:
+ io.murano.apps.docker.DockerRedis: DockerRedis.yaml

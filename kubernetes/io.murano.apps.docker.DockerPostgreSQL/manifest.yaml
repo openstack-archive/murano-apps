@@ -1,0 +1,10 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.apps.docker.DockerPostgreSQL
+Name: Docker Postgres
+Description: |
+ PostgreSQL, often simply “Postgres”, is an object-relational database management system (ORDBMS) with an emphasis on extensibility and standards-compliance. As a database server, its primary function is to store data, securely and supporting best practices, and retrieve it later, as requested by other software applications, be it those on the same computer or those running on another computer across a network (including the Internet).
+Author: 'Mirantis, Inc'
+Tags: [docker, application, Postgres]
+Classes:
+ io.murano.apps.docker.DockerPostgreSQL: DockerPostgreSQL.yaml

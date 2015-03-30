@@ -2,11 +2,13 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.apps.docker.DockerHTTPd
+    type: io.murano.apps.docker.DockerPHPZendServer
   name: $.appConfiguration.name
   host: $.appConfiguration.host 
   port: $.appConfiguration.port
   publish: $.appConfiguration.publish
+  adminPort: $.appConfiguration.adminPort
+  password: $.appConfiguration.password
 
 
 Forms:
@@ -15,7 +17,7 @@ Forms:
         - name: name
           type: string
           label: Application Name
-          initial: 'DockerHTTPd'
+          initial: 'DockerPHP-ZendServer'
           description: >-
             Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
             underline are allowed
@@ -26,6 +28,12 @@ Forms:
           label: Container Host
           description: >-
             Select an instance of Docker contaniner hosting provider to run the app
+        - name: password
+          type: password
+          required: true
+          label: Admin Password
+          description: >-
+            Password for admin user in ZendServer
         - name: port
           type: integer
           label: Port
@@ -34,10 +42,16 @@ Forms:
           initial: 80
           description: >-
             Select a port to run the app
+        - name: adminPort
+          type: integer
+          label: Port
+          minValue: 1
+          maxValue: 65535
+          initial: 10081
+          description: >-
+            Select a port for adminstration
         - name: publish
           type: boolean
-          initial: false
           label: Make application accessible from outside
-          initial: true
-          required: false
-
+          initial: false
+          required: true

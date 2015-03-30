@@ -2,11 +2,13 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.apps.docker.DockerHTTPd
+    type: io.murano.apps.docker.DockerInfluxDB
   name: $.appConfiguration.name
   host: $.appConfiguration.host 
-  port: $.appConfiguration.port
+  interfacePort: $.appConfiguration.interfacePort
+  apiPort: $.appConfiguration.apiPort
   publish: $.appConfiguration.publish
+  preCreateDB: $.appConfiguration.preCreateDB
 
 
 Forms:
@@ -15,7 +17,7 @@ Forms:
         - name: name
           type: string
           label: Application Name
-          initial: 'DockerHTTPd'
+          initial: 'DockerInfluxDB'
           description: >-
             Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
             underline are allowed
@@ -26,18 +28,31 @@ Forms:
           label: Container Host
           description: >-
             Select an instance of Docker contaniner hosting provider to run the app
-        - name: port
+        - name: preCreateDB
+          type: string
+          label: DB list to pre-create
+          initial: 'db1;db2'
+          required: false
+          description: >-
+            Enter a semicolon separated list of databases. These databases will be pre-created on a container start.
+        - name: interfacePort
           type: integer
           label: Port
           minValue: 1
           maxValue: 65535
-          initial: 80
+          initial: 8083
           description: >-
-            Select a port to run the app
+            Select InfluxDB interface port
+        - name: apiPort
+          type: integer
+          label: Api port
+          minValue: 1
+          maxValue: 65535
+          initial: 8086
+          description: >-
+            Select InfluxDB API port
         - name: publish
           type: boolean
-          initial: false
           label: Make application accessible from outside
-          initial: true
-          required: false
-
+          initial: false
+          required: true

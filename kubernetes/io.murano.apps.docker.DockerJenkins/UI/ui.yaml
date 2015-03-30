@@ -2,7 +2,7 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.apps.docker.DockerHTTPd
+    type: io.murano.apps.docker.DockerJenkins
   name: $.appConfiguration.name
   host: $.appConfiguration.host 
   port: $.appConfiguration.port
@@ -15,7 +15,7 @@ Forms:
         - name: name
           type: string
           label: Application Name
-          initial: 'DockerHTTPd'
+          initial: 'DockerJenkins'
           description: >-
             Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
             underline are allowed
@@ -31,13 +31,12 @@ Forms:
           label: Port
           minValue: 1
           maxValue: 65535
-          initial: 80
+          initial: 8080
           description: >-
             Select a port to run the app
         - name: publish
           type: boolean
-          initial: false
           label: Make application accessible from outside
-          initial: true
-          required: false
+          initial: false
+          required: true
 
