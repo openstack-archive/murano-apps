@@ -25,6 +25,18 @@ Properties:
   password:
     Contract: $.string().notNull()
 
+  database:
+    Contract: $.class(DockerMySQL).notNull()
+
+  dbName:
+    Contract: $.string().notNull()
+
+  dbUser:
+    Contract: $.string().notNull()
+
+  dbPass:
+    Contract: $.string().notNull()
+
 
 Methods:
   initialize:
@@ -35,16 +47,23 @@ Methods:
 
   getContainer:
     Body:
-      Return:
-        name: $.name
-        image: 'php-zendserver'
-        env:
-          ZS_ADMIN_PASSWORD: $.password
-        ports:
-          - port: $.port
-            scope: $._scope
-          - port: $.adminPort
-            scope: $._scope
+      - $.database.deploy()
+      - $dbLink: $.getConnectionTo($.database, $.database.port)
+      - Return:
+          name: $.name
+          image: 'php-zendserver'
+          env:
+            MYSQL_HOSTNAME: $dbLink.host
+            MYSQL_PORT: $dbLink.port
+            MYSQL_USERNAME: $.dbUser
+            MYSQL_PASSWORD: $.dbPass
+            MYSQL_DBNAME: $.dbName
+            ZS_ADMIN_PASSWORD: $.password
+          ports:
+            - port: $.port
+              scope: $._scope
+            - port: $.adminPort
+              scope: $._scope
 
 
   onInstallationStart:

@@ -9,6 +9,10 @@ Application:
   publish: $.appConfiguration.publish
   adminPort: $.appConfiguration.adminPort
   password: $.appConfiguration.password
+  database: $.dbConfig.database
+  dbName: $.dbConfig.dbName
+  dbUser: $.dbConfig.dbUser
+  dbPass: $.dbConfig.dbPass
 
 
 Forms:
@@ -55,3 +59,34 @@ Forms:
           label: Make application accessible from outside
           initial: false
           required: true
+
+  - dbConfig:
+      fields:
+        - name: database
+          type: io.murano.apps.docker.DockerMySQL
+          label: MySQL instance
+          required: true
+          description: >-
+            Please select existing MySQL instance or add a new one
+
+        - name: dbName
+          type: string
+          label: MySQL database
+          required: true
+          description: >-
+            Please specify a MySQL database name to connect to.
+
+        - name: dbUser
+          type: string
+          label: MySQL user name
+          initial: admin
+          required: true
+          description: >-
+            Please specify a MySQL user.
+
+        - name: dbPass
+          type: password
+          label: MySQL user pass
+          required: true
+          description: >-
+            Please specify a MySQL user password
