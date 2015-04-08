@@ -1,0 +1,20 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Deploy Puppet Example
+
+Parameters:
+  port: $port
+
+Body: |
+  return executeRecipe(args).stdout
+
+Scripts:
+  executeRecipe:
+    Type: Puppet
+    Version: 1.0.0
+    EntryPoint: git::init
+    Files:
+        -  git: https://github.com/puppetlabs/puppetlabs-git.git
+    Options:
+      captureStdout: true
+      captureStderr: true

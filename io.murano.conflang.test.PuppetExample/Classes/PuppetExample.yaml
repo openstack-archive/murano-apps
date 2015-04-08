@@ -1,0 +1,53 @@
+Namespaces:
+  =: io.murano.conflang.test.PuppetExample
+  std: io.murano
+  res: io.murano.resources
+  sys: io.murano.system
+
+
+Name: PuppetExample
+
+Extends: std:Application
+
+Properties:
+
+  name:
+    Contract: $.string().notNull()
+
+  port:
+    Contract: $.string().notNull()
+
+  instance:
+    Contract: $.class(res:Instance).notNull()
+
+
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+  deploy:
+    Body:
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $._environment.reporter.report($this, 'Creating VM for Puppet example ')
+          - $securityGroupIngress:
+              - ToPort: $.port
+                FromPort: $.port
+                IpProtocol: tcp
+                External: true
+              - ToPort: 22
+                FromPort: 22
+                IpProtocol: tcp
+                External: true
+          - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+          - $.instance.deploy()
+          - $resources: new(sys:Resources)
+          # Deploy Puppet example
+          - $template: $resources.yaml('DeployPuppetExample.template').bind(dict( port => $.port))
+
+          - $._environment.reporter.report($this, 'Instance is created. Deploying Puppet example')
+          - $.instance.agent.call($template, $resources)
+          - $._environment.reporter.report($this, 'Puppet example is installed')
+          - $.setAttr(deployed, true)
