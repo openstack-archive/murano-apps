@@ -1,0 +1,25 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Deploy Chef Example
+
+Parameters:
+  port: $port
+
+Body: |
+  return executeRecipe(args).stdout
+
+Scripts:
+  executeRecipe:
+    Type: Chef
+    Version: 1.0.0
+    EntryPoint: tomcat::default
+    Files:
+        -  https://github.com/chef-cookbooks/yum-epel.git
+        -  https://github.com/chef-cookbooks/yum.git
+        -  https://github.com/opscode-cookbooks/java
+        -  https://github.com/opscode-cookbooks/openssl
+        -  https://github.com/sethvargo/chef-sugar.git
+        -  https://github.com/opscode-cookbooks/tomcat.git
+    Options:
+      captureStdout: true
+      captureStderr: true
