@@ -53,3 +53,5 @@ Forms:
           label: Make application accessible from outside
           initial: false
           required: true
+          description: >-
+            Check if you plan to access application from internet
