@@ -18,9 +18,6 @@ Properties:
     Contract: $.bool().notNull()
     Default: true
 
-  password:
-    Contract: $.string().notNull()
-
 
 Methods:
   initialize:

@@ -4,7 +4,7 @@ Application:
   ?:
     type: io.murano.apps.docker.DockerMongoDB
   name: $.appConfiguration.name
-  host: $.appConfiguration.host 
+  host: $.appConfiguration.host
   port: $.appConfiguration.port
   publish: $.appConfiguration.publish
 
