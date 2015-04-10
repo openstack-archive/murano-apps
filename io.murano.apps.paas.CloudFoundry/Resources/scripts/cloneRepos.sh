@@ -1,5 +1,7 @@
 #!/bin/bash
 
+exec &> /tmp/clone_repos.log
+
 function include(){
     curr_dir=$(cd $(dirname "$0") && pwd)
     inc_file_path=$curr_dir/$1
@@ -13,6 +15,5 @@ function include(){
 include "common.sh"
 
 cd /root/cf_nise_installer
-
-bash ./scripts/clone_nise_bosh.sh >> install.log
-bash ./scripts/clone_cf_release.sh >> install.log
+./scripts/clone_nise_bosh.sh
+./scripts/clone_cf_release.sh

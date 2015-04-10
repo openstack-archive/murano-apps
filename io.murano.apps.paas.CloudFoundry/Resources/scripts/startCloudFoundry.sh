@@ -1,5 +1,7 @@
 #!/bin/bash
 
+exec &> /tmp/start_cf.log
+
 function include(){
     curr_dir=$(cd $(dirname "$0") && pwd)
     inc_file_path=$curr_dir/$1
@@ -13,12 +15,10 @@ function include(){
 include "common.sh"
 . ~/.profile
 
-cd /root
-cd cf_nise_installer
-
-bash ./scripts/start.sh > start.log
+cd /root/cf_nise_installer
+./scripts/start.sh | tee start.log
 /var/vcap/bosh/bin/monit restart cloud_controller_ng
-bash ./scripts/start.sh >> start.log
+./scripts/start.sh | tee start.log
 
 tail start.log | grep Login
 

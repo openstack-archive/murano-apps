@@ -1,4 +1,7 @@
 #!/bin/bash
+
+exec &> /tmp/install_cf_release.log
+
 function include(){
     curr_dir=$(cd $(dirname "$0") && pwd)
     inc_file_path=$curr_dir/$1
@@ -13,15 +16,9 @@ include "common.sh"
 . ~/.profile
 
 if [ ! -e /tmp/wagrant-reboot ] ; then
-log "DEBUG: change dir to cf_nise_installer"
-
-cd /root/cf_nise_installer
-
-log "Debug: Starting cf-release script"
-pwd >> current.log
-
-./scripts/install_cf_release.sh >> install.log
- touch /tmp/wagrant-reboot
- reboot
+  cd /root/cf_nise_installer
+  retry 3 ./scripts/install_cf_release.sh
+  touch /tmp/wagrant-reboot
+  reboot
 fi
 

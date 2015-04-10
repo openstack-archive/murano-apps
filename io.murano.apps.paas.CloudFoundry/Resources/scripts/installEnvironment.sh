@@ -1,5 +1,7 @@
 #!/bin/bash
 
+exec &> /tmp/install_environemnt.log
+
 function include(){
     curr_dir=$(cd $(dirname "$0") && pwd)
     inc_file_path=$curr_dir/$1
@@ -13,6 +15,5 @@ function include(){
 include "common.sh"
 
 cd /root/cf_nise_installer
-
-bash ./scripts/install_environemnt.sh >> install.log
+./scripts/install_environemnt.sh
 

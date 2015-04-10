@@ -46,17 +46,17 @@ Methods:
           # Install Ruby part
           - $template: $resources.yaml('InstallRuby.template')
           - $.environment.reporter.report($this, '[1/6] Installing Ruby...')
-          - $.instance.agent.call($template, $resources)
+          - $.instance.agent.call($template, $resources, 3600)
 
           #Clone base repos
           - $template: $resources.yaml('CloneRepos.template')
           - $.environment.reporter.report($this, '[2/6]Cloning git repositories for BOSH and cf-release...')
-          - $.instance.agent.call($template, $resources)
+          - $.instance.agent.call($template, $resources, 3600)
 
           #Install Environment
           - $template: $resources.yaml('InstallEnvironment.template')
           - $.environment.reporter.report($this, '[3/6]Install Environment...')
-          - $.instance.agent.call($template, $resources)
+          - $.instance.agent.call($template, $resources, 3600)
 
           #Install CF release
           - $template: $resources.yaml('InstallCFRelease.template')
@@ -66,7 +66,7 @@ Methods:
           #Install CF CLI
           - $template: $resources.yaml('InstallCFcli.template')
           - $.environment.reporter.report($this, '[5/6]Installing CF CLI...')
-          - $.instance.agent.call($template, $resources)
+          - $.instance.agent.call($template, $resources, 600)
 
           - $template: $resources.yaml('StartCloudFoundry.template')
           - $.environment.reporter.report($this, '[6/6]Start CloudFoundry services...')

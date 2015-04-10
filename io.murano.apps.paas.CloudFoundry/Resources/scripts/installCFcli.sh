@@ -1,5 +1,7 @@
 #!/bin/bash
 
+exec &> /tmp/install_cf_cli.log
+
 function include(){
     curr_dir=$(cd $(dirname "$0") && pwd)
     inc_file_path=$curr_dir/$1
@@ -13,6 +15,5 @@ function include(){
 include "common.sh"
 
 cd /root
-
-wget https://s3.amazonaws.com/go-cli/releases/v6.1.2/cf-cli_amd64.deb
+wget https://s3.amazonaws.com/go-cli/releases/v6.1.2/cf-cli_amd64.deb -O cf-cli_amd64.deb
 dpkg --install cf-cli_amd64.deb
