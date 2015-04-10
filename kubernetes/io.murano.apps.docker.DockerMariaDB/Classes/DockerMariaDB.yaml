@@ -10,10 +10,6 @@ Properties:
   name:
     Contract: $.string().notNull()
 
-  port:
-    Contract: $.int().check($ > 0 and $ < 65536)
-    Default: 3306
-
   publish:
     Contract: $.bool().notNull()
     Default: true
@@ -37,7 +33,7 @@ Methods:
         env:
           MARIADB_PASS: $.password
         ports:
-          - port: $.port
+          - port: 3306
             scope: $._scope
 
 

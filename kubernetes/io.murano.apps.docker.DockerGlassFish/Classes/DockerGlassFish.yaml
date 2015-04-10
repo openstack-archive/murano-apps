@@ -17,18 +17,6 @@ Properties:
   password:
     Contract: $.string().notNull()
 
-  adminPort:
-    Contract: $.int().check($ > 0 and $ < 65536)
-    Default: 4848
-
-  httpPort:
-    Contract: $.int().check($ > 0 and $ < 65536)
-    Default: 8080
-
-  httpsPort:
-    Contract: $.int().check($ > 0 and $ < 65536)
-    Default: 8181
-
 
 Methods:
   initialize:
@@ -45,11 +33,11 @@ Methods:
         env:
           GLASSFISH_PASS: $.password
         ports:
-          - port: $.adminPort
+          - port: 4848
             scope: $._scope
-          - port: $.httpPort
+          - port: 8080
             scope: $._scope
-          - port: $.httpsPort
+          - port: 8181
             scope: $._scope
 
 
@@ -63,13 +51,13 @@ Methods:
       - If: $.publish
         Then:
           - $adminEndpoints: join(', ', $.applicationEndpoints.
-              where($.scope = $this._scope and $.containerPort = $this.adminPort).
+              where($.scope = $this._scope and $.containerPort = 4848).
               select(format('http://{0}:{1}', $.address, $.port)))
           - $httpEndpoints: join(', ', $.applicationEndpoints.
-              where($.scope = $this._scope and $.containerPort = $this.httpPort).
+              where($.scope = $this._scope and $.containerPort = 8080).
               select(format('http://{0}:{1}', $.address, $.port)))
           - $httpsEndpoints: join(', ', $.applicationEndpoints.
-              where($.scope = $this._scope and $.containerPort = $this.httpsPort).
+              where($.scope = $this._scope and $.containerPort = 8181).
               select(format('https://{0}:{1}', $.address, $.port)))
 
           - $._environment.reporter.report(

@@ -4,8 +4,7 @@ Application:
   ?:
     type: io.murano.apps.docker.DockerNginx
   name: $.appConfiguration.name
-  host: $.appConfiguration.host 
-  port: $.appConfiguration.port
+  host: $.appConfiguration.host
   publish: $.appConfiguration.publish
 
 
@@ -26,14 +25,6 @@ Forms:
           label: Container Host
           description: >-
             Select an instance of Docker contaniner hosting provider to run the app
-        - name: port
-          type: integer
-          label: Port
-          minValue: 1
-          maxValue: 65535
-          initial: 80
-          description: >-
-            Select a port to run the app
         - name: publish
           type: boolean
           label: Make application accessible from outside

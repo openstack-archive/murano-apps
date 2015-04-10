@@ -10,9 +10,6 @@ Properties:
   name:
     Contract: $.string().notNull()
 
-  port:
-    Contract: $.int().check($ > 0 and $ < 65536)
-
   publish:
     Contract: $.bool().notNull()
     Default: true
@@ -31,7 +28,7 @@ Methods:
         name: $.name
         image: redis
         ports:
-          - port: $.port
+          - port: 6379
             scope: $._scope
 
 

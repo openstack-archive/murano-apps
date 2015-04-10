@@ -10,14 +10,6 @@ Properties:
   name:
     Contract: $.string().notNull()
 
-  interfacePort:
-    Contract: $.int().check($ > 0 and $ < 65536)
-    Default: 4200
-
-  transportPort:
-    Contract: $.int().check($ > 0 and $ < 65536)
-    Default: 4300
-
   publish:
     Contract: $.bool().notNull()
     Default: true
@@ -36,9 +28,9 @@ Methods:
         name: $.name
         image: crate
         ports:
-          - port: $.transportPort
+          - port: 4300
             scope: $._scope
-          - port: $.interfacePort
+          - port: 4200
             scope: $._scope
 
 
@@ -52,7 +44,7 @@ Methods:
       - If: $.publish
         Then:
           - $endpoints: $.applicationEndpoints.
-              where($.scope = $this._scope and $.containerPort = $this.interfacePort).
+              where($.scope = $this._scope and $.containerPort = 4200).
               select(format('http://{0}:{1}', $.address, $.port))
 
           - $._environment.reporter.report($this, 'Application {0} is available at {1}'.format($.name, join(', ', $endpoints)))

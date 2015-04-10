@@ -19,7 +19,6 @@ Templates:
       labels: 'name=redis-master,app=redis'
       kubernetesCluster: $.appConfiguration.kubernetesCluster
       replicas: 1
-    port: 6379
     publish: false
 
   redisSlave:
@@ -33,7 +32,6 @@ Templates:
       labels: 'name=redis-slave,app=redis,uses=redis-master'
       kubernetesCluster: $.appConfiguration.kubernetesCluster
       replicas: 2
-    port: 6379
     publish: false
     redisMaster: $redisMaster
 
@@ -44,7 +42,6 @@ Application:
   host: $guestBookHost
   redisMaster: $redisMaster
   redisSlave: $redisSlave
-  port: $.appConfiguration.port
   publish: $.appConfiguration.publish
 
 
@@ -64,14 +61,6 @@ Forms:
           required: true
           description: >-
             Kubernetes service
-        - name: port
-          type: integer
-          label: Port
-          minValue: 1
-          maxValue: 65535
-          initial: 80
-          description: >-
-            Select a port on which app will be running
         - name: publish
           type: boolean
           label: Make application accessible from outside

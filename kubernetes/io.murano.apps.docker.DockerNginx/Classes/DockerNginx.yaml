@@ -10,10 +10,6 @@ Properties:
   name:
     Contract: $.string().notNull()
 
-  port:
-    Contract: $.int().check($ > 0 and $ < 65536)
-    Default: 80
-
   publish:
     Contract: $.bool().notNull()
     Default: true
@@ -32,7 +28,7 @@ Methods:
         name: $.name
         image: nginx
         ports:
-          - port: $.port
+          - port: 80
             scope: $._scope
 
 

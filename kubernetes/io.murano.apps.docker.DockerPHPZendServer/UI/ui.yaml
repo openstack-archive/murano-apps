@@ -4,10 +4,8 @@ Application:
   ?:
     type: io.murano.apps.docker.DockerPHPZendServer
   name: $.appConfiguration.name
-  host: $.appConfiguration.host 
-  port: $.appConfiguration.port
+  host: $.appConfiguration.host
   publish: $.appConfiguration.publish
-  adminPort: $.appConfiguration.adminPort
   password: $.appConfiguration.password
   database: $.dbConfig.database
   dbName: $.dbConfig.dbName
@@ -38,22 +36,6 @@ Forms:
           label: Admin Password
           description: >-
             Password for admin user in ZendServer
-        - name: port
-          type: integer
-          label: Port
-          minValue: 1
-          maxValue: 65535
-          initial: 80
-          description: >-
-            Select a port to run the app
-        - name: adminPort
-          type: integer
-          label: Port
-          minValue: 1
-          maxValue: 65535
-          initial: 10081
-          description: >-
-            Select a port for adminstration
         - name: publish
           type: boolean
           label: Make application accessible from outside
