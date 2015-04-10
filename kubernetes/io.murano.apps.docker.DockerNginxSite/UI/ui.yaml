@@ -7,7 +7,7 @@ Application:
   host: $.appConfiguration.host
   port: $.appConfiguration.port
   publish: $.appConfiguration.publish
-  url: $.appConfiguration.url
+  siteRepo: $.appConfiguration.siteRepo
 
 
 Forms:
@@ -20,7 +20,7 @@ Forms:
           description: >-
             Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
             underline are allowed
-        - name: url
+        - name: siteRepo
           type: string
           required: true
           label: Repository URL
