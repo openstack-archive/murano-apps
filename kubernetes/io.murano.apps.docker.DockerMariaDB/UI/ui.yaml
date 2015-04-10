@@ -30,9 +30,9 @@ Forms:
         - name: password
           type: password
           required: true
-          label: MySQL Password
+          label: MariaDB Password
           description: >-
-            Password for root user in MySQL
+            Password for root user in MariaDB
         - name: port
           type: integer
           label: Port
