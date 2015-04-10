@@ -30,4 +30,4 @@ Forms:
           initial: false
           required: true
           description: >-
-            Check if you want to access application from internet
+            Check if you intend to access application from the Internet

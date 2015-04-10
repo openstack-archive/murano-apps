@@ -21,7 +21,6 @@ Forms:
             underline are allowed
         - name: password
           type: password
-          required: true
           label: Admin Password
           description: Password for admin user in Tomcat
         - name: host
@@ -34,7 +33,7 @@ Forms:
         - name: publish
           type: boolean
           label: Make application accessible from outside
-          initial: false
-          required: true
+          initial: true
+          required: false
           description: >-
-            Check if you want to access application from internet
+            Check if you intend to access application from the Internet

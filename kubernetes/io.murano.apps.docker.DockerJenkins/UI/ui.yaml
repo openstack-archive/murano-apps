@@ -27,8 +27,8 @@ Forms:
             Select an instance of Docker contaniner hosting provider to run the app
         - name: publish
           type: boolean
-          label: Make application accessible from outside
-          initial: false
-          required: true
+          label: Visible from outside
+          initial: true
+          required: false
           description: >-
-            Check if you want to access application from internet
+            Check if you intend to access application from the Internet

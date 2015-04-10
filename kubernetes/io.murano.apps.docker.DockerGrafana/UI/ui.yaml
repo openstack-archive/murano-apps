@@ -32,11 +32,11 @@ Forms:
             Select an instance of Docker contaniner hosting provider to run the app
         - name: publish
           type: boolean
-          label: Make application accessible from outside
+          label: Visible from outside
           initial: false
           required: true
           description: >-
-            Check if you want to access application from internet
+            Check if you intend to access the application from the Internet
 
   - grafanaConfig:
       fields:
@@ -52,7 +52,7 @@ Forms:
           label: InfluxDB database
           required: true
           description: >-
-            Please specify an InfluxDB database name to connect to.
+            Please specify an InfluxDB database name to connect to
 
         - name: grafanaUser
           type: string

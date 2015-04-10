@@ -87,21 +87,20 @@ Forms:
         - name: unitNamingPattern
           type: string
           initial: 'kube-#'
+          helpText: \'#\' expands to machine sequence number
           required: false
+          description: >-
+            For your convenience instance hostname can be specified.
+            Enter a name or leave blank for random name generation.
           regexpValidator: '^(([a-zA-Z0-9#][a-zA-Z0-9-#]*[a-zA-Z0-9#])\.)*([A-Za-z0-9#]|[A-Za-z0-9#][A-Za-z0-9-#]*[A-Za-z0-9#])$'
           label: Kubernetes node hostname pattern
-          widgetMedia:
-            js: ['muranodashboard/js/support_placeholder.js']
-            css: {all: ['muranodashboard/css/support_placeholder.css']}
         - name: enableMonitoring
           type: boolean
           initial: true
           required: false
           label: Enable cAdvisor monitoring
           description: >-
-            Check to enable cAdvisor monitoring
-
-
+            Enable cAdvisor monitoring
         - name: gatewayCount
           type: integer
           label: Initial/current number of gateway nodes
@@ -109,7 +108,8 @@ Forms:
           minValue: 0
           required: true
           description: >-
-            External traffic will be routed through gateway nodes
+            External traffic will be routed through gateway nodes.
+            Increasing gateways count allows to set up complex and HA clusters.
         - name: maxGatewayCount
           type: integer
           label: Maximum number of gateway nodes
@@ -117,7 +117,8 @@ Forms:
           required: true
           minValue: 0
           description: >-
-            Maximum number of gateway nodes
+            Maximum number of gateway nodes.
+            Taken into account when performing scalability actions.
         - name: assignGatewayFloatingIP
           type: boolean
           initial: true
@@ -127,18 +128,19 @@ Forms:
           required: false
         - name: gatewayNamingPattern
           type: string
-          initial: 'gateway-#'
+          initial: gateway-#
           required: false
           regexpValidator: '^(([a-zA-Z0-9#][a-zA-Z0-9-#]*[a-zA-Z0-9#])\.)*([A-Za-z0-9#]|[A-Za-z0-9#][A-Za-z0-9-#]*[A-Za-z0-9#])$'
           label: Gateway hostname pattern
-          widgetMedia:
-            js: ['muranodashboard/js/support_placeholder.js']
-            css: {all: ['muranodashboard/css/support_placeholder.css']}
+          helpText: \'#\' expands to gateway sequence number
+          description: >-
+             Check to assign floating IP to gateway nodes
         - name: dockerRegistry
           type: string
           label: Custom Docker registry URL
           description: >-
-            URL of docker repository mirror to use or empty for default repository
+            URL of docker repository mirror to use.
+            Leave empty to use Docker default.
           required: false
 
   - instanceConfiguration:
@@ -147,12 +149,12 @@ Forms:
           type: string
           required: false
           hidden: true
-          description: Specify some instance parameters on which application would be created
+          description: Specify some instance parameters on which application would be created.
         - name: flavor
           type: flavor
           label: Instance flavor
           description: >-
-            Select registered in Openstack flavor. Consider that application performance
+            Select one of the existing flavors. Consider that application performance
             depends on this parameter.
           required: false
         - name: keyPair
@@ -160,10 +162,10 @@ Forms:
           label: Key Pair
           description: >-
             Select the Key Pair to control access to instances. You can login to
-            instances using this KeyPair after the deployment of application.
+            instances using this KeyPair after the deployment.
           required: false
         - name: availabilityZone
           type: azone
           label: Availability zone
-          description: Select availability zone where the application would be installed.
+          description: Select an availability zone where the application would be installed.
           required: false

@@ -19,7 +19,7 @@ Forms:
         - name: name
           type: string
           label: Application Name
-          initial: 'DockerPHP-ZendServer'
+          initial: DockerPHP-ZendServer
           description: >-
             Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
             underline are allowed
@@ -32,17 +32,16 @@ Forms:
             Select an instance of Docker contaniner hosting provider to run the app
         - name: password
           type: password
-          required: true
           label: Admin Password
           description: >-
             Password for admin user in ZendServer
         - name: publish
           type: boolean
-          label: Make application accessible from outside
-          initial: false
-          required: true
+          label: Visible from outside
+          initial: true
+          required: false
           description: >-
-            Check if you want to access application from internet
+            Check if you intend to access application from the Internet
 
   - dbConfig:
       fields:
@@ -58,7 +57,7 @@ Forms:
           label: MySQL database
           required: true
           description: >-
-            Please specify a MySQL database name to connect to.
+            Please specify a MySQL database name to connect to
 
         - name: dbUser
           type: string
@@ -66,7 +65,7 @@ Forms:
           initial: admin
           required: true
           description: >-
-            Please specify a MySQL user.
+            Please specify a MySQL user
 
         - name: dbPass
           type: password

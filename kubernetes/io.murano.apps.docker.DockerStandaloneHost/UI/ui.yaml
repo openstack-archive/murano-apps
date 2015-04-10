@@ -32,13 +32,11 @@ Forms:
              Select to true to assign floating IP automatically
           initial: true
           required: false
-          widgetMedia:
-            css: {all: ['muranodashboard/css/checkbox.css']}
         - name: dockerRegistry
           type: string
           label: Custom Docker registry URL
           description: >-
-            URL of docker repository mirror to use or empty for default repository
+            URL of docker repository mirror to use. Leave empty for Docker default
           required: false
 
   - instanceConfiguration:
@@ -71,6 +69,3 @@ Forms:
           label: Hostname
           type: string
           required: false
-          widgetMedia:
-            js: ['muranodashboard/js/support_placeholder.js']
-            css: {all: ['muranodashboard/css/support_placeholder.css']}

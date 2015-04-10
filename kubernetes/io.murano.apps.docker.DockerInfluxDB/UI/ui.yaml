@@ -32,11 +32,11 @@ Forms:
           initial: 'db1;db2'
           required: false
           description: >-
-            Enter a semicolon separated list of databases. These databases will be pre-created on a container start.
+            Enter a semicolon separated list of databases. These databases will be pre-created on a container start
         - name: publish
           type: boolean
-          label: Make application accessible from outside
-          initial: false
-          required: true
+          label: Visible from outside
+          initial: true
+          required: false
           description: >-
-            Check if you want to access application from internet
+            Check if you intend to access application from the Internet

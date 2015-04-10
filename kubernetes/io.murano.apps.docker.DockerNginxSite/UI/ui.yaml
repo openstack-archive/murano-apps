@@ -15,7 +15,7 @@ Forms:
         - name: name
           type: string
           label: Application Name
-          initial: 'DockerNginxSite'
+          initial: DockerNginxSite
           description: >-
             Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
             underline are allowed
@@ -23,7 +23,7 @@ Forms:
           type: string
           required: true
           label: Repository URL
-          initial: 'http://github.com/???'
+          initial: http://github.com/*
           description: Enter an URL to git repository with site content
         - name: host
           type:
@@ -34,8 +34,8 @@ Forms:
             Select an instance of Docker contaniner hosting provider to run the app
         - name: publish
           type: boolean
-          label: Make application accessible from outside
-          initial: false
-          required: true
+          label: Visible from outside
+          initial: true
+          required: false
           description: >-
-            Check if you want to access application from internet
+            Check if you intend to access application from the Internet

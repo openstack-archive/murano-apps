@@ -14,7 +14,7 @@ Forms:
         - name: name
           type: string
           label: Application Name
-          initial: 'DockerMySQL'
+          initial: DockerMySQL
           description: >-
             Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
             underline are allowed
@@ -27,14 +27,13 @@ Forms:
             Select an instance of Docker contaniner hosting provider to run the app
         - name: password
           type: password
-          required: true
           label: MySQL Password
           description: >-
             Password for root user in MySQL
         - name: publish
           type: boolean
-          label: Make application accessible from outside
-          initial: false
-          required: true
+          label: Visible from outside
+          initial: true
+          required: false
           description: >-
-            Check if you want to access application from internet
+            Check if you intend to access application from the Internet

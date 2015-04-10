@@ -15,24 +15,24 @@ Forms:
         - name: name
           type: string
           label: Pod Name
-          required: true
           description: >-
-            This name is used as Kubernetes ID and name label
+            Name of the pod to create.
+            This name must be unique throughout the cluster
         - name: labels
           type: string
           label: Labels
           required: false
           description: >-
-            Comma separated list of labels
+            Comma separated list of labels. Allows easy selecting in the future
         - name: kubernetesCluster
           type: io.murano.apps.docker.kubernetes.KubernetesCluster
           label: Kubernetes cluster
-          required: true
           description: >-
             Kubernetes service
         - name: replicas
           type: integer
           label: Replicas (0 = disabled)
           initial: 2
-          required: true
           minValue: 0
+          description: >-
+            Number of cluster Replicas. Setting to '0' prevents Replication Controller creation

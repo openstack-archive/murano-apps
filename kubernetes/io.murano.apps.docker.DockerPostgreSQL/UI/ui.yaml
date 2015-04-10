@@ -14,7 +14,7 @@ Forms:
         - name: name
           type: string
           label: Application Name
-          initial: 'DockerPostgres'
+          initial: DockerPostgres
           description: >-
             Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
             underline are allowed
@@ -33,8 +33,8 @@ Forms:
             Password for root user in PostgreSQL
         - name: publish
           type: boolean
-          label: Make application accessible from outside
-          initial: false
-          required: true
+          label: Visible from outside
+          initial: true
+          required: false
           description: >-
-            Check if you want to access application from internet
+            Check if you intend to access application from the Internet

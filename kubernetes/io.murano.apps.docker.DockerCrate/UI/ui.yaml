@@ -14,7 +14,7 @@ Forms:
         - name: name
           type: string
           label: Application Name
-          initial: 'DockerCrate'
+          initial: DockerCrate
           description: >-
             Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
             underline are allowed
@@ -32,8 +32,8 @@ Forms:
           description: Select Crate ports
         - name: publish
           type: boolean
-          label: Make application accessible from outside
-          initial: false
-          required: true
+          label: Visible from outside
+          initial: true
+          required: false
           description: >-
-            Check if you plan to access application from internet
+            Check if you intend to access the application from the Internet
