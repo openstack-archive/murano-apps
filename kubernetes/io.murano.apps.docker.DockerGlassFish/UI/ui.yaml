@@ -5,9 +5,9 @@ Application:
     type: io.murano.apps.docker.DockerGlassFish
   name: $.appConfiguration.name
   host: $.appConfiguration.host
-  adminPort: $.appConfiguration.port
-  httpPort: $.appConfiguration.httpPort
-  httpsPort: $.appConfiguration.httpsPort
+  adminPort: 4848
+  httpPort: 8080
+  httpsPort: 8181
   publish: $.appConfiguration.publish
   password: $.appConfiguration.password
 
@@ -34,30 +34,6 @@ Forms:
           label: Container Host
           description: >-
             Select an instance of Docker contaniner hosting provider to run the app
-        - name: port
-          type: integer
-          label: Port
-          minValue: 1
-          maxValue: 65535
-          initial: 4848
-          description: >-
-            Select a port to run the app
-        - name: httpPort
-          type: integer
-          label: HTTP Port
-          minValue: 1
-          maxValue: 65535
-          initial: 8080
-          description: >-
-            Select a http port
-        - name: httpsPort
-          type: integer
-          label: HTTPS Port
-          minValue: 1
-          maxValue: 65535
-          initial: 8181
-          description: >-
-            Select a https port
         - name: publish
           type: boolean
           label: Make application accessible from outside

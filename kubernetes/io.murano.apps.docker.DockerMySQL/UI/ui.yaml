@@ -5,7 +5,7 @@ Application:
     type: io.murano.apps.docker.DockerMySQL
   name: $.appConfiguration.name
   host: $.appConfiguration.host 
-  port: $.appConfiguration.port
+  port: 3306
   publish: $.appConfiguration.publish
   password: $.appConfiguration.password
 
@@ -32,14 +32,6 @@ Forms:
           label: MySQL Password
           description: >-
             Password for root user in MySQL
-        - name: port
-          type: integer
-          label: Port
-          minValue: 1
-          maxValue: 65535
-          initial: 3306
-          description: >-
-            Select a port to run the app
         - name: publish
           type: boolean
           label: Make application accessible from outside

@@ -5,8 +5,8 @@ Application:
     type: io.murano.apps.docker.DockerInfluxDB
   name: $.appConfiguration.name
   host: $.appConfiguration.host 
-  interfacePort: $.appConfiguration.interfacePort
-  apiPort: $.appConfiguration.apiPort
+  interfacePort: 8083
+  apiPort: 8086
   publish: $.appConfiguration.publish
   preCreateDB: $.appConfiguration.preCreateDB
 
@@ -35,22 +35,6 @@ Forms:
           required: false
           description: >-
             Enter a semicolon separated list of databases. These databases will be pre-created on a container start.
-        - name: interfacePort
-          type: integer
-          label: Port
-          minValue: 1
-          maxValue: 65535
-          initial: 8083
-          description: >-
-            Select InfluxDB interface port
-        - name: apiPort
-          type: integer
-          label: Api port
-          minValue: 1
-          maxValue: 65535
-          initial: 8086
-          description: >-
-            Select InfluxDB API port
         - name: publish
           type: boolean
           label: Make application accessible from outside

@@ -5,7 +5,7 @@ Application:
     type: io.murano.apps.docker.DockerMongoDB
   name: $.appConfiguration.name
   host: $.appConfiguration.host
-  port: $.appConfiguration.port
+  port: 27017
   publish: $.appConfiguration.publish
 
 Forms:
@@ -25,14 +25,6 @@ Forms:
           label: Container Host
           description: >-
             Select an instance of Docker contaniner hosting provider to run the app
-        - name: port
-          type: integer
-          label: Port
-          minValue: 1
-          maxValue: 65535
-          initial: 27017
-          description: >-
-            Select a port to run the app
         - name: publish
           type: boolean
           label: Make application accessible from outside
