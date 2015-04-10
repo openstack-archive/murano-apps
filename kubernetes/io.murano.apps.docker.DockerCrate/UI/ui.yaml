@@ -5,8 +5,8 @@ Application:
     type: io.murano.apps.docker.DockerCrate
   name: $.appConfiguration.name
   host: $.appConfiguration.host 
-  interfacePort: 4200
-  transportPort: 4300
+  interfacePort: $.appConfiguration.interfacePort
+  transportPort: $.appConfiguration.transportPort
   publish: $.appConfiguration.publish
 
 
@@ -32,6 +32,22 @@ Forms:
           required: false
           hidden: true
           description: Select Crate ports
+        - name: interfacePort
+          type: integer
+          label: Port
+          minValue: 1
+          maxValue: 65535
+          initial: 4200
+          description: >-
+            HTTP API port
+        - name: transportPort
+          type: integer
+          label: Port
+          minValue: 1
+          maxValue: 65535
+          initial: 4300
+          description: >-
+            Internal transport port
         - name: publish
           type: boolean
           label: Make application accessible from outside
