@@ -1,0 +1,81 @@
+Version: 2
+Templates:
+  guestBookHost:
+    ?:
+      type: io.murano.apps.docker.kubernetes.KubernetesPod
+    name: frontend
+    labels: 'name=frontend,app=frontend,uses=redis-slave-or-redis-master'
+    kubernetesCluster: $.appConfiguration.kubernetesCluster
+    replicas: 3
+
+  redisMaster:
+    ?:
+      type: io.murano.apps.docker.DockerRedis
+    name: RedisMaster
+    host:
+      ?:
+        type: io.murano.apps.docker.kubernetes.KubernetesPod
+      name: 'redis-master'
+      labels: 'name=redis-master,app=redis'
+      kubernetesCluster: $.appConfiguration.kubernetesCluster
+      replicas: 1
+    port: 6379
+    publish: false
+
+  redisSlave:
+    ?:
+      type: io.murano.apps.docker.DockerRedisSlave
+    name: RedisSlave
+    host:
+      ?:
+        type: io.murano.apps.docker.kubernetes.KubernetesPod
+      name: 'redis-slave'
+      labels: 'name=redis-slave,app=redis,uses=redis-master'
+      kubernetesCluster: $.appConfiguration.kubernetesCluster
+      replicas: 2
+    port: 6379
+    publish: false
+    redisMaster: $redisMaster
+
+Application:
+  ?:
+    type: io.murano.apps.docker.DockerGuestBook
+  name: $.appConfiguration.name
+  host: $guestBookHost
+  redisMaster: $redisMaster
+  redisSlave: $redisSlave
+  port: $.appConfiguration.port
+  publish: $.appConfiguration.publish
+
+
+Forms:
+  - appConfiguration:
+      fields:
+        - name: name
+          type: string
+          label: Application Name
+          initial: 'GuestBook'
+          description: >-
+            Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
+            underline are allowed
+        - name: kubernetesCluster
+          type: io.murano.apps.docker.kubernetes.KubernetesCluster
+          label: Kubernetes cluster
+          required: true
+          description: >-
+            Kubernetes service
+        - name: port
+          type: integer
+          label: Port
+          minValue: 1
+          maxValue: 65535
+          initial: 80
+          description: >-
+            Select a port on which app will be running
+        - name: publish
+          type: boolean
+          label: Make application accessible from outside
+          initial: false
+          required: true
+          description: >-
+            Check if you plan to access application from the Internet

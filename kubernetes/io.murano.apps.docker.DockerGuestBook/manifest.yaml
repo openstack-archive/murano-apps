@@ -1,0 +1,12 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.apps.docker.GuestBook
+Name: Docker GuestBook
+Description: |
+ Simple demo application using Kubernetes Cluster for deployment
+Author: 'Mirantis, Inc'
+Tags: [Docker, Kubernetes, guestbook]
+
+Classes:
+ io.murano.apps.docker.DockerRedisSlave: RedisSlave.yaml
+ io.murano.apps.docker.DockerGuestBook: GuestBook.yaml
