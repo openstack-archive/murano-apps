@@ -73,8 +73,8 @@ Methods:
               select(format('https://{0}:{1}', $.address, $.port)))
 
           - $._environment.reporter.report(
-                $this,
-                'GlassFish {0} is available at {1} (admin) and {2}/{3} (apps)'.format(
-                    $.name, $adminEndpoints, $httpEndpoints, $httpsEndpoints)
+              $this,
+              'GlassFish {0} is available at {1} (admin) and {2}/{3} (apps)'.format(
+                $.name, $adminEndpoints, $httpEndpoints, $httpsEndpoints))
         Else:
           - $._environment.reporter.report($this, 'GlassFish {0} has deployed but is not accessible from outside'.format($.name))
