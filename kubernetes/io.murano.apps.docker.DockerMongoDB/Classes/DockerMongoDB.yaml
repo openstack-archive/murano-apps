@@ -10,10 +10,6 @@ Properties:
   name:
     Contract: $.string().notNull()
 
-  port:
-    Contract: $.int().check($ > 0 and $ < 65536)
-    Default: 27017
-
   publish:
     Contract: $.bool().notNull()
     Default: true
@@ -32,7 +28,7 @@ Methods:
         name: $.name
         image: mongo
         ports:
-          - port: $.port
+          - port: 27017
             scope: $._scope
 
 

@@ -10,10 +10,6 @@ Properties:
   name:
     Contract: $.string().notNull()
 
-  port:
-    Contract: $.int().check($ > 0 and $ < 65536)
-    Default: 80
-
   publish:
     Contract: $.bool().notNull()
     Default: true
@@ -36,8 +32,8 @@ Methods:
     Body:
       - $.redisMaster.deploy()
       - $.redisSlave.deploy()
-      - $redisMasterLink: $.getConnectionTo($.redisMaster, $.redisMaster.port)
-      - $redisSlaveLink: $.getConnectionTo($.redisSlave, $.redisSlave.port)
+      - $redisMasterLink: $.getConnectionTo($.redisMaster, 6379)
+      - $redisSlaveLink: $.getConnectionTo($.redisSlave, 6379)
       - Return:
           name: $.name
           image: 'brendanburns/php-redis'
@@ -47,7 +43,7 @@ Methods:
             REDISSLAVE_SERVICE_HOST: $.redisSlave.host
             REDISSLAVE_SERVICE_PORT: $.redisSlave.port
           ports:
-            - port: $.port
+            - port: 80
               scope: $._scope
 
 

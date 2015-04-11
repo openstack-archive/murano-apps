@@ -10,10 +10,6 @@ Properties:
   name:
     Contract: $.string().notNull()
 
-  port:
-    Contract: $.int().notNull().check($ > 0 and $ < 65536)
-    Default: 80
-
   publish:
     Contract: $.bool().notNull()
     Default: true
@@ -37,7 +33,7 @@ Methods:
         env:
           APP_URL: $.siteRepo
         ports:
-          - port: $.port
+          - port: 80
             scope: $._scope
 
 

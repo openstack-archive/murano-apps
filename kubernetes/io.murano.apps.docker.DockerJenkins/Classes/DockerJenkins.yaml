@@ -10,10 +10,6 @@ Properties:
   name:
     Contract: $.string().notNull()
 
-  port:
-    Contract: $.int().check($ > 0 and $ < 65536)
-    Default: 8080
-
   publish:
     Contract: $.bool().notNull()
     Default: true
@@ -32,7 +28,7 @@ Methods:
         name: $.name
         image: jenkins
         ports:
-          - port: $.port
+          - port: 8080
             scope: $._scope
 
 

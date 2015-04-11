@@ -10,9 +10,6 @@ Properties:
   name:
     Contract: $.string().notNull()
 
-  port:
-    Contract: $.int().check($ > 0 and $ < 65536)
-
   publish:
     Contract: $.bool().notNull()
     Default: true
@@ -36,7 +33,7 @@ Methods:
         env:
           TOMCAT_PASS: $.password
         ports:
-          - port: $.port
+          - port: 8080
             scope: $._scope
 
 

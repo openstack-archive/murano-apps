@@ -10,10 +10,6 @@ Properties:
   name:
     Contract: $.string().notNull()
 
-  port:
-    Contract: $.int().check($ > 0 and $ < 65536)
-    Default: 6379
-
   publish:
     Contract: $.bool().notNull()
     Default: true
@@ -31,7 +27,7 @@ Methods:
 
   getContainer:
     Body:
-      - $redisMasterLink: $.getConnectionTo($.redisMaster, $.redisMaster.port)
+      - $redisMasterLink: $.getConnectionTo($.redisMaster, 6379)
       - Return:
           name: $.name
           image: 'brendanburns/redis-slave'
@@ -39,7 +35,7 @@ Methods:
             REDIS_MASTER_SERVICE_HOST: $redisMaster.host
             REDIS_MASTER_SERVICE_PORT: $redisMaster.port
           ports:
-            - port: $.port
+            - port: 6379
               scope: $._scope
 
 

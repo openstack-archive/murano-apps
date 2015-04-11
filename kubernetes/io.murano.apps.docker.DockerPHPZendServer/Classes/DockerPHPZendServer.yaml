@@ -10,14 +10,6 @@ Properties:
   name:
     Contract: $.string().notNull()
 
-  adminPort:
-    Contract: $.int().check($ > 0 and $ < 65536)
-    Default: 8081
-
-  port:
-    Contract: $.int().check($ > 0 and $ < 65536)
-    Default: 80
-
   publish:
     Contract: $.bool().notNull()
     Default: true
@@ -48,7 +40,7 @@ Methods:
   getContainer:
     Body:
       - $.database.deploy()
-      - $dbLink: $.getConnectionTo($.database, $.database.port)
+      - $dbLink: $.getConnectionTo($.database, 3306)
       - Return:
           name: $.name
           image: 'php-zendserver'
@@ -60,9 +52,9 @@ Methods:
             MYSQL_DBNAME: $.dbName
             ZS_ADMIN_PASSWORD: $.password
           ports:
-            - port: $.port
+            - port: 80
               scope: $._scope
-            - port: $.adminPort
+            - port: 10081
               scope: $._scope
 
 
@@ -75,7 +67,7 @@ Methods:
     Body:
       - If: $.publish
         Then:
-          - $endpoints: $.applicationEndpoints.where($.scope = $this._scope and $.containerPort = $.adminPort).
+          - $endpoints: $.applicationEndpoints.where($.scope = $this._scope and $.containerPort = 80).
               select(format('http://{0}:{1}', $.address, $.port))
           - $._environment.reporter.report($this, 'PHPZendServer {0} is available at {1}'.format($.name, join(', ', $endpoints)))
         Else:
