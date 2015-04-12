@@ -1,4 +1,4 @@
-FormatVersion: 2.0.0
+FormatVersion: 2.1.0
 Version: 1.0.0
 Name: Deploy Chef Example
 
@@ -14,12 +14,12 @@ Scripts:
     Version: 1.0.0
     EntryPoint: tomcat::default
     Files:
-        -  https://github.com/chef-cookbooks/yum-epel.git
-        -  https://github.com/chef-cookbooks/yum.git
-        -  https://github.com/opscode-cookbooks/java
-        -  https://github.com/opscode-cookbooks/openssl
-        -  https://github.com/sethvargo/chef-sugar.git
-        -  https://github.com/opscode-cookbooks/tomcat.git
+        -  yum-epel: https://github.com/chef-cookbooks/yum-epel.git
+        -  yum: https://github.com/chef-cookbooks/yum.git
+        -  java: https://github.com/opscode-cookbooks/java.git
+        -  openssl: https://github.com/opscode-cookbooks/openssl.git
+        -  chef-sugar: https://github.com/sethvargo/chef-sugar.git
+        -  tomcat: https://github.com/opscode-cookbooks/tomcat.git
     Options:
       captureStdout: true
       captureStderr: true
