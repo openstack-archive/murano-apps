@@ -100,8 +100,8 @@ Forms:
           type: string
           label: Instance Naming Pattern
           required: false
-          maxLength: 200
-          regexpValidator: '^[-_\w]+$'
+          maxLength: 64
+          regexpValidator: '^[a-zA-z][-_\w]*$'
           errorMessages:
             invalid: Just letters, numbers, underscores and hyphens are allowed.
           helpText: Just letters, numbers, underscores and hyphens are allowed.
