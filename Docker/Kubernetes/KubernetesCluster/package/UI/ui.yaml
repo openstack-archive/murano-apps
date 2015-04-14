@@ -86,8 +86,8 @@ Forms:
           required: false
         - name: unitNamingPattern
           type: string
-          initial: 'kube-#'
-          helpText: \'#\' expands to machine sequence number
+          initial: kube-#
+          helpText: "# expands to machine sequence number"
           required: false
           description: >-
             For your convenience instance hostname can be specified.
@@ -132,7 +132,7 @@ Forms:
           required: false
           regexpValidator: '^(([a-zA-Z0-9#][a-zA-Z0-9-#]*[a-zA-Z0-9#])\.)*([A-Za-z0-9#]|[A-Za-z0-9#][A-Za-z0-9-#]*[A-Za-z0-9#])$'
           label: Gateway hostname pattern
-          helpText: \'#\' expands to gateway sequence number
+          helpText: "# expands to gateway sequence number"
           description: >-
              Check to assign floating IP to gateway nodes
         - name: dockerRegistry
@@ -157,6 +157,11 @@ Forms:
             Select one of the existing flavors. Consider that application performance
             depends on this parameter.
           required: false
+          requirements:
+            min_disk: 10
+            min_memory_mb: 1024
+            min_vcpus: 1
+
         - name: keyPair
           type: keypair
           label: Key Pair

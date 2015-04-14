@@ -53,6 +53,10 @@ Forms:
             Select registered in Openstack flavor. Consider that application performance
             depends on this parameter.
           required: false
+          requirements:
+            min_disk: 10
+            min_memory_mb: 1024
+            min_vcpus: 1
         - name: keyPair
           type: keypair
           label: Key Pair
