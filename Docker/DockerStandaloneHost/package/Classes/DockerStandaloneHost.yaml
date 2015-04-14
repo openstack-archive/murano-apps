@@ -250,7 +250,7 @@ Methods:
       - applicationName:
           Contract: $.string().notNull()
     Body:
-      - $.applicationEndpoints: $.applicationEndpoints.select($.applicationName != $applicationName)
+      - $.applicationEndpoints: $.applicationEndpoints.where($.applicationName != $applicationName)
 
 
   deleteContainer:
