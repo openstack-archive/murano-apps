@@ -62,7 +62,7 @@ Methods:
 
           - $._environment.reporter.report(
               $this,
-              'GlassFish {0} is available at {1} (admin) and {2}/{3} (apps)'.format(
+              'GlassFish {0} is available at {1} (admin) and {2} + {3} (apps)'.format(
                 $.name, $adminEndpoints, $httpEndpoints, $httpsEndpoints))
         Else:
           - $._environment.reporter.report($this, 'GlassFish {0} has deployed but is not accessible from outside'.format($.name))
