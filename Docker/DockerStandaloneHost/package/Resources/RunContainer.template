@@ -12,7 +12,7 @@ Parameters:
 
 Body: |
   options = ['-d', '--name ' + args.appName]
-  for container_port, host_port in args.portMap.iteritems():
+  for host_port, container_port in args.portMap.iteritems():
     options.append('-p {0}:{1}'.format(host_port, container_port))
   for host_dir, container_dir in args.volumeMap.iteritems():
     options.append("-v '{0}':'{1}'".format(host_dir, container_dir))
