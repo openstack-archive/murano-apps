@@ -1,18 +1,18 @@
 FormatVersion: 2.0.0
 Version: 1.0.0
-Name: Destroy Service
+Name: Delete Service
 
 Parameters:
   serviceId: $serviceId
 
 Body: |
-  return destroyService('{0}'.format(args.serviceId)).stdout
+  return deleteService('{0}'.format(args.serviceId)).stdout
 
 Scripts:
-  destroyService:
+  deleteService:
     Type: Application
     Version: 1.0.0
-    EntryPoint: destroyService.sh
+    EntryPoint: deleteService.sh
     Files: []
     Options:
       captureStdout: true

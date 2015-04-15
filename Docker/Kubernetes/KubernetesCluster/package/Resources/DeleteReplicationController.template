@@ -1,0 +1,20 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Delete Replication Controller
+
+Parameters:
+  rcId: $rcId
+
+Body: |
+  return deleteReplicationController(args.rcId).stdout
+
+Scripts:
+  deleteReplicationController:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: deleteReplicationController.sh
+    Files: []
+    Options:
+      captureStdout: true
+      captureStderr: true
+

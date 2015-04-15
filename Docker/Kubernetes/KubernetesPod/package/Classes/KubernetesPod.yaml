@@ -158,7 +158,7 @@ Methods:
           Contract: $.string().notNull()
     Body:
       - $._deleteContainer($name)
-      - $.kubernetesCluster.destroyService(
+      - $.kubernetesCluster.deleteService(
             applicationName => $name,
             podId => $._getPodName())
       - $.deploy()
@@ -195,7 +195,7 @@ Methods:
                     definition => $rcDefinition, isNew => $prevReplicas = 0)
           - If: $.replicas = 0 and $prevReplicas > 0
             Then:
-              - $.kubernetesCluster.destroyReplicationController($._getReplicationControllerId())
+              - $.kubernetesCluster.deleteReplicationController($._getReplicationControllerId())
           - $.setAttr(lastReplicas, $.replicas)
       - $._environment.reporter.report($, 'Pod {0} is ready'.format($.name))
 

@@ -148,15 +148,15 @@ Methods:
       - $.masterNode.instance.agent.call($template, $resources)
 
 
-  destroyReplicationController:
+  deleteReplicationController:
     Arguments:
       - id:
           Contract: $.string().notNull()
     Body:
       - $.deploy()
       - $resources: new(sys:Resources)
-      - $template: $resources.yaml('DestroyReplicationController.template').bind(dict(rcId => $id))
-      - $.kubernetesCluster.masterNode.instance.agent.call($template, $resources)
+      - $template: $resources.yaml('DeleteReplicationController.template').bind(dict(rcId => $id))
+      - $.masterNode.instance.agent.call($template, $resources)
 
 
   createServices:
@@ -257,7 +257,7 @@ Methods:
         Do:
           - If: not $service in $servicesUsed
             Then:
-              - $._destroyService($service)
+              - $._deleteService($service)
       - $._environment.stack.push()
 
 
@@ -349,26 +349,26 @@ Methods:
       -  $.setAttr(lastGatewayCount, $.gatewayCount)
 
 
-  _destroyService:
+  _deleteService:
     Arguments:
       serviceName:
         Contract: $.string().notNull()
     Body:
       - $resources: new(sys:Resources)
-      - $template: $resources.yaml('DestroyService.template').bind(dict(
+      - $template: $resources.yaml('DeleteService.template').bind(dict(
             serviceId => $service
           ))
       - $.masterNode.instance.agent.call($template, $resources)
 
 
-  destroyService:
+  deleteService:
     Arguments:
       - applicationName:
           Contract: $.string().notNull()
       - podId:
           Contract: $.string().notNull()
     Body:
-      - $._destroyService($applicationName, $podId)
+      - $._deleteService($applicationName, $podId)
 
 
   _findUnusedPort:
