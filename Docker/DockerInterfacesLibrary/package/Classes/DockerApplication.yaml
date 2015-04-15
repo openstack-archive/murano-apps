@@ -28,16 +28,23 @@ Methods:
 
   deploy:
     Body:
-      - $._environment.reporter.report($this, 'Waiting for the host to be ready')
       - $.host.deploy()
       - $container: $.getContainer()
       - $repr: $._getContainerRepresentation($container)
       - If: $.getAttr(container, null) != $repr
         Then:
-          - $.onInstallationStart()
+        - $.onInstallationStart()
+        - Try:
           - $.applicationEndpoints: $.host.hostContainer($container)
           - $.setAttr(container, $repr)
-      - $.onInstallationFinish()
+          Catch:
+          - As: e
+            Do:
+            - $formatString: 'Error: {0}'
+            - $._environment.reporter.report_error($, $formatString.format($e.message))
+            - Rethrow:
+          Else:
+          - $.onInstallationFinish()
 
 
   getConnectionTo:

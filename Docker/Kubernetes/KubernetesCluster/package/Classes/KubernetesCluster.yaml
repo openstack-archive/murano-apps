@@ -114,6 +114,7 @@ Methods:
     Body:
       Return: $.masterNode.getIp()
 
+
   createPod:
     Arguments:
       - definition:
@@ -159,6 +160,18 @@ Methods:
       - $.masterNode.instance.agent.call($template, $resources)
 
 
+  deletePods:
+    Arguments:
+      - labels:
+          Contract:
+            $.string().notNull(): $.string().notNull()
+    Body:
+      - $.deploy()
+      - $resources: new(sys:Resources)
+      - $template: $resources.yaml('DeletePods.template').bind(dict(labels => $labels))
+      - $.masterNode.instance.agent.call($template, $resources)
+
+  
   createServices:
     Arguments:
       - applicationName:
@@ -339,6 +352,7 @@ Methods:
           - $serviceIp: $endpoint.address
       - Return: $serviceIp
 
+
   _updateEndpoints:
     Body:
       - For: endpoint
@@ -428,6 +442,7 @@ Methods:
           - $result.publicIPs: $.minionNodes.take($.nodeCount).select($.getIp())
       - Return: $result
 
+
   scaleNodesUp:
     Usage: Action
     Body:
@@ -437,6 +452,7 @@ Methods:
           - $.nodeCount: $.nodeCount + 1
           - $.deploy()
 
+
   scaleNodesDown:
     Usage: Action
     Body:
@@ -445,6 +461,7 @@ Methods:
           - $._environment.reporter.report($this, 'Scaling Kubernetes cluster down')
           - $.nodeCount: $.nodeCount - 1
           - $.deploy()
+
 
   scaleGatewaysUp:
     Usage: Action

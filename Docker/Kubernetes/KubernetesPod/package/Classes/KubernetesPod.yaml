@@ -65,6 +65,17 @@ Methods:
       - container:
           Contract: $.class(docker:DockerContainer)
     Body:
+      - $podName: $._getPodName()
+      - For: port
+        In: $container.ports
+        Do:
+        - $endpoints: $.kubernetesCluster.serviceEndpoints.where(
+            $.containerPort = $port.port and $.protocol = $port.protocol and $.podId = $podName)
+        - If: len($endpoints) > 0
+          Then:
+            - $msg: format('Port {0} is already used in the Pod {1}', $port.port, $.name)
+            - Throw: PortConflictException
+              Message: $msg
       - $._deleteContainer($container.name)
 
       - $containerDef:
@@ -89,7 +100,7 @@ Methods:
       - $.kubernetesCluster.createServices(
             applicationName => $container.name,
             applicationPorts => $container.ports,
-            podId => $._getPodName())
+            podId => $podName)
       - Return: $.getEndpoints($container.name)
 
 
@@ -171,33 +182,39 @@ Methods:
     Body:
       Return: toLower($volume.name)
 
+
   deploy:
     Body:
       - $prevPod: $.getAttr(lastPodDeployed, null)
       - $prevReplicas: $.getAttr(lastReplicas, 0)
 
       - $podDefinition: $._podDefinition
-      - If: $prevPod != $podDefinition
+      - $replicas: $.replicas
+      - If: len($podDefinition.desiredState.manifest.containers) = 0
         Then:
-          - $._environment.reporter.report($, 'Deploying Pod {0}'.format($.name))
-          - $.kubernetesCluster.createPod(
-                definition => $podDefinition, isNew => not $.getAttr(deployed, false))
-          - $.setAttr(lastPodDeployed, $podDefinition)
-          - $.setAttr(deployed, true)
-
-      - If: $.replicas != $prevReplicas or $prevPod != $podDefinition
+          - $replicas: 0
+      - $.setAttr(lastReplicas, $replicas)
+      - If: $replicas != $prevReplicas or $prevPod != $podDefinition
         Then:
-          - If: $.replicas > 0
+          - If: $replicas > 0
             Then:
               - $._environment.reporter.report($, 'Deploying Replication Controller for Pod {0}'.format($.name))
               - $rcDefinition: $._buildReplicationControllerDefinition($podDefinition)
               - $.kubernetesCluster.createReplicationController(
                     definition => $rcDefinition, isNew => $prevReplicas = 0)
-          - If: $.replicas = 0 and $prevReplicas > 0
+          - If: $replicas = 0 and $prevReplicas > 0
             Then:
               - $.kubernetesCluster.deleteReplicationController($._getReplicationControllerId())
-          - $.setAttr(lastReplicas, $.replicas)
-      - $._environment.reporter.report($, 'Pod {0} is ready'.format($.name))
+          - If: $prevPod != $podDefinition
+            Then:
+              - $.kubernetesCluster.deletePods(dict(id => $._getPodName()))
+          - If: $.replicas = 0 and len($podDefinition.desiredState.manifest.containers) > 0
+            Then:
+              - $.kubernetesCluster.createPod(definition => $podDefinition, isNew => true)
+
+          - $._environment.reporter.report($, 'Pod {0} is ready'.format($.name))
+          - $.setAttr(lastPodDeployed, $podDefinition)
+
 
   _buildReplicationControllerDefinition:
     Arguments:
@@ -216,9 +233,11 @@ Methods:
             desiredState: $podDefinition.desiredState
             labels: $podDefinition.labels
 
+
   _getReplicationControllerId:
     Body:
       - Return: $._getPodName()
+
 
   getInternalScopeId:
     Body:

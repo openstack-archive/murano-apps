@@ -1,0 +1,21 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Delete Pods
+
+Parameters:
+  labels: $labels
+
+Body: |
+  labels_str = ','.join(map(lambda t: '='.join(t), args.labels.items()))
+  deletePods(labels_str)
+
+Scripts:
+  deletePods:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: deletePods.sh
+    Files: []
+    Options:
+      captureStdout: true
+      captureStderr: true
+
