@@ -37,9 +37,14 @@ Methods:
       - $._scope: switch($.publish, $ => public, not $ => internal)
 
 
-  getContainer:
+  deploy:
     Body:
       - $.database.deploy()
+      - $.super($.deploy())
+
+
+  getContainer:
+    Body:
       - $dbLink: $.getConnectionTo($.database, 3306)
       - Return:
           name: $.name
