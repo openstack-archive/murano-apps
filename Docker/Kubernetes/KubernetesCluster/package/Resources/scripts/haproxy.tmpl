@@ -8,10 +8,12 @@ defaults
 
 {{range $svc := ls "/registry/services/endpoints/default"}}
 {{$se := printf "/registry/services/endpoints/default/%s" $svc }}{{$ss := printf "/registry/services/specs/default/%s" $svc }}
-{{$seKey := get $se}}{{$ssKey := get $ss}}{{$seJson := json $seKey.Value}}{{$ssJson := json $ssKey.Value}}
-listen {{base $svc}} 0.0.0.0:{{$ssJson.port}}
+{{$seKey := get $se}}{{$ssKey := get $ss}}{{$seJson := json $seKey.Value}}{{$ssJson := json $ssKey.Value}}{{$baseSvc := base $svc}}
+{{if and (ne "kubernetes" $baseSvc) (ne "kubernetes-ro" $baseSvc)}}
+listen {{$baseSvc}} 0.0.0.0:{{$ssJson.port}}
     mode tcp
     balance leastconn
 {{range $index, $endpoint := $seJson.endpoints}}
     server svr{{$index}} {{$endpoint}}{{end}}
-{{end}}
+
+{{end}}{{end}}
