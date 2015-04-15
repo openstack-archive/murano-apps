@@ -28,10 +28,15 @@ Methods:
       - $._scope: switch($.publish, $ => public, not $ => internal)
 
 
-  getContainer:
+  deploy:
     Body:
       - $.redisMaster.deploy()
       - $.redisSlave.deploy()
+      - $.super($.deploy())
+
+
+  getContainer:
+    Body:
       - $redisMasterLink: $.getConnectionTo($.redisMaster, 6379)
       - $redisSlaveLink: $.getConnectionTo($.redisSlave, 6379)
       - Return:
