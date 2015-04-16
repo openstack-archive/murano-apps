@@ -187,24 +187,25 @@ Methods:
       - $portMap: $.getAttr(portMap, dict())
       - $applicationPorts: $.getAttr(applicationPorts, dict())
       - $key: format('{0}-{1}-{2}', $applicationPort.port, $applicationPort.protocol, $applicationName)
+
       - If: $key in $applicationPorts
         Then:
-          - Return: $applicationPorts[$key]
+          - Return: $applicationPorts.get($key)
 
-      - $port: $applicationPort.port
+      - $port: str($applicationPort.port)
       - If: $port in $portMap
         Then:
-          - $port: 1025
+          - $port: '1025'
       - While: $port in $portMap
         Do:
-          $port: $port + 1
+          - $port: str(int($port) + 1)
 
       - $portMap[$port]: $applicationName
       - $applicationPorts[$key]: $port
 
       - $.setAttr(portMap, $portMap)
       - $.setAttr(applicationPorts, $applicationPorts)
-      - Return: $port
+      - Return: int($port)
 
 
   _releaseApplicationPorts:
