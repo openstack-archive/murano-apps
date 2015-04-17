@@ -92,7 +92,10 @@ Forms:
           description: >-
             For your convenience instance hostname can be specified.
             Enter a name or leave blank for random name generation.
-          regexpValidator: '^(([a-zA-Z0-9#][a-zA-Z0-9-#]*[a-zA-Z0-9#])\.)*([A-Za-z0-9#]|[A-Za-z0-9#][A-Za-z0-9-#]*[A-Za-z0-9#])$'
+          regexpValidator: '^[a-zA-z][-_\w#]*$'
+          maxLength: 64
+          errorMessages:
+            invalid: Just letters, numbers, underscores, sharps and hyphens are allowed.
           label: Kubernetes node hostname pattern
         - name: enableMonitoring
           type: boolean
@@ -130,7 +133,10 @@ Forms:
           type: string
           initial: gateway-#
           required: false
-          regexpValidator: '^(([a-zA-Z0-9#][a-zA-Z0-9-#]*[a-zA-Z0-9#])\.)*([A-Za-z0-9#]|[A-Za-z0-9#][A-Za-z0-9-#]*[A-Za-z0-9#])$'
+          maxLength: 64
+          regexpValidator: '^[a-zA-z][-_\w#]*$'
+          errorMessages:
+            invalid: Just letters, numbers, underscores, sharps and hyphens are allowed.
           label: Gateway hostname pattern
           helpText: "# expands to gateway sequence number"
           description: >-

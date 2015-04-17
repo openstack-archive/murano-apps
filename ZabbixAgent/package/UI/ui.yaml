@@ -25,7 +25,7 @@ Forms:
           label: HostName
           initial: zabbix
           maxLength: 64
-          regexpValidator: '^[ a-zA-Z0-9_\.-]{1,}$'
+          regexpValidator: '^[a-zA-z][-_\w]*$'
           description: >-
             Unique, case sensitive hostname.
             Required for active checks and must match hostname as configured on the server.
