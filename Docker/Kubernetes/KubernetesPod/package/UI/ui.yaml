@@ -14,16 +14,27 @@ Forms:
       fields:
         - name: name
           type: string
+          regexpValidator: '^[a-z0-9]([a-z0-9.-]{0,251})?[a-z0-9]$'
+          maxLength: 253
           label: Pod Name
           description: >-
             Name of the pod to create.
-            This name must be unique throughout the cluster
+            This name must be unique throughout the cluster. The name should be up to maximum
+            length of 253 characters and consist of lower case alphanumeric characters, hyphens, and dots.
         - name: labels
           type: string
+          #NOTE(ddovbii): this regexp is used here because of k8s restrictions: https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/labels.md#syntax-and-character-set
+          regexpValidator: '^(([a-zA-Z0-9]([a-zA-Z0-9\.]{0,251}[a-zA-Z0-9])?\/)?([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)=[A-Za-z0-9][-\w.]{0,63})?(,([a-zA-Z0-9]([a-zA-Z0-9\.]{0,251}[a-zA-Z0-9])?\/)?([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)=[A-Za-z0-9][-\w.]{0,63})*$'
           label: Labels
           required: false
           description: >-
-            Comma separated list of labels. Allows easy selecting in the future
+            Comma separated list of labels. Allows easy selecting in the future.
+            Valid label keys have two segments - prefix and name - separated by a slash.
+            The name segment is required and must be a DNS label 63 characters or less, all lowercase,
+            beginning and ending with an alphanumeric character, with dashes and alphanumerics between.
+            The prefix and slash are optional. If specified, the prefix must be a DNS subdomain.
+            Valid label values must be shorter than 64 characters, accepted characters are ([-A-Za-z0-9_.])
+            but the first character must be ([A-Za-z0-9]).
         - name: kubernetesCluster
           type: io.murano.apps.docker.kubernetes.KubernetesCluster
           label: Kubernetes cluster
