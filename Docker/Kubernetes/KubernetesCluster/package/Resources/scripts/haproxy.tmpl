@@ -5,15 +5,16 @@ defaults
   contimeout 5000
   clitimeout 50000
   srvtimeout 50000
-
 {{range $svc := ls "/registry/services/endpoints/default"}}
-{{$se := printf "/registry/services/endpoints/default/%s" $svc }}{{$ss := printf "/registry/services/specs/default/%s" $svc }}
-{{$seKey := get $se}}{{$ssKey := get $ss}}{{$seJson := json $seKey.Value}}{{$ssJson := json $ssKey.Value}}{{$baseSvc := base $svc}}
-{{if and (ne "kubernetes" $baseSvc) (ne "kubernetes-ro" $baseSvc)}}
-listen {{$baseSvc}} 0.0.0.0:{{$ssJson.port}}
+{{$se := printf "/registry/services/endpoints/default/%s" $svc }}
+{{$ss := printf "/registry/services/specs/default/%s" $svc }}
+{{$seKey := get $se}}{{$ssKey := get $ss}}{{$seJson := json $seKey.Value}}
+{{$ssJson := json $ssKey.Value}}{{$baseSvc := base $svc}}
+{{if and (ne "kubernetes" $baseSvc) (ne "kubernetes-ro" $baseSvc)}}{{range $port := $ssJson.spec.ports}}
+listen {{$baseSvc}}-{{$port.port}} 0.0.0.0:{{$port.port}}
     mode tcp
     balance leastconn
-{{range $index, $endpoint := $seJson.endpoints}}
-    server svr{{$index}} {{$endpoint}}{{end}}
+{{range $subset := $seJson.subsets}}{{range $index, $endpoint := $subset.addresses}}
+    server svr{{$index}} {{$endpoint.IP}}:{{$port.targetPort}}{{end}}{{end}}
 
-{{end}}{{end}}
+{{end}}{{end}}{{end}}

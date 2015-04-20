@@ -24,7 +24,7 @@ Templates:
       image: 'ubuntu14.04-x64-kubernetes'
       assignFloatingIp: $.appConfiguration.assignFloatingIP
       keyname: $.instanceConfiguration.keyPair
-    enableMonitoring: $.appConfiguration.enableMonitoring
+    exposeCAdvisor: $.appConfiguration.exposeCAdvisor
 
 
   gatewayNode:
@@ -97,13 +97,13 @@ Forms:
           errorMessages:
             invalid: Just letters, numbers, underscores, sharps and hyphens are allowed.
           label: Kubernetes node hostname pattern
-        - name: enableMonitoring
+        - name: exposeCAdvisor
           type: boolean
           initial: true
           required: false
-          label: Enable cAdvisor monitoring
+          label: Expose cAdvisor UI
           description: >-
-            Enable cAdvisor monitoring
+            Opens external access to cAdvisor interface
         - name: gatewayCount
           type: integer
           label: Initial/current number of gateway nodes

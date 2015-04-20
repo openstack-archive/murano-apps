@@ -13,8 +13,8 @@ Body: |
   with open(fileName, 'w') as f:
     json.dump(args.serviceDefinition, f)
 
-  updateService('{0} {1} {2} {3}'.format(args.isNew, args.serviceDefinition['id'], args.serviceDefinition['kind'], fileName))
-  return getServiceIp(args.serviceDefinition['id']).stdout
+  updateService('{0} {1} {2}'.format(args.isNew, args.serviceDefinition['metadata']['name'], fileName))
+  return getServiceIp(args.serviceDefinition['metadata']['name']).stdout
 
 Scripts:
   updateService:

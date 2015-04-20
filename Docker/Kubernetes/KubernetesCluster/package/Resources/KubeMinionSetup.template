@@ -6,13 +6,12 @@ Parameters:
   name: $name
   ip: $ip
   masterIp: $masterIp
-  enableMonitoring: $enableMonitoring
   dockerRegistry: $dockerRegistry
 
 Body: |
   if args.dockerRegistry:
     setupRegistry(args.dockerRegistry)
-  setup('{0} {1} {2} {3}'.format(args.name, args.ip, args.masterIp, args.enableMonitoring))
+  setup('{0} {1} {2}'.format(args.name, args.ip, args.masterIp))
 
 Scripts:
   setup:
@@ -26,7 +25,6 @@ Scripts:
       - init_conf/kube-proxy.conf
       - initd_scripts/kubelet
       - initd_scripts/kube-proxy
-      - cadvisor.manifest
 
     Options:
       captureStdout: true
