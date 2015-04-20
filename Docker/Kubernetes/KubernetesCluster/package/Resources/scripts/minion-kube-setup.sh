@@ -3,7 +3,6 @@
 # $1 - NAME
 # $2 - IP
 # $3 - MASTER_IP
-# $4 - IS_CA_ENABLED
 
 mkdir /var/log/kubernetes
 mkdir -p /var/run/murano-kubernetes
@@ -21,16 +20,6 @@ cp initd_scripts/kube-proxy /etc/init.d/
 
 cp -f default_scripts/kube-proxy /etc/default
 cp -f default_scripts/kubelet /etc/default/
-
-if [ "$4" == "True" ]; then
-   #Create directory for manifests used by kubelet
-   mkdir /etc/kubernetes
-   mkdir /etc/kubernetes/manifests
-   cp -f cadvisor.manifest /etc/kubernetes/manifests
-   #Add path to kubelet parameters
-   sed -i 's/kubernetes"/kubernetes \\/g' /etc/default/kubelet
-   sed -i '/--log_dir*/a --config=/etc/kubernetes/manifests"' /etc/default/kubelet
-fi
 
 service kubelet start
 service kube-proxy start

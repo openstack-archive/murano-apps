@@ -3,19 +3,23 @@ Version: 1.0.0
 Name: Register Kubernetes Node
 
 Parameters:
-  name: $name
-  nodeId: $nodeId
+  nodeDefinition: $nodeDefinition
 
 Body: |
-  return register('{0} {1}'.format(args.name, args.nodeId)).stdout
+  import json
+  import uuid
+  fileName = '/var/run/murano-kubernetes/' + str(uuid.uuid4()) + '.json'
+  with open(fileName, 'w') as f:
+    json.dump(args.nodeDefinition, f)
+
+  return register(fileName).stdout
 
 Scripts:
   register:
     Type: Application
     Version: 1.0.0
     EntryPoint: kube-add-node.sh
-    Files:
-      - minion-node.json
+    Files: []
 
     Options:
       captureStdout: true
