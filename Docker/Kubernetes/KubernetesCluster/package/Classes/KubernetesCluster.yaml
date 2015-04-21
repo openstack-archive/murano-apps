@@ -91,23 +91,30 @@ Methods:
           - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
           - $.setAttr(deployed, true)
 
-      - $._environment.reporter.report($this, 'Setting up Kubernetes cluster')
-      - Parallel:
-          - Do: $.masterNode.deployInstance()
-          - Do: $.minionNodes.take($.nodeCount).pselect($.deployInstance())
-          - Do: $.gatewayNodes.take($.gatewayCount).pselect($.deployInstance())
+      - $prevNodeCount: $.getAttr(lastNodeCount, 0)
+      - $prevGatewayCount: $.getAttr(lastGatewayCount, 0)
 
-      - $.masterNode.setupEtcd()
-      - $.minionNodes.take($.nodeCount).select($.setupEtcd())
-      - $.gatewayNodes.take($.gatewayCount).select($.setupEtcd())
+      - If: $prevNodeCount != $.nodeCount or $prevGatewayCount != $.gatewayCount
+        Then:
+          - $._environment.reporter.report($this, 'Setting up Kubernetes cluster')
+          - Parallel:
+              - Do: $.masterNode.deployInstance()
+              - Do: $.minionNodes.take($.nodeCount).pselect($.deployInstance())
+              - Do: $.gatewayNodes.take($.gatewayCount).pselect($.deployInstance())
 
-      - $.masterNode.setupNode()
-      - Parallel:
-          - Do: $.minionNodes.take($.nodeCount).pselect($.setupNode())
-          - Do: $.minionNodes.skip($.nodeCount).pselect($.removeFromCluster())
-          - Do: $.gatewayNodes.take($.gatewayCount).pselect($.setupNode())
-      - $._updateEndpoints()
-      - $._environment.reporter.report($this, 'Kubernetes cluster is up and running')
+          - $.masterNode.setupEtcd()
+          - $.minionNodes.take($.nodeCount).select($.setupEtcd())
+          - $.gatewayNodes.take($.gatewayCount).select($.setupEtcd())
+
+          - $.masterNode.setupNode()
+          - Parallel:
+              - Do: $.minionNodes.take($.nodeCount).pselect($.setupNode())
+              - Do: $.minionNodes.skip($.nodeCount).pselect($.removeFromCluster())
+              - Do: $.gatewayNodes.take($.gatewayCount).pselect($.setupNode())
+          - $._updateServicePublicIps()
+          - $.setAttr(lastNodeCount, $.nodeCount)
+          - $.setAttr(lastGatewayCount, $.gatewayCount)
+          - $._environment.reporter.report($this, 'Kubernetes cluster is up and running')
 
 
   getIp:
@@ -172,7 +179,7 @@ Methods:
       - $.masterNode.instance.agent.call($template, $resources)
 
   
-  createServices:
+  createService:
     Arguments:
       - applicationName:
           Contract: $.string().notNull()
@@ -182,197 +189,199 @@ Methods:
       - podId:
           Contract: $.string().notNull()
     Body:
-      - $resources: new(sys:Resources)
-
-      - $applicationServices: {}
+      - $currentEndpoints: $.serviceEndpoints.where($.applicationName = $applicationName and $.podId = $podId and $.scope = internal)
+      - $serviceName: format('svc-{0}', randomName())
+      - $endpointMap: {}
       - For: endpoint
-        In: $.serviceEndpoints.where($.applicationName = $applicationName).where($.serviceName != null)
+        In: $currentEndpoints
         Do:
           - $serviceName: $endpoint.serviceName
-          - $applicationServices[$serviceName]: $endpoint
+          - $key: format('{0}-{1}', $endpoint.containerPort, $endpoint.protocol)
+          - $endpointMap[$key]: $endpoint
 
-      - $.serviceEndpoints: $.serviceEndpoints.where($.applicationName != $applicationName)
+      - $serviceChanged: len(list($applicationPorts.where($.scope != host))) != len($currentEndpoints)
 
-      - $servicesUsed: []
+      - $servicePorts: []
       - For: applicationPort
-        In: $applicationPorts
+        In: $applicationPorts.where($.scope != host)
         Do:
-          - If: $applicationPort.scope != host
+          - $key: format('{0}-{1}', $applicationPort.port, $applicationPort.protocol)
+          - $endpoint: $endpointMap.get($key)
+          - If: $endpoint != null
             Then:
-              - $serviceName: null
-              - $reuseEndpoint: null
-              - For: service
-                In: $applicationServices.keys()
-                Do:
-                  - $endpoint: $applicationServices.get($service)
-                  - If: $endpoint.containerPort = $applicationPort.port and $endpoint.protocol = $applicationPort.protocol
-                    Then:
-                      - $serviceName: $service
-                      - $reuseEndpoint: $endpoint
-                      - Break:
+              - $record:
+                  - assignedPort: $endpoint.port
+                    applicationPort: $applicationPort
+            Else:
+              - $port: $._findUnusedPort($applicationPort.port, $applicationPort.protocol)
+              - $record:
+                  - assignedPort: $port
+                    applicationPort: $applicationPort
+              - $serviceChanged: true
 
-              - If: $serviceName = null
-                Then:
-                  - $serviceName: format('svc-{0}', randomName())
-                  - $servicePort: $._findUnusedPort($applicationPort.port, $applicationPort.protocol)
-                  - $serviceIp: $._createService($podId, $serviceName, $servicePort, $applicationPort)
-                Else:
-                  - $servicesUsed: $servicesUsed + list($serviceName)
-                  - $servicePort: $reuseEndpoint.port
-                  - $serviceIp: $._updateService($podId, $reuseEndpoint)
+              - $securityGroupIngress:
+                  - ToPort: $port
+                    FromPort: $port
+                    IpProtocol: toLower($applicationPort.protocol)
+                    External: $applicationPort.scope = public
+              - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
 
-              - $newEndpoint:
-                  port: $servicePort
-                  address: $serviceIp
-                  scope: internal
-                  portScope: $applicationPort.scope
-                  applicationName: $applicationName
-                  containerPort: $applicationPort.port
-                  protocol: $applicationPort.protocol
-                  podId: $podId
-                  serviceName: $serviceName
-              - $.serviceEndpoints: $.serviceEndpoints + list($newEndpoint)
+          - $servicePorts: $servicePorts + $record
 
-              - If: $applicationPort.scope in list(public, cloud)
-                Then:
-                  - If: $.gatewayCount > 0
-                    Then:
-                      - $nodes: $.gatewayNodes.take($.gatewayCount)
-                    Else:
-                      - $nodes: $.minionNodes.take($.nodeCount)
+      - If: $serviceChanged
+        Then:
+          - $serviceIp: $._createOrUpdateService(
+                name => $serviceName,
+                ports => $servicePorts,
+                podId => $podId,
+                isNew => len($currentEndpoints) = 0
+              )
+          - $._updateEndpoints(
+                ports => $servicePorts,
+                applicationName => $applicationName,
+                podId => $podId,
+                serviceName => $serviceName,
+                serviceIp => $serviceIp
+              )
+          - $._environment.stack.push()
 
-                  - For: t
-                    In: $nodes
-                    Do:
-                      - $newEndpoint.address: $t.getIp()
-                      - $newEndpoint.scope: cloud
-                      - $.serviceEndpoints: $.serviceEndpoints + list($newEndpoint)
 
-                      - If: $t.instance.floatingIpAddress != null and $applicationPort.scope = public
-                        Then:
-                        - $newEndpoint.address: $t.instance.floatingIpAddress
-                        - $newEndpoint.scope: public
-                        - $.serviceEndpoints: $.serviceEndpoints + list($newEndpoint)
+  _createOrUpdateService:
+    Arguments:
+      - name:
+          Contract: $.string().notNull()
+      - ports:
+          Contract:
+            - assignedPort: $.int().notNull()
+              applicationPort: $.class(docker:ApplicationPort).notNull()
+      - podId:
+          Contract: $.string().notNull()
+      - isNew:
+          Contract: $.bool().notNull()
+
+    Body:
+      - $serviceDefinition:
+          apiVersion: v1beta3
+          kind: Service
+          metadata:
+            labels:
+              name: $name
+            name: $name
+          spec:
+            ports: $ports.select(dict(
+                port => $.assignedPort,
+                targetPort => $.applicationPort.port,
+                protocol => $.applicationPort.protocol,
+                name => str($.assignedPort)
+              ))
+            selector:
+              id: $podId
+
+      - If: $.gatewayCount = 0
+        Then:
+          - $serviceDefinition.spec.publicIPs: $.minionNodes.take($.nodeCount).select($.getIp())
+
+      - $resources: new(sys:Resources)
+      - $template: $resources.yaml('UpdateService.template').bind(dict(
+            serviceDefinition => $serviceDefinition,
+            isNew => $isNew
+          ))
+      - Return: $.masterNode.instance.agent.call($template, $resources)
+
+
+  _updateEndpoints:
+    Arguments:
+      - ports:
+          Contract:
+            - assignedPort: $.int().notNull()
+              applicationPort: $.class(docker:ApplicationPort).notNull()
+      - applicationName:
+          Contract: $.string().notNull()
+      - podId:
+          Contract: $.string().notNull()
+      - serviceName:
+          Contract: $.string().notNull()
+      - serviceIp:
+          Contract: $.string().notNull()
+    Body:
+      - $.serviceEndpoints: $.serviceEndpoints.where($.applicationName != $applicationName or $.podId != $podId)
+      - For: port
+        In: $ports
+        Do:
           - $newEndpoint:
-              port: $applicationPort.port
+              port: $port.assignedPort
+              address: $serviceIp
+              scope: internal
+              portScope: $port.applicationPort.scope
+              applicationName: $applicationName
+              containerPort: $port.applicationPort.port
+              protocol: $port.applicationPort.protocol
+              podId: $podId
+              serviceName: $serviceName
+
+          - $.serviceEndpoints: $.serviceEndpoints + list($newEndpoint)
+          - If: $port.applicationPort.scope in list(public, cloud)
+            Then:
+              - If: $.gatewayCount > 0
+                Then:
+                  - $nodes: $.gatewayNodes.take($.gatewayCount)
+                Else:
+                  - $nodes: $.minionNodes.take($.nodeCount)
+
+              - For: t
+                In: $nodes
+                Do:
+                  - $newEndpoint.address: $t.getIp()
+                  - $newEndpoint.scope: cloud
+                  - $.serviceEndpoints: $.serviceEndpoints + list($newEndpoint)
+
+                  - If: $t.instance.floatingIpAddress != null and $port.applicationPort.scope = public
+                    Then:
+                    - $newEndpoint.address: $t.instance.floatingIpAddress
+                    - $newEndpoint.scope: public
+                    - $.serviceEndpoints: $.serviceEndpoints + list($newEndpoint)
+          - $newEndpoint:
+              port: $port.applicationPort.port
               address: '127.0.0.1'
               scope: host
-              portScope: $applicationPort.scope
-              containerPort: $applicationPort.port
-              protocol: $applicationPort.protocol
+              portScope: $port.applicationPort.scope
+              containerPort: $port.applicationPort.port
+              protocol: $port.applicationPort.protocol
               applicationName: $applicationName
               podId: $podId
               serviceName: null
           - $.serviceEndpoints: $.serviceEndpoints + list($newEndpoint)
 
-      - For: service
-        In: $applicationServices.keys()
-        Do:
-          - If: not $service in $servicesUsed
-            Then:
-              - $._deleteService($service)
-      - $._environment.stack.push()
 
-
-  _createService:
-    Arguments:
-      - podId:
-          Contract: $.string().notNull()
-      - serviceName:
-          Contract: $.string().notNull()
-      - servicePort:
-          Contract: $.int().notNull()
-      - applicationPort:
-          Contract: $.class(docker:ApplicationPort)
+  _updateServicePublicIps:
     Body:
-      - $resources: new(sys:Resources)
-      - $serviceDefinition: $._buildServiceDefinition(
-            $serviceName,
-            $servicePort,
-            $applicationPort.protocol,
-            $applicationPort.port,
-            $podId,
-            $.gatewayCount = 0
-          )
-      - $template: $resources.yaml('UpdateService.template').bind(dict(
-            serviceDefinition => $serviceDefinition,
-            isNew => true
-          ))
-      - $securityGroupIngress:
-          - ToPort: $servicePort
-            FromPort: $servicePort
-            IpProtocol: toLower($applicationPort.protocol)
-            External: $applicationPort.scope = public
-
-      - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
-
-      - Return: $.masterNode.instance.agent.call($template, $resources)
-
-
-  _updateService:
-    Arguments:
-      - podId:
-          Contract: $.string().notNull()
-      - endpoint:
-          Contract:
-            port: $.int().notNull().check($ > 0)
-            address: $.string().notNull()
-            scope: $.string().notNull().check($ in list(public, cloud, internal, host))
-            containerPort: $.int().notNull().check($ > 0)
-            protocol: $.string().notNull().check($ in list(TCP, UDP))
-            applicationName: $.string().notNull()
-            podId: $.string().notNull()
-            serviceName: $.string()
-
-    Body:
-      - $resources: new(sys:Resources)
-      - $prevNodeCount: $.getAttr(lastNodeCount, 0-1) # 0-1 instead of -1 because YAQL 0.2 doesn't understand unary operators
-      - $prevGatewayCount: $.getAttr(lastGatewayCount, 0-1)
+      - $prevNodeCount: $.getAttr(lastNodeCount, 0)
+      - $prevGatewayCount: $.getAttr(lastGatewayCount, 0)
       - $gatewayModeChanged: $prevGatewayCount != $.gatewayCount and $prevGatewayCount * $.gatewayCount = 0
-
-      - $serviceChanged: $endpoint.podId != $podId or
-          $endpoint.portScope in list(public, cloud) and (
-          $gatewayModeChanged or $.gatewayCount = 0 and $prevNodeCount != $.nodeCount)
-      - If: $serviceChanged
+      - If: $prevGatewayCount > 0 and $.gatewayCount > 0
         Then:
-          - $serviceDefinition: $._buildServiceDefinition(
-                $endpoint.serviceName,
-                $endpoint.port,
-                $endpoint.protocol,
-                $endpoint.containerPort,
-                $podId,
-                $.gatewayCount = 0
-              )
-          - $template: $resources.yaml('UpdateService.template').bind(dict(
-                serviceDefinition => $serviceDefinition,
-                isNew => false
-              ))
-          - $serviceIp: $.masterNode.instance.agent.call($template, $resources)
-        Else:
-          - $serviceIp: $endpoint.address
-      - Return: $serviceIp
-
-
-  _updateEndpoints:
-    Body:
+          - Return:
+      - If: $prevGatewayCount = 0 and $.gatewayCount = 0 and $prevNodeCount = $.nodeCount
+        Then:
+          - Return:
+      - $serviceNameMap: {}
       - For: endpoint
         In: $.serviceEndpoints
         Do:
-          - $._updateService($endpoint.podId, $endpoint)
-      -  $.setAttr(lastNodeCount, $.nodeCount)
-      -  $.setAttr(lastGatewayCount, $.gatewayCount)
-
-
-  _deleteService:
-    Arguments:
-      serviceName:
-        Contract: $.string().notNull()
-    Body:
-      - $resources: new(sys:Resources)
-      - $template: $resources.yaml('DeleteService.template').bind(dict(
-            serviceId => $service
-          ))
-      - $.masterNode.instance.agent.call($template, $resources)
+          - $serviceName: $endpoint.serviceName
+          - If: $serviceName != null
+            Then:
+              - $serviceNameMap[$serviceName]: true
+      - $uniqueServiceNames: $serviceNameMap.keys()
+      - If: len($uniqueServiceNames) > 0
+        Then:
+          - $publicIPs: $.minionNodes.take($.nodeCount).select($.getIp())
+          - $resources: new(sys:Resources)
+          - $template: $resources.yaml('PatchServices.template').bind(dict(
+                services => $uniqueServiceNames,
+                publicIPs => $publicIPs
+              ))
+          - $.masterNode.instance.agent.call($template, $resources)
 
 
   deleteService:
@@ -382,7 +391,11 @@ Methods:
       - podId:
           Contract: $.string().notNull()
     Body:
-      - $._deleteService($applicationName, $podId)
+      - $resources: new(sys:Resources)
+      - $template: $resources.yaml('DeleteService.template').bind(dict(
+            serviceId => $service
+          ))
+      - $.masterNode.instance.agent.call($template, $resources)
 
 
   _findUnusedPort:
@@ -411,36 +424,6 @@ Methods:
           Contract: $.string().notNull()
     Body:
       - Return: len(list($.serviceEndpoints.where($.port = $port).where($.protocol = $protocol))) = 0
-
-
-  _buildServiceDefinition:
-    Arguments:
-      - serviceName:
-          Contract: $.string().notNull()
-      - servicePort:
-          Contract: $.int().notNull()
-      - protocol:
-          Contract: $.string().notNull()
-      - containerPort:
-          Contract: $.int().notNull()
-      - podId:
-          Contract: $.string().notNull()
-      - withNodeIps:
-          Contract: $.bool().notNull()
-    Body:
-      - $result:
-          id: $serviceName
-          kind: Service
-          apiVersion: v1beta1
-          port: $servicePort
-          containerPort: $containerPort
-          protocol: $protocol
-          selector:
-            id: $podId
-      - If: $withNodeIps
-        Then:
-          - $result.publicIPs: $.minionNodes.take($.nodeCount).select($.getIp())
-      - Return: $result
 
 
   scaleNodesUp:

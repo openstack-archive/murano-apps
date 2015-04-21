@@ -9,7 +9,7 @@ Name: KubernetesMinionNode
 Extends: KubernetesNode
 
 Properties:
-  enableMonitoring:
+  exposeCAdvisor:
     Contract: $.bool().notNull()
     Default: false
 
@@ -25,7 +25,7 @@ Methods:
     Body:
       - If: not $.getAttr(instanceDeployed, false)
         Then:
-          - $._environment.reporter.report($this, 'Creating Kubernetes Minion')
+          - $._environment.reporter.report($this, 'Creating Kubernetes Node {0}'.format($.instance.name))
           - $.super($.deployInstance())
           - $.setAttr(instanceDeployed, true)
 
@@ -60,32 +60,52 @@ Methods:
           - $template: $resources.yaml('SetupFlannelNode.template')
           - $.instance.agent.call($template, $resources)
 
-          - If: $.enableMonitoring
-            Then:
-              - $._environment.reporter.report($this, 'Adding access to cAdvisor')
-              - $securityGroupIngress:
-                  - ToPort: 4194
-                    FromPort: 4194
-                    IpProtocol: tcp
-                    External: true
-              - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+          - $securityGroupIngress:
+              - ToPort: 4194
+                FromPort: 4194
+                IpProtocol: tcp
+                External: $.exposeCAdvisor
+          - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
 
           - $._environment.reporter.report($, 'Setup Kubernetes Minion on {0}'.format($.instance.name))
           - $template: $resources.yaml('KubeMinionSetup.template').bind(dict(
                 name => $.instance.name,
                 ip => $.getIp(),
                 masterIp => $._cluster.masterNode.getIp(),
-                enableMonitoring => $.enableMonitoring,
                 dockerRegistry => $._cluster.dockerRegistry
               ))
           - $.instance.agent.call($template, $resources)
-
-          - $template: $resources.yaml('KubeRegisterNode.template').bind(dict(
-                name => $.instance.name,
-                nodeId => $.getIp()
-              ))
-          - $._cluster.masterNode.instance.agent.call($template, $resources)
+          - $._registerNode()
           - $.setAttr(nodeConfigured, true)
+          - $msg: 'cAdvisor monitoring for Node {0} is now available at http://{1}:4194'
+          - $ip: $.getIp()
+          - If: $.exposeCAdvisor
+            Then:
+              - $ip: coalesce($.instance.floatingIpAddress, $.getIp())
+          - $._environment.reporter.report($this, $msg.format($.instance.name, $ip))
+
+
+  _registerNode:
+    Body:
+      - $nodeDefinition:
+          kind: Node
+          apiVersion: v1beta3
+          metadata:
+            name: $.getIp()
+            labels:
+              name: $.instance.name
+          spec:
+            externalID: $.id()
+            status:
+              capacity:
+                cpu: 200
+                memory: 4145438720
+
+      - $resources: new(sys:Resources)
+      - $template: $resources.yaml('KubeRegisterNode.template').bind(dict(
+            nodeDefinition => $nodeDefinition
+          ))
+      - $._cluster.masterNode.instance.agent.call($template, $resources)
 
 
   removeFromCluster:

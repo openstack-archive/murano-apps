@@ -5,10 +5,9 @@
 DEFINITION_DIR=/var/run/murano-kubernetes
 mkdir -p $DEFINITION_DIR
 serviceId=$2
-kind=$3
-fileName=$4
+fileName=$3
 
-echo "$serviceId $kind $fileName" >> $DEFINITION_DIR/elements.list
+echo "$serviceId Service $fileName" >> $DEFINITION_DIR/elements.list
 
 if [ "$1" == "True" ]; then
   echo "Creating a new Service" >> /tmp/murano-kube.log
