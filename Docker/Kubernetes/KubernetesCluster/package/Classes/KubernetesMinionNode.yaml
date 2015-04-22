@@ -99,6 +99,10 @@ Methods:
 
   _registerNode:
     Body:
+      - $resources: new(sys:Resources)
+      - $template: $resources.yaml('GetNodeCapabilities.template')
+      - $capacity: $.instance.agent.call($template, $resources)
+
       - $nodeDefinition:
           kind: Node
           apiVersion: v1beta3
@@ -109,11 +113,8 @@ Methods:
           spec:
             externalID: $.id()
             status:
-              capacity:
-                cpu: 200
-                memory: 4145438720
+              capacity: $capacity
 
-      - $resources: new(sys:Resources)
       - $template: $resources.yaml('KubeRegisterNode.template').bind(dict(
             nodeDefinition => $nodeDefinition
           ))
