@@ -36,7 +36,7 @@ Image building
 .. sourcecode:: bash
 
     sudo ELEMENTS_PATH=${murano_agent_root}/contrib/elements:${murano_apps_root}/Docker/Kubernetes/KubernetesCluster/elements disk-image-create \
-        vm ubuntu murano-agent docker -o ubuntu14.04-x64-kubernetes
+        vm ubuntu murano-agent docker kubernetes -o ubuntu14.04-x64-kubernetes
 
 Where ${murano_agent_root} is a path to murano-agent files
 and ${murano_apps_root} is a path to murano-apps files.
