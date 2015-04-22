@@ -100,7 +100,6 @@ Methods:
           select($this._buildVolumeEntry($))
 
       - $diff:
-      - $diff:
           spec:
             containers: [$containerDef]
             volumes: $newVolumes
