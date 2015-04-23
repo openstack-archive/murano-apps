@@ -6,9 +6,8 @@ DEFINITION_DIR=/var/run/murano-kubernetes
 mkdir -p $DEFINITION_DIR
 
 podId=$2
-kind=$3
-fileName=$4
-echo "$podId $kind $fileName" >> $DEFINITION_DIR/elements.list
+fileName=$3
+echo "$podId Pod $fileName" >> $DEFINITION_DIR/elements.list
 
 if [ "$1" == "True" ]; then
   #new Pod
