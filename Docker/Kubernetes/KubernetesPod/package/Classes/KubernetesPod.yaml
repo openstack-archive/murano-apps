@@ -94,7 +94,7 @@ Methods:
           args: $container.commands
           ports: $container.ports.select($this._getPortDefinition($))
           volumeMounts: $container.volumes.keys().select(dict(name => $this._generateVolumeName($container.volumes.get($)), mountPath => $))
-          env: $container.env.keys().select(dict(key => $, value => $container.env.get($)))
+          env: $container.env.keys().select(dict(name => $, value => $container.env.get($)))
 
       - $newVolumes: $container.volumes.values().where(not $this._generateVolumeName($) in $this._podDefinition.spec.volumes.name).
           select($this._buildVolumeEntry($))
