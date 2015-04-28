@@ -50,8 +50,8 @@ Forms:
         - name: publish
           type: boolean
           label: Visible from outside
-          initial: false
-          required: true
+          initial: true
+          required: false
           description: >-
             Check if you intend to access the application from the Internet
 
