@@ -41,23 +41,37 @@ Methods:
   initialize:
     Body:
       - $._environment: $.find(std:Environment).require()
+      - $._podDefinition: null
 
-      - $podName: $._getPodName()
-      - $podDefinition: $.getAttr(lastPodDeployed, null)
-      - If: $podDefinition = null
+
+  # this is a workaround for early initialization. If docker application was deleted
+  # its destroy method will call deleteContainer method that will change _podDefinition
+  # on KubernetesPod loaded from ObjectsCopy
+  # but ininitialize method on a KubernetesPod from Objects is called before destruction
+  # and because we have 2 different KubernetesPod objects that share attributes but
+  # not private variables _podDefinition of real object will still contain outdated data
+  _loadCurrentPodDefinition:
+    Body:
+      - If: $._podDefinition = null
         Then:
-          - $podDefinition:
-              apiVersion: v1beta3
-              kind: Pod
-              metadata:
-                name: $podName
-                labels: $._getPodLabels($podName)
-              spec:
-                containers: []
-                volumes: []
+          - $podName: $._getPodName()
+          - $podDefinition: $.getAttr(lastPodDeployed, null)
+          - If: $podDefinition = null
+            Then:
+              - $podDefinition:
+                  apiVersion: v1beta3
+                  kind: Pod
+                  metadata:
+                    name: $podName
+                    labels: $._getPodLabels($podName)
+                  spec:
+                    containers: []
+                    volumes: []
 
-          - $.setAttr(lastPodDeployed, $podDefinition)
-      - $._podDefinition: $podDefinition
+              - $.setAttr(lastPodDeployed, $podDefinition)
+          - $._podDefinition: $podDefinition
+      - Return: $._podDefinition
+
 
   _getPodName:
     Body:
@@ -75,6 +89,7 @@ Methods:
       - container:
           Contract: $.class(docker:DockerContainer)
     Body:
+      - $._loadCurrentPodDefinition()
       - $podName: $._getPodName()
       - For: port
         In: $container.ports
@@ -93,11 +108,15 @@ Methods:
           image: $container.image
           args: $container.commands
           ports: $container.ports.select($this._getPortDefinition($))
-          volumeMounts: $container.volumes.keys().select(dict(name => $this._generateVolumeName($container.volumes.get($)), mountPath => $))
+          volumeMounts: $container.volumes.keys().select(
+            dict(
+              name => $this._generateVolumeName($container.name, $container.volumes.get($)),
+              mountPath => $
+            ))
           env: $container.env.keys().select(dict(name => $, value => $container.env.get($)))
 
-      - $newVolumes: $container.volumes.values().where(not $this._generateVolumeName($) in $this._podDefinition.spec.volumes.name).
-          select($this._buildVolumeEntry($))
+      - $newVolumes: $container.volumes.values().select(
+          $this._buildVolumeEntry($container.name, $))
 
       - $diff:
           spec:
@@ -136,6 +155,8 @@ Methods:
 
   _buildVolumeEntry:
     Arguments:
+      - name:
+          Contract: $.string().notNull()
       - volume:
           Contract: $.class(docker:DockerVolume).notNull()
     Body:
@@ -153,7 +174,7 @@ Methods:
           - Throw: UnknownDockerVolumeType
             Message: format('Unknown docker volume type {0}', $type)
       - Return:
-          name: $._generateVolumeName($volume)
+          name: $._generateVolumeName($name, $volume)
           source: $spec
 
 
@@ -163,9 +184,25 @@ Methods:
           Contract: $.string().notNull()
     Body:
       - $lenBefore: len($._podDefinition.spec.containers) + len($._podDefinition.spec.volumes)
-      - $newContainers: $._podDefinition.spec.containers.where($.name != $name)
+      - $containerName: toLower($name)
+      - $newContainers: $._podDefinition.spec.containers.where($.name != $containerName)
+      - $volumeNameMap: $.getAttr(volumeNameMap, dict())
+      - $newVolumeNameMap: {}
+      - $volumesToDelete: []
+      - $prefix: format('{0}/'.format($name))
+      - For: key
+        In: $volumeNameMap.keys()
+        Do:
+          - $volumeName: $volumeNameMap.get($key)
+          - If: $key.startsWith($prefix)
+            Then:
+              - $volumesToDelete: $volumesToDelete + list($volumeName)
+            Else:
+              - $newVolumeNameMap[$key]: $volumeName
+      - $.setAttr(volumeNameMap, $newVolumeNameMap)
+
       - $newVolumes: $._podDefinition.spec.volumes.where(
-            $.name in $._podDefinition.spec.containers.volumeMounts.name)
+            not ($.name in $volumesToDelete))
       - If: len($newContainers) + len($newVolumes) != $lenBefore
         Then:
           - $._podDefinition.spec.containers: $newContainers
@@ -177,8 +214,9 @@ Methods:
       - name:
           Contract: $.string().notNull()
     Body:
+      - $._loadCurrentPodDefinition()
       - $._deleteContainer($name)
-      - $.kubernetesCluster.deleteService(
+      - $.kubernetesCluster.deleteServices(
             applicationName => $name,
             podId => $._getPodName())
       - $.deploy()
@@ -186,14 +224,25 @@ Methods:
 
   _generateVolumeName:
     Arguments:
+      - name:
+          Contract: $.string().notNull()
       - volume:
           Contract: $.class(docker:DockerVolume).notNull()
     Body:
-      Return: toLower($volume.name)
+      - $key: format('{0}/{1}', $name, $volume.name)
+      - $map: $.getAttr(volumeNameMap, dict())
+      - $volumeName: $map.get($key)
+      - If: $volumeName = null
+        Then:
+          - $volumeName: randomName()
+          - $map[$key]: $volumeName
+          - $.setAttr(volumeNameMap, $map)
+      - Return: $volumeName
 
 
   deploy:
     Body:
+      - $._loadCurrentPodDefinition()
       - $prevPod: $.getAttr(lastPodDeployed, null)
       - $prevReplicas: $.getAttr(lastReplicas, 0)
 

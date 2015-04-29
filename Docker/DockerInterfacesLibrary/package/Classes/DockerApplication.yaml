@@ -59,6 +59,16 @@ Methods:
           - $.onInstallationFinish()
 
 
+  destroy:
+    Body:
+      - $.host.deploy()
+      - If: $.getAttr(container, null) != null
+        Then:
+          - $container: $.getContainer()
+          - $.host.deleteContainer($container.name)
+          - $.setAttr(container, null)
+
+
   getConnectionTo:
     Arguments:
       - application:

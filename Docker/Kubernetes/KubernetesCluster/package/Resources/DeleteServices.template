@@ -12,13 +12,15 @@
 
 FormatVersion: 2.0.0
 Version: 1.0.0
-Name: Delete Service
+Name: Delete Services
 
 Parameters:
-  serviceId: $serviceId
+  services: $services
 
 Body: |
-  return deleteService('{0}'.format(args.serviceId)).stdout
+  services = set(args.services)
+  for service in services:
+      deleteService(service)
 
 Scripts:
   deleteService:

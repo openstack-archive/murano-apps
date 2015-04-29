@@ -200,7 +200,7 @@ Methods:
       - $applicationPorts: $.getAttr(applicationPorts, dict())
       - $key: format('{0}-{1}-{2}', $applicationPort.port, $applicationPort.protocol, $applicationName)
 
-      - If: $key in $applicationPorts
+      - If: $key in $applicationPorts.keys()
         Then:
           - Return: $applicationPorts.get($key)
 
@@ -242,7 +242,7 @@ Methods:
       - For: key
         In: $applicationPorts.keys()
         Do:
-          - $value: $applicationPorts.get($port)
+          - $value: $applicationPorts.get($key)
           - If: not $value in $portsToDelete
             Then:
               - $newApplicationPorts[$key]: $value

@@ -72,6 +72,7 @@ Methods:
 
   deploy:
     Body:
+      - $.serviceEndpoints: $.getAttr(serviceEndpoints, list())
       - If: not $.getAttr(deployed, false)
         Then:
           - $._environment.reporter.report($this, 'Creating VMs for Kubernetes cluster')
@@ -127,6 +128,7 @@ Methods:
           - $.setAttr(lastNodeCount, $.nodeCount)
           - $.setAttr(lastGatewayCount, $.gatewayCount)
           - $._environment.reporter.report($this, 'Kubernetes cluster is up and running')
+      - $.setAttr(serviceEndpoints, $.serviceEndpoints)
 
 
   getIp:
@@ -201,6 +203,7 @@ Methods:
       - podId:
           Contract: $.string().notNull()
     Body:
+      - $.serviceEndpoints: $.getAttr(serviceEndpoints, list())
       - $currentEndpoints: $.serviceEndpoints.where($.applicationName = $applicationName and $.podId = $podId and $.scope = internal)
       - $serviceName: format('svc-{0}', randomName())
       - $endpointMap: {}
@@ -256,6 +259,7 @@ Methods:
                 serviceIp => $serviceIp
               )
           - $._environment.stack.push()
+      - $.setAttr(serviceEndpoints, $.serviceEndpoints)
 
 
   _createOrUpdateService:
@@ -396,18 +400,22 @@ Methods:
           - $.masterNode.instance.agent.call($template, $resources)
 
 
-  deleteService:
+  deleteServices:
     Arguments:
       - applicationName:
           Contract: $.string().notNull()
       - podId:
           Contract: $.string().notNull()
     Body:
+      - $.serviceEndpoints: $.getAttr(serviceEndpoints, list())
       - $resources: new(sys:Resources)
-      - $template: $resources.yaml('DeleteService.template').bind(dict(
-            serviceId => $service
+      - $services: $.serviceEndpoints.where($.scope = internal and $.podId = $podId).select($.serviceName)
+      - $template: $resources.yaml('DeleteServices.template').bind(dict(
+            services => $services
           ))
       - $.masterNode.instance.agent.call($template, $resources)
+      - $.serviceEndpoints: $.serviceEndpoints.where($.podId != $podId)
+      - $.setAttr(serviceEndpoints, $.serviceEndpoints)
 
 
   _findUnusedPort:
