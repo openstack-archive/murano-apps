@@ -62,10 +62,12 @@ Methods:
         Then:
           - $._environment.reporter.report($this, 'Create VM for Docker Server')
           - $.instance.deploy()
+          - $resources: new(sys:Resources)
+          - $template: $resources.yaml('StartDocker.template')
+          - $.instance.agent.call($template, $resources)
           - If: $.dockerRegistry != null and $.dockerRegistry != ''
             Then:
               - $._environment.reporter.report($this, 'Configuring Docker registry')
-              - $resources: new(sys:Resources)
               - $template: $resources.yaml('SetupDockerRegistry.template').bind(dict(
                     dockerRegistry => $.dockerRegistry
                   ))
