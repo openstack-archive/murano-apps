@@ -469,6 +469,8 @@ Methods:
           - $._environment.reporter.report($this, 'Scaling up Kubernetes cluster')
           - $.nodeCount: $.nodeCount + 1
           - $.deploy()
+        Else:
+          - $._environment.reporter.report($this, 'The maximum number of nodes has been reached')
 
 
   scaleNodesDown:
@@ -479,6 +481,8 @@ Methods:
           - $._environment.reporter.report($this, 'Scaling Kubernetes cluster down')
           - $.nodeCount: $.nodeCount - 1
           - $.deploy()
+        Else:
+          - $._environment.reporter.report($this, 'At least one node must be in cluster')
 
 
   scaleGatewaysUp:
@@ -489,6 +493,8 @@ Methods:
           - $._environment.reporter.report($this, 'Adding new gateway node')
           - $.gatewayCount: $.gatewayCount + 1
           - $.deploy()
+        Else:
+          - $._environment.reporter.report($this, 'The maximum number of nodes has been reached')
 
 
   scaleGatewaysDown:
