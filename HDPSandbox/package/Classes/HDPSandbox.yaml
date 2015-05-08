@@ -1,0 +1,35 @@
+Namespaces:
+  =: io.murano.apps.linux
+  std: io.murano
+  res: io.murano.resources
+
+
+Name: HDPSandbox
+
+Extends: std:Application
+
+Properties:
+  name:
+    Contract: $.string().notNull()
+
+  instance:
+    Contract: $.class(res:Instance).notNull()
+
+Methods:
+  initialize:
+    Body:
+      - $.environment: $.find(std:Environment).require()
+
+  deploy:
+    Body:
+      - $.environment.reporter.report($this, 'Creating VM')
+      - $securityGroupIngress:
+        - FromPort: 1
+          ToPort: 65535
+          IpProtocol: tcp
+          External: true
+      - $.environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+      - $.instance.deploy()
+      - $msg: 'HDP Sandbox is installed and running at http://'
+      - $ep: $.instance.floatingIpAddress + ':8888'
+      - $.environment.reporter.report($this, $msg + $ep)

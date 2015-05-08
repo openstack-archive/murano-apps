@@ -1,0 +1,41 @@
+Version: 2
+
+Application:
+  ?:
+    type: io.murano.apps.HDPSandbox
+  name: $.appConfiguration.name
+  instance:
+    ?:
+      type: io.murano.resources.LinuxMuranoInstance
+    name: generateHostname($.instanceConfiguration.unitNamingPattern, 1)
+    flavor: $.instanceConfiguration.flavor
+    image: 'hdp-sandbox'
+    assignFloatingIp: true
+
+Forms:
+  - appConfiguration:
+      fields:
+        - name: name
+          type: string
+          label: Application Name
+          initial: 'HDP-Sandbox'
+          description: >-
+            Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
+            underline are allowed
+  - instanceConfiguration:
+      fields:
+        - name: flavor
+          type: flavor
+          label: Instance flavor
+          description: >-
+            Select registered in Openstack flavor. Consider that application performance
+            depends on this parameter.
+          required: false
+          requirements:
+            min_disk: 50
+            min_memory_mb: 4096
+            min_vcpus: 1
+        - name: unitNamingPattern
+          label: Hostname
+          type: string
+          required: false
