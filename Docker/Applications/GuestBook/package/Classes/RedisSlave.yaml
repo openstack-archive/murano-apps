@@ -31,12 +31,6 @@ Properties:
 
 
 Methods:
-  initialize:
-    Body:
-      - $._environment: $.find(std:Environment).require()
-      - $._scope: switch($.publish, $ => public, not $ => internal)
-
-
   getContainer:
     Body:
       - $redisMasterLink: $.getConnectionTo($.redisMaster, 6379)
@@ -44,24 +38,8 @@ Methods:
           name: $.name
           image: 'brendanburns/redis-slave'
           env:
-            REDIS_MASTER_SERVICE_HOST: $redisMaster.host
-            REDIS_MASTER_SERVICE_PORT: $redisMaster.port
+            REDIS_MASTER_SERVICE_HOST: $redisMasterLink.host
+            REDIS_MASTER_SERVICE_PORT: $redisMasterLink.port
           ports:
             - port: 6379
-              scope: $._scope
-
-
-  onInstallationStart:
-    Body:
-      - $._environment.reporter.report($this, 'Installing RedisSlave')
-
-
-  onInstallationFinish:
-    Body:
-      - If: $.publish
-        Then:
-          - $endpoints: $.applicationEndpoints.where($.scope = $this._scope).
-              select(format('{0}:{1}', $.address, $.port))
-          - $._environment.reporter.report($this, 'Redis Slave {0} is available at {1}'.format($.name, join(', ', $endpoints)))
-        Else:
-          - $._environment.reporter.report($this, 'Redis Slave {0} has deployed but is not accessible from outside'.format($.name))
+              scope: switch($.publish, $ => public, not $ => internal)
