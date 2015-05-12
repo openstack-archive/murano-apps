@@ -54,8 +54,8 @@ Methods:
           - $._environment.reporter.report($this, 'Instance has been created. Installing Rally...')
           # Install Rally
           - $template: $resources.yaml('InstallRally.template').bind(dict(
-                repository => $repository,
-                version => $version
+                repository => $.repository,
+                version => $.version
               ))
           - $.instance.agent.call($template, $resources)
           - $._environment.reporter.report($this, 'Rally has been installed.')
