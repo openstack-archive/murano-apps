@@ -86,7 +86,7 @@ Methods:
         Else:
           - If: $.host.getInternalScopeId() = $application.host.getInternalScopeId()
             Then:
-              - $scopes: list(internal) + $scope
+              - $scopes: list(internal) + $scopes
       - For: s
         In: $scopes
         Do:

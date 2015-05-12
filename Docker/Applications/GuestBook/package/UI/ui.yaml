@@ -20,6 +20,14 @@ Templates:
     kubernetesCluster: $.appConfiguration.kubernetesCluster
     replicas: 3
 
+  redisSlaveHost:
+    ?:
+      type: io.murano.apps.docker.kubernetes.KubernetesPod
+    name: 'redis-slave'
+    labels: 'name=redis-slave,app=redis,uses=redis-master'
+    kubernetesCluster: $.appConfiguration.kubernetesCluster
+    replicas: 2
+
   redisMaster:
     ?:
       type: io.murano.apps.docker.DockerRedis
@@ -33,19 +41,6 @@ Templates:
       replicas: 1
     publish: false
 
-  redisSlave:
-    ?:
-      type: io.murano.apps.docker.DockerRedisSlave
-    name: RedisSlave
-    host:
-      ?:
-        type: io.murano.apps.docker.kubernetes.KubernetesPod
-      name: 'redis-slave'
-      labels: 'name=redis-slave,app=redis,uses=redis-master'
-      kubernetesCluster: $.appConfiguration.kubernetesCluster
-      replicas: 2
-    publish: false
-    redisMaster: $redisMaster
 
 Application:
   ?:
@@ -53,7 +48,8 @@ Application:
   name: $.appConfiguration.name
   host: $guestBookHost
   redisMaster: $redisMaster
-  redisSlave: $redisSlave
+
+  redisSlaveHost: $redisSlaveHost
   publish: $.appConfiguration.publish
 
 
