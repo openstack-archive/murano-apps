@@ -29,8 +29,12 @@ Properties:
   redisMaster:
     Contract: $.class(DockerRedis).notNull()
 
+  redisSlaveHost:
+    Contract: $.class(DockerContainerHost).notNull()
+
   redisSlave:
-    Contract: $.class(DockerRedisSlave).notNull()
+    Contract: $.class(DockerRedisSlave)
+    Usage: Out
 
 
 Methods:
@@ -43,6 +47,12 @@ Methods:
   deploy:
     Body:
       - $.redisMaster.deploy()
+      - $.redisSlave: new(
+          DockerRedisSlave,
+          name => 'RedisSlave',
+          host => $this.redisSlaveHost,
+          publish => false,
+          redisMaster => $this.redisMaster)
       - $.redisSlave.deploy()
       - $.super($.deploy())
 
@@ -55,10 +65,10 @@ Methods:
           name: $.name
           image: 'brendanburns/php-redis'
           env:
-            REDIS_MASTER_SERVICE_HOST: $.redisMaster.host
-            REDIS_MASTER_SERVICE_PORT: $.redisMaster.port
-            REDISSLAVE_SERVICE_HOST: $.redisSlave.host
-            REDISSLAVE_SERVICE_PORT: $.redisSlave.port
+            REDIS_MASTER_SERVICE_HOST: $redisMasterLink.host
+            REDIS_MASTER_SERVICE_PORT: $redisMasterLink.port
+            REDISSLAVE_SERVICE_HOST: $redisSlaveLink.host
+            REDISSLAVE_SERVICE_PORT: $redisSlaveLink.port
           ports:
             - port: 80
               scope: $._scope
