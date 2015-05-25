@@ -20,3 +20,7 @@ Author: 'Mirantis, Inc'
 Tags: [docker, application, Grafana]
 Classes:
  io.murano.apps.docker.DockerGrafana: DockerGrafana.yaml
+Require:
+  io.murano.apps.docker.DockerStandaloneHost:
+  io.murano.apps.docker.kubernetes.KubernetesPod:
+  io.murano.apps.docker.DockerInfluxDB:

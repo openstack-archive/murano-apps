@@ -23,3 +23,5 @@ Classes:
  io.murano.apps.docker.kubernetes.static.Pod: Pod.yaml
  io.murano.apps.docker.kubernetes.static.Service: Service.yaml
  io.murano.apps.docker.kubernetes.static.ReplicationController: ReplicationController.yaml
+Require:
+  io.murano.apps.docker.kubernetes.KubernetesCluster:
