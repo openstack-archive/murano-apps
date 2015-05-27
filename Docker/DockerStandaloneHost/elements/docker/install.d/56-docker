@@ -2,7 +2,22 @@
 
 set -eu
 
-if [ -e /etc/lsb-release ]; then
+os=$(uname)
+dist_name='Unknown'
+
+if [ "${os}" = "Linux" ] ; then
+    if [ -f /etc/redhat-release ] ; then
+        dist_name=$(cat /etc/redhat-release |sed s/\ release.*//)
+    elif [ -f /etc/SuSE-release ] ; then
+        dist_name='SuSe'
+    elif [ -f /etc/lsb-release ]; then
+        dist=$(cat /etc/lsb-release | grep '^DISTRIB_ID' | awk -F=  '{ print $2 }')
+    fi
+fi
+
+dist_name=$(lowercase $dist_name)
+
+if [ "${dist_name}" == 'ubuntu' ]; then
     if [ -e /usr/lib/apt/methods/https ]; then
         apt-get update
         apt-get install apt-transport-https
@@ -12,5 +27,6 @@ if [ -e /etc/lsb-release ]; then
     apt-get update
     apt-get -y install lxc-docker=1.6.2
 else
-    yum -y install docker
+    install-packages curl
+    curl -sSL https://get.docker.com/ | sh
 fi
