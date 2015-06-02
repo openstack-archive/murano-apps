@@ -1,0 +1,46 @@
+#  Licensed under the Apache License, Version 2.0 (the "License"); you may
+#  not use this file except in compliance with the License. You may obtain
+#  a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#  License for the specific language governing permissions and limitations
+#  under the License.
+
+Namespaces:
+  =: io.murano.apps.activeDirectory
+  std: io.murano
+
+Name: DomainHost
+
+Extends: Host
+
+Properties:
+  domain:
+    Contract: $.class(ActiveDirectory)
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+  deploy:
+    Arguments:
+    Body:
+      # If domain object exists, deploy ActiveDirectory first
+      - If: $.domain != null
+        Then:
+          - $._environment.reporter.report($this, format('Deploying domain host'))
+          - $.domain.deploy()
+
+      # Deploy this host
+      - $.super($.deploy())
+
+      # If domain object exists, join domain
+      - If: $.domain != null
+        Then:
+          # Workaround against broken ResourceManager:
+          - $.super($.joinDomain($this.domain))
