@@ -20,3 +20,7 @@ Author: 'Mirantis, Inc'
 Tags: [CMS, PHP, Web]
 Classes:
  io.murano.apps.WordPress: WordPress.yaml
+Require:
+ io.murano.databases.MySql:
+ io.murano.apps.apache.ApacheHttpServer:
+ io.murano.apps.ZabbixAgent:

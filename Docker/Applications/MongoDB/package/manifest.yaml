@@ -20,3 +20,6 @@ Author: 'Mirantis, Inc'
 Tags: [Docker, MongoDB]
 Classes:
  io.murano.apps.docker.DockerMongoDB: DockerMongoDB.yaml
+Require:
+  io.murano.apps.docker.DockerStandaloneHost:
+  io.murano.apps.docker.kubernetes.KubernetesPod:

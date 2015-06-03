@@ -23,3 +23,6 @@ Author: 'Mirantis, Inc'
 Tags: [docker, application]
 Classes:
  io.murano.apps.docker.DockerApp: DockerApp.yaml
+Require:
+  io.murano.apps.docker.DockerStandaloneHost:
+  io.murano.apps.docker.kubernetes.KubernetesPod:
