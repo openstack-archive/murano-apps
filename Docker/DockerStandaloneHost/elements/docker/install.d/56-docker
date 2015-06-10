@@ -15,7 +15,8 @@ if [ "${os}" = "Linux" ] ; then
     fi
 fi
 
-dist_name=$(lowercase $dist_name)
+# Convert ditribition name to lowercase
+dist_name=${dist_name,,}
 
 if [ "${dist_name}" == 'ubuntu' ]; then
     if [ -e /usr/lib/apt/methods/https ]; then
