@@ -1,0 +1,25 @@
+FormatVersion: 2.1.0
+Version: 1.0.0
+Name: Deploy Orion Chef
+
+Parameters:
+  port: $port
+
+Body: |
+  return executeRecipe(args).stdout
+
+Scripts:
+  executeRecipe:
+    Type: Chef
+    Version: 1.0.0
+    EntryPoint: orion::0.19.0_install
+    Files:
+        -  orion: https://forge.fiware.org/scmrepos/svn/testbed/trunk/cookbooks/GESoftware/orion
+        -  orion-dbcluster:  https://forge.fiware.org/scmrepos/svn/testbed/trunk/cookbooks/GESoftware/orion-dbcluster
+        -  mongodb: https://forge.fiware.org/scmrepos/svn/testbed/trunk/cookbooks/BaseSoftware/mongodb/
+        -  apt: https://forge.fiware.org/scmrepos/svn/testbed/trunk/cookbooks/BaseRecipes/apt/
+        -  yum: https://forge.fiware.org/scmrepos/svn/testbed/trunk/cookbooks/BaseRecipes/yum
+        -  build-essential: https://github.com/opscode-cookbooks/build-essential
+    Options:
+      captureStdout: true
+      captureStderr: true

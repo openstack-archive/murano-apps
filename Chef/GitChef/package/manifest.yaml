@@ -1,0 +1,10 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.conflang.chef.GitChef
+Name: GitChef
+Description: |
+  Git Chef.
+Author: 'TID'
+Tags: [Test, Chef]
+Classes:
+ io.murano.conflang.chef.GitChef: GitChef.yaml
