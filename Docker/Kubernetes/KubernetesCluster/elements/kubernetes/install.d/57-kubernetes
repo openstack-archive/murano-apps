@@ -4,8 +4,9 @@ install-packages curl wget linux-libc-dev git gcc libc6-dev bridge-utils haproxy
 SVC_ROOT=/opt/bin
 
 ETCD_LATEST_VERSION="v2.0.9"
-KUBE_LATEST_VERSION="v0.15.0"
-FLANNEL_LATEST_VERSION="v0.3.1"
+KUBE_LATEST_VERSION="v0.20.1"
+FLANNEL_LATEST_VERSION="v0.5.0"
+CONFD_LATEST_VERSION="0.10.0"
 
 ETCD_LATEST_URL="https://github.com/coreos/etcd/releases/download/${ETCD_LATEST_VERSION}/etcd-${ETCD_LATEST_VERSION}-linux-amd64.tar.gz"
 KUBE_LATEST_URL="https://github.com/GoogleCloudPlatform/kubernetes/releases/download/${KUBE_LATEST_VERSION}/kubernetes.tar.gz"
@@ -59,10 +60,10 @@ rm -rf ${SVC_ROOT}/flannel
 
 
 # Update system PATH
-sed -i 's/PATH="/PATH="\/opt\/bin:\/opt\/go\/bin:/g' /etc/environment
+sed -i 's/PATH="/PATH="\/opt\/bin:\/usr\/local\/go\/bin:/g' /etc/environment
 
 
-wget -O confd https://github.com/kelseyhightower/confd/releases/download/v0.7.1/confd-0.7.1-linux-amd64
+wget -O confd https://github.com/kelseyhightower/confd/releases/download/v${CONFD_LATEST_VERSION}/confd-${CONFD_LATEST_VERSION}-linux-amd64
 mv confd /usr/local/bin/confd
 chmod +x /usr/local/bin/confd
 mkdir -p /etc/confd/{conf.d,templates}
