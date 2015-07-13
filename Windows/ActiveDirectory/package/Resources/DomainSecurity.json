@@ -1,0 +1,134 @@
+[
+	{
+	    "IpProtocol": "tcp",
+	    "FromPort": "25",
+	    "ToPort": "25",
+        "External": false
+	},
+	{
+	    "IpProtocol": "tcp",
+	    "FromPort": "53",
+	    "ToPort": "53",
+        "External": false
+	},
+	{
+	    "IpProtocol": "udp",
+	    "FromPort": "53",
+	    "ToPort": "53",
+        "External": false
+	},
+	{
+	    "IpProtocol": "tcp",
+	    "FromPort": "88",
+	    "ToPort": "88",
+        "External": false
+	},
+	{
+	    "IpProtocol": "udp",
+	    "FromPort": "88",
+	    "ToPort": "88",
+        "External": false
+	},
+	{
+	    "IpProtocol": "udp",
+	    "FromPort": "123",
+	    "ToPort": "123",
+        "External": false
+	},
+	{
+	    "IpProtocol": "tcp",
+	    "FromPort": "135",
+	    "ToPort": "135",
+        "External": false
+	},
+	{
+	    "IpProtocol": "udp",
+	    "FromPort": "137",
+	    "ToPort": "137",
+        "External": false
+	},
+	{
+	    "IpProtocol": "udp",
+	    "FromPort": "138",
+	    "ToPort": "138",
+        "External": false
+	},
+	{
+	    "IpProtocol": "tcp",
+	    "FromPort": "445",
+	    "ToPort": "445",
+        "External": false
+	},
+	{
+	    "IpProtocol": "udp",
+	    "FromPort": "445",
+	    "ToPort": "445",
+        "External": false
+	},
+	{
+	    "IpProtocol": "tcp",
+	    "FromPort": "464",
+	    "ToPort": "464",
+        "External": false
+	},
+	{
+	    "IpProtocol": "udp",
+	    "FromPort": "464",
+	    "ToPort": "464",
+        "External": false
+	},
+	{
+	    "IpProtocol": "tcp",
+	    "FromPort": "389",
+	    "ToPort": "389",
+        "External": false
+	},
+	{
+	    "IpProtocol": "udp",
+	    "FromPort": "389",
+	    "ToPort": "389",
+        "External": false
+	},
+	{
+	    "IpProtocol": "tcp",
+	    "FromPort": "636",
+	    "ToPort": "636",
+        "External": false
+	},
+	{
+	    "IpProtocol": "tcp",
+	    "FromPort": "3268",
+	    "ToPort": "3268",
+        "External": false
+	},
+	{
+	    "IpProtocol": "tcp",
+	    "FromPort": "3269",
+	    "ToPort": "3269",
+        "External": false
+	},
+	{
+	    "IpProtocol": "tcp",
+	    "FromPort": "5722",
+	    "ToPort": "5722",
+        "External": false
+	},
+	{
+	    "IpProtocol": "tcp",
+	    "FromPort": "9389",
+	    "ToPort": "9389",
+        "External": false
+	},
+	{
+	    "IpProtocol": "tcp",
+	    "FromPort": "49152",
+	    "ToPort": "65535",
+        "External": false
+	},
+	{
+	    "IpProtocol": "udp",
+	    "FromPort": "49152",
+	    "ToPort": "65535",
+        "External": false
+	}
+]
