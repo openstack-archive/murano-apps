@@ -58,4 +58,10 @@ Methods:
           - $._environment.reporter.report($this, 'Instance is created. Deploying Apache')
           - $.instance.agent.call($template, $resources)
           - $._environment.reporter.report($this, 'Apache is installed.')
+          - If: $.instance.assignFloatingIp
+            Then:
+              - $host: $.instance.floatingIpAddress
+            Else:
+              - $host: $.instance.ipAddresses[0]
+          - $._environment.reporter.report($this, format('Apache is available at http://{0}', $host))
           - $.setAttr(deployed, true)
