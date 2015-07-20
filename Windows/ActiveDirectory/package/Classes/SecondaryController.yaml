@@ -22,21 +22,20 @@ Extends: Controller
 Methods:
   initialize:
     Body:
-      - $.super($.initialize())
-      - $.domain: $.find(ActiveDirectory).require()
+      - $._domain: $.find(ActiveDirectory).require()
       - $._environment: $.find(std:Environment).require()
 
   deploy:
     Body:
       - $._environment.reporter.report($this, 'Creating VM for Secondary Controller')
       - $.super($.deploy())
-      - $.host.joinDomain($.domain)
+      - $.host.joinDomain($._domain)
       - $resources: new(sys:Resources)
       - $._environment.reporter.report($this, 'Configuring Secondary Controller in')
       - $template: $resources.json('CreateSecondaryDC.template').bind(dict(
-            domain => $.domain.name,
+            domain => $._domain.name,
             recoveryPassword => $.recoveryPassword,
-            domainAccountName => $.domain.adminAccountName,
-            domainPassword => $.domain.adminPassword
+            domainAccountName => $._domain.adminAccountName,
+            domainPassword => $._domain.adminPassword
           ))
       - $.host.agent.call($template, $resources, 1800)
