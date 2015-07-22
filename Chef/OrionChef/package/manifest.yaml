@@ -1,0 +1,10 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.conflang.fiware.OrionChef
+Name: OrionChef
+Description: |
+  Orion Chef.
+Author: 'TID'
+Tags: [FIWARE, Orion, ContextBroker, Chef]
+Classes:
+ io.murano.conflang.fiware.OrionChef: OrionChef.yaml

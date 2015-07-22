@@ -1,0 +1,46 @@
+Namespaces:
+  =: io.murano.conflang.chef.GitChef
+  std: io.murano
+  res: io.murano.resources
+  sys: io.murano.system
+
+
+Name: GitChef
+
+Extends: std:Application
+
+Properties:
+
+  name:
+    Contract: $.string().notNull()
+
+  instance:
+    Contract: $.class(res:Instance).notNull()
+
+
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+  deploy:
+    Body:
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $._environment.reporter.report($this, 'Creating VM for Git Chef example ')
+          - $securityGroupIngress:
+              - ToPort: 22
+                FromPort: 22
+                IpProtocol: tcp
+                External: true
+          - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+          - $.instance.deploy()
+          - $resources: new(sys:Resources)
+          # Deploy Chef example
+          - $template: $resources.yaml('DeployGitChef.template')
+
+          - $._environment.reporter.report($this, 'Instance is created. Deploying Git Chef')
+          - $.instance.agent.call($template, $resources)
+          - $._environment.reporter.report($this, 'Git is installed')
+          - $.setAttr(deployed, true)

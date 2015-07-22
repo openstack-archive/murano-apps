@@ -1,0 +1,28 @@
+FormatVersion: 2.1.0
+Version: 1.0.0
+Name: Deploy Git Chef
+
+Parameters:
+  port: $port
+
+Body: |
+  return executeRecipe(args).stdout
+
+Scripts:
+  executeRecipe:
+    Type: Chef
+    Version: 1.0.0
+    EntryPoint: git::default
+    Files:
+        -  git: https://github.com/jssjr/git.git
+        -  yum-epel: https://github.com/chef-cookbooks/yum-epel.git
+        -  yum: https://github.com/chef-cookbooks/yum.git
+        -  dmg: https://github.com/opscode-cookbooks/dmg
+        -  openssl: https://github.com/opscode-cookbooks/openssl.git
+        -  chef-sugar: https://github.com/sethvargo/chef-sugar.git
+        -  chef_handler: https://github.com/opscode-cookbooks/chef_handler
+        -  windows: https://github.com/opscode-cookbooks/windows
+        -  build-essential: https://github.com/opscode-cookbooks/build-essential
+    Options:
+      captureStdout: true
+      captureStderr: true

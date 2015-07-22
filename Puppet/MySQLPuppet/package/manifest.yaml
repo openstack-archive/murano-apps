@@ -12,11 +12,11 @@
 
 Format: 1.0
 Type: Application
-FullName: io.murano.conflang.test.ChefExample
-Name: ChefExample
+FullName: io.murano.conflang.puppet.MySQLPuppet
+Name: MySQLPuppet
 Description: |
-  Chef Test.
+  Puppet Test.
 Author: 'TID'
-Tags: [Test, Chef]
+Tags: [Test, Puppet]
 Classes:
- io.murano.conflang.test.ChefExample: ChefExample.yaml
+ io.murano.conflang.puppet.MySQLPuppet: MySQLPuppet.yaml
