@@ -1,0 +1,60 @@
+#  Licensed under the Apache License, Version 2.0 (the "License"); you may
+#  not use this file except in compliance with the License. You may obtain
+#  a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#  License for the specific language governing permissions and limitations
+#  under the License.
+
+Namespaces:
+  =: io.murano.apps.docker
+  std: io.murano
+
+Name: DockerOrion
+
+Extends: DockerApplication
+
+Properties:
+  name:
+    Contract: $.string().notNull()
+
+  publish:
+    Contract: $.bool().notNull()
+    Default: true
+
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+      - $._scope: switch($.publish, $ => public, not $ => internal)
+
+
+  getContainer:
+    Body:
+      Return:
+        name: $.name
+        image: 'tidchile/fiware-orion'
+        ports:
+          - port: 1026
+            scope: $._scope
+
+
+  onInstallationStart:
+    Body:
+      - $._environment.reporter.report($this, 'Installing Orion')
+
+
+  onInstallationFinish:
+    Body:
+      - If: $.publish
+        Then:
+          - $endpoints: $.applicationEndpoints.where($.scope = $this._scope).
+              select(format('http://{0}:{1}', $.address, $.port))
+          - $._environment.reporter.report($this, 'Orion {0} is available at {1}'.format($.name, join(', ', $endpoints)))
+        Else:
+          - $._environment.reporter.report($this, 'Orion {0} was deployed but is not accessible from outside'.format($.name))
