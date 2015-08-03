@@ -58,5 +58,10 @@ Methods:
           - $template: $resources.yaml('DeployTomcat.template')
           - $._environment.reporter.report($this, 'Instance is created. Deploying Tomcat')
           - $.instance.agent.call($template, $resources)
-          - $._environment.reporter.report($this, 'Tomcat is installed')
+          - If: $.instance.assignFloatingIp
+            Then:
+              - $address: $.instance.floatingIpAddress
+            Else:
+              - $address: $.server.instance.ipAddresses[0]
+          - $._environment.reporter.report($this, 'Tomcat is available at http://{0}:{1}'.format($address, 8080))
           - $.setAttr(deployed, true)
