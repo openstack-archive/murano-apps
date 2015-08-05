@@ -1,4 +1,4 @@
-Version: 2
+Version: 2.1
 
 Templates:
   primaryController:
@@ -14,6 +14,10 @@ Templates:
       availabilityZone: $.instanceConfiguration.availabilityZone
       keyname: $.instanceConfiguration.keyPair
       assignFloatingIp: $.appConfiguration.assignFloatingIP
+      networks:
+        useEnvironmentNetwork: $.instanceConfiguration.network[0]=null
+        useFlatNetwork: false
+        customNetworks: switch($.instanceConfiguration.network[0], $=null=>list(), $!=null=>$customJoinNet)
 
   secondaryController:
     ?:
@@ -25,6 +29,16 @@ Templates:
       name: generateHostname($.appConfiguration.unitNamingPattern, $index + 1)
       flavor: $.instanceConfiguration.flavor
       image: $.instanceConfiguration.osImage
+      networks:
+        useEnvironmentNetwork: $.instanceConfiguration.network[0]=null
+        useFlatNetwork: false
+        customNetworks: switch($.instanceConfiguration.network[0], $=null=>list(), $!=null=>$customJoinNet)
+
+  customJoinNet:
+    - ?:
+        type: io.murano.resources.ExistingNeutronNetwork
+      internalNetworkName: $.instanceConfiguration.network[0]
+      internalSubnetworkName: $.instanceConfiguration.network[1]
 
 
 Application:
@@ -173,6 +187,13 @@ Forms:
           description: >-
             Select valid image for a service. Image should already be prepared and
             registered in glance.
+
+        - name: network
+          type: network
+          label: Network
+          description: Select a network to join. 'Auto' corresponds to a default environment's network.
+          required: false
+          murano_networks: translate
 
         - name: availabilityZone
           type: azone

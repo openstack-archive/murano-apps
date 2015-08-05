@@ -1,4 +1,11 @@
-Version: 2
+Version: 2.1
+
+Templates:
+  customJoinNet:
+    - ?:
+        type: io.murano.resources.ExistingNeutronNetwork
+      internalNetworkName: $.instanceConfiguration.network[0]
+      internalSubnetworkName: $.instanceConfiguration.network[1]
 
 Application:
   ?:
@@ -11,6 +18,10 @@ Application:
     flavor: $.instanceConfiguration.flavor
     image: 'hdp-sandbox'
     assignFloatingIp: true
+    networks:
+      useEnvironmentNetwork: $.instanceConfiguration.network[0]=null
+      useFlatNetwork: false
+      customNetworks: switch($.instanceConfiguration.network[0], $=null=>list(), $!=null=>$customJoinNet)
 
 Forms:
   - appConfiguration:
@@ -35,6 +46,12 @@ Forms:
             min_disk: 50
             min_memory_mb: 4096
             min_vcpus: 1
+        - name: network
+          type: network
+          label: Network
+          description: Select a network to join. 'Auto' corresponds to a default environment's network.
+          required: false
+          murano_networks: translate
         - name: unitNamingPattern
           label: Hostname
           type: string
