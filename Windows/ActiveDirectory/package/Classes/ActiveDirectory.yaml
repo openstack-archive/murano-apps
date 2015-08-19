@@ -59,7 +59,7 @@ Methods:
       - $.setAttr(domainDeployed, true)
       - $._environment.reporter.report($this, 'MS Active Directory is deployed')
       - $.reportDeployed(title => 'MS Active Directory',
-                         unitCount => len(secondaryControllers) + 1)
+                         unitCount => len($.secondaryControllers) + 1)
       - $.setAttr(domainDeployed, false)
 
   destroy:
