@@ -28,7 +28,7 @@ Scripts:
     Files:
      - <common.sh>
      - <config.json>
-     - <manifest.yml>
+     - <manifest.yaml>
     Options:
       captureStdout: true
       captureStderr: true

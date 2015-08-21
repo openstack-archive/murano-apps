@@ -22,6 +22,6 @@
   },
 
   "deployment_provisioner": {
-    "manifest_path": "/root/workspace/manifest.yml"
+    "manifest_path": "/root/workspace/manifest.yaml"
   }
 }
