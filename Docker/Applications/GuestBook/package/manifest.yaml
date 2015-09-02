@@ -22,3 +22,8 @@ Tags: [Docker, Kubernetes, guestbook]
 Classes:
  io.murano.apps.docker.DockerRedisSlave: RedisSlave.yaml
  io.murano.apps.docker.DockerGuestBook: GuestBook.yaml
+Require:
+  io.murano.apps.docker.DockerRedis:
+  io.murano.apps.docker.kubernetes.KubernetesPod:
+  io.murano.apps.docker.kubernetes.KubernetesCluster:
+  io.murano.apps.docker.Interfaces:

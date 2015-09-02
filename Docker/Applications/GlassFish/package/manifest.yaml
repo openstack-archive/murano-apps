@@ -20,3 +20,7 @@ Author: 'Mirantis, Inc'
 Tags: [docker, application, GlassFish]
 Classes:
  io.murano.apps.docker.DockerGlassFish: DockerGlassFish.yaml
+Require:
+  io.murano.apps.docker.DockerStandaloneHost:
+  io.murano.apps.docker.kubernetes.KubernetesPod:
+  io.murano.apps.docker.Interfaces:

@@ -20,3 +20,7 @@ Author: 'Mirantis, Inc'
 Tags: [docker, application, Postgres]
 Classes:
  io.murano.apps.docker.DockerPostgreSQL: DockerPostgreSQL.yaml
+Require:
+  io.murano.apps.docker.DockerStandaloneHost:
+  io.murano.apps.docker.kubernetes.KubernetesPod:
+  io.murano.apps.docker.Interfaces:
