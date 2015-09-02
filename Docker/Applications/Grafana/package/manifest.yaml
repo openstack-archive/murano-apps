@@ -24,3 +24,4 @@ Require:
   io.murano.apps.docker.DockerStandaloneHost:
   io.murano.apps.docker.kubernetes.KubernetesPod:
   io.murano.apps.docker.DockerInfluxDB:
+  io.murano.apps.docker.Interfaces:

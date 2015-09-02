@@ -20,3 +20,7 @@ Author: 'TID'
 Tags: [docker, application, Orion, FIWARE]
 Classes:
  io.murano.apps.docker.DockerOrion: DockerOrion.yaml
+Require:
+  io.murano.apps.docker.DockerStandaloneHost:
+  io.murano.apps.docker.kubernetes.KubernetesPod:
+  io.murano.apps.docker.Interfaces:

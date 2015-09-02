@@ -24,4 +24,4 @@ Tags: [Database, Postgre, SQL, RDBMS]
 Classes:
  io.murano.databases.PostgreSql: PostgreSql.yaml
 Require:
- io.murano.databases.SqlDatabase:
+ io.murano.databases:

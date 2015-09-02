@@ -23,4 +23,4 @@ Tags: [Database, MySql, SQL, RDBMS]
 Classes:
  io.murano.databases.MySql: MySql.yaml
 Require:
- io.murano.databases.SqlDatabase:
+ io.murano.databases:
