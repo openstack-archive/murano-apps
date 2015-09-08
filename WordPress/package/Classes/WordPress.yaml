@@ -48,12 +48,25 @@ Methods:
         Then:
           - $._environment.reporter.report($this, 'Ensuring Apache is deployed.')
           - $.server.deploy()
+
+          # NOTE(ddovbii) This also can be done using the mechanism of contract checks as following:
+          # Contract: $.class(srv:ApacheHttpServer).notNull().check($.enablePHP = true)
+          # Due to the fact that in case of contract conflicts we can't write a custom error messages
+          # to the deployment logs and can't show them to user it is done in this way. As soon as we implement
+          # this opportunity this check will be deleted and contract check will be used
+          - If: not $.server.enablePHP
+            Then:
+              - $msg: 'Unable to install WordPress. PHP is not installed on the server'
+              - $._environment.reporter.report_error($this, $msg)
+              - Throw: DependencyMissingError
+                Message: $msg
+
           - $resources: new(sys:Resources)
 
           # Deploy Wordpress
           - $template: $resources.yaml('DeployWordPress.template')
           - $.server.instance.agent.call($template, $resources)
-          
+
           # Configure access to MySql
           - $._environment.reporter.report($this, 'Ensuring Database is deployed.')
           - $.database.createDatabase($.dbName)
