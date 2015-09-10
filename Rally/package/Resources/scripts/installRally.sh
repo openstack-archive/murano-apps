@@ -11,9 +11,12 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
-sudo apt-get update
-sudo apt-get -y install git
+set -e
 
-git clone $1
-git checkout $2
-./rally/install_rally.sh
+sudo apt-get update
+
+git clone $1 rally
+cd rally
+git checkout $2 2>&1
+
+sudo ./install_rally.sh --yes
