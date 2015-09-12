@@ -18,4 +18,4 @@ cp initd_scripts/etcd /etc/init.d/
 
 service etcd start
 
-sleep 10
+sleep 30
