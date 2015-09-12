@@ -2,13 +2,15 @@
 
 # $1 - NAME
 # $2 - IP
-count=5
-done=false
+count=30
 
-while  [ $count -gt 0 ] && [ "$done" != "true" ]
-do
-  /opt/bin/etcdctl member add $1 http://$2:7001  > /tmp/out && done="true"
-  ((count-- ))
-  sleep 2
+while [ $count -gt 0 ]; do
+ out=$(/opt/bin/etcdctl member add "$1" "http://$2:7001")
+ if [ $? -eq 0 ]; then
+   echo "$out" | grep ETCD_INITIAL_CLUSTER= | cut -f 2 -d '"'
+   exit 0
+ fi
+ ((count-- ))
+ sleep 2
 done
-cat /tmp/out | grep ETCD_INITIAL_CLUSTER | grep -n 1 | cut -f 2 -d'"'
+exit 1
