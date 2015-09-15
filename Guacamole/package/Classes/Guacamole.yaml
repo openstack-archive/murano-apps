@@ -21,8 +21,6 @@ Name: Guacamole
 Extends: std:Application
 
 Properties:
-  name:
-    Contract: $.string().notNull()
   username:
     Contract: $.string().notNull()
   password:
@@ -55,5 +53,5 @@ Methods:
               - $address: $.server.instance.floatingIpAddress
             Else:
               - $address: $.server.instance.ipAddresses[0]
-          - $._environment.reporter.report($this, 'Guacamole {0} is available at http://{1}:{2}/guacamole'.format($.name, $address, 8080))
+          - $._environment.reporter.report($this, 'Guacamole application is available at http://{1}:{2}/guacamole'.format($address, 8080))
           - $.setAttr(deployed, true)
