@@ -10,7 +10,7 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
-Version: 2.1
+Version: 2.2
 
 Templates:
   customJoinNet:
@@ -22,7 +22,6 @@ Templates:
 Application:
   ?:
     type: io.murano.conflang.puppet.MySQLPuppet
-  name: $.appConfiguration.name
   port: $.appConfiguration.port
   instance:
     ?:
@@ -52,13 +51,6 @@ Forms:
           description: 'MySQL port'
           required: true
           initial: 3306
-        - name: name
-          type: string
-          label: Application Name
-          initial: 'MySQL (Puppet)'
-          description: >-
-            Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
-            underline are allowed
         - name: assignFloatingIP
           type: boolean
           label: Assign Floating IP

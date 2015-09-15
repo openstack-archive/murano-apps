@@ -21,9 +21,6 @@ Name: CloudFoundryDiego
 Extends: std:Application
 
 Properties:
-  name:
-    Contract: $.string().notNull()
-
   instance:
     Contract: $.class(res:Instance).notNull()
 

@@ -10,7 +10,7 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
-Version: 2.1
+Version: 2.2
 
 Templates:
   customJoinNet:
@@ -22,7 +22,6 @@ Templates:
 Application:
   ?:
     type: io.murano.databases.PostgreSql
-  name: $.appConfiguration.name
   database: $.initDatabaseConfiguration.database
   username: $.initDatabaseConfiguration.username
   password: $.initDatabaseConfiguration.password
@@ -34,34 +33,13 @@ Application:
     image: $.instanceConfiguration.osImage
     keyname: $.instanceConfiguration.keyPair
     availabilityZone: $.instanceConfiguration.availabilityZone
-    assignFloatingIp: $.appConfiguration.assignFloatingIP
+    assignFloatingIp: $.instanceConfiguration.assignFloatingIP
     networks:
       useEnvironmentNetwork: $.instanceConfiguration.network[0]=null
       useFlatNetwork: false
       customNetworks: switch($.instanceConfiguration.network[0], $=null=>list(), $!=null=>$customJoinNet)
 
 Forms:
-  - appConfiguration:
-      fields:
-        - name: license
-          type: string
-          description: Apache License, Version 2.0
-          hidden: true
-          required: false
-        - name: name
-          type: string
-          label: Application Name
-          initial: PostgreDB
-          description: >-
-            Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
-            underline are allowed
-        - name: assignFloatingIP
-          type: boolean
-          label: Assign Floating IP
-          description: >-
-             Select to true to assign floating IP automatically
-          initial: false
-          required: false
   - initDatabaseConfiguration:
       fields:
         - name: title
@@ -110,6 +88,13 @@ Forms:
           description: >-
             Select valid image for the application. Image should already be prepared and
             registered in glance.
+        - name: assignFloatingIP
+          type: boolean
+          label: Assign Floating IP
+          description: >-
+             Select to true to assign floating IP automatically
+          initial: false
+          required: false
         - name: keyPair
           type: keypair
           label: Key Pair

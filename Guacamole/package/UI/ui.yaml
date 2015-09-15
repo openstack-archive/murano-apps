@@ -10,12 +10,11 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
-Version: 2
+Version: 2.2
 
 Application:
   ?:
     type: io.murano.apps.Guacamole
-  name: $.appConfiguration.name
   username: $.appConfiguration.username
   password: $.appConfiguration.password
   server: $.appConfiguration.server
@@ -28,13 +27,6 @@ Forms:
           description: Apache License, Version 2.0
           hidden: true
           required: false
-        - name: name
-          type: string
-          label: Application Name
-          initial: Guacamole
-          description: >-
-            Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
-            underline are allowed
         - name: username
           type: string
           label: Username
