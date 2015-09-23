@@ -70,6 +70,12 @@ Methods:
                 Then:
                   - $.assignUser($.username, $.database)
               - $._environment.reporter.report($this, format('User {0} created.', $.username))
+          - If: $.instance.assignFloatingIp
+            Then:
+              - $host: $.instance.floatingIpAddress
+            Else:
+              - $host: $.instance.ipAddresses[0]
+          - $._environment.reporter.report($this, format('PostgreSQL is available at {0}', $host))
 
   createDatabase:
     Arguments:
