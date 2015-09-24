@@ -46,6 +46,7 @@ Templates:
 Application:
   ?:
     type: io.murano.apps.activeDirectory.ActiveDirectory
+  adminPassword: $.appConfiguration.adminPassword
   name: $.appConfiguration.name
   primaryController: $primaryController
   secondaryControllers: repeat($secondaryController, $.appConfiguration.dcInstances - 1)
