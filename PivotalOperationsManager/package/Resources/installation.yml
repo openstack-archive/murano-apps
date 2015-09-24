@@ -1,0 +1,152 @@
+{
+    "guid": "%GUID%",
+    "installation_schema_version": "1.6",
+    "infrastructure": {
+        "type": "openstack",
+        "vm_password_type": "generate",
+        "director_configuration": {
+            "resurrector_enabled": false,
+            "ntp_servers": [
+                "1.amazon.pool.ntp.org"
+            ],
+            "blobstore_type": "local",
+            "database_type": "internal"
+        },
+        "networks": [
+            {
+                "guid": "%NETWORK-GUID%",
+                "name": "%NETWORK-NAME%",
+                "iaas_network_identifier": "%OS-NETWORK-ID%",
+                "subnet": "%CIDR%",
+                "dns": "%DNS%",
+                "gateway": "%GATEWAY%"
+            }
+        ],
+        "iaas_configuration": {
+            "identity_endpoint": "%AUTH-URL%",
+            "username": "%OSUSER%",
+            "password": "%OSPASS%",
+            "tenant": "%OSTENANT%",
+            "ignore_server_availability_zone": false,
+            "key_pair_name": "%KEY-NAME%",
+            "ssh_private_key": "%SSH-PRIVATE-KEY%",
+            "region": "RegionOne"
+        },
+        "availability_zones": [
+            {
+                "guid": "%AZONE-ID%",
+                "iaas_identifier": "%AZONE%"
+            }
+        ]
+    },
+    "products": [
+        {
+            "guid": "%PRODUCT-ID%",
+            "installation_name": "%PRODUCT-ID%",
+            "product_version": "%VER%",
+            "singleton_availability_zone_reference": "%AZONE-ID%",
+            "stemcell": {
+                "infrastructure": "openstack",
+                "hypervisor": "kvm",
+                "os": "ubuntu-trusty",
+                "version": "3130",
+                "file": "bosh-stemcell-3130-openstack-kvm-ubuntu-trusty-go_agent-raw.tgz",
+                "name": "bosh-openstack-kvm-ubuntu-trusty-go_agent-raw",
+                "format": "-raw"
+            },
+            "jobs": [
+                {
+                    "guid": "%DIRECTOR-ID%",
+                    "installation_name": "director",
+                    "properties": [
+                        {
+                            "value": {
+                                "identity": "vcap"
+                            },
+                            "identifier": "vm_credentials"
+                        },
+                        {
+                            "value": {
+                                "identity": "vcap"
+                            },
+                            "identifier": "agent_credentials"
+                        },
+                        {
+                            "value": {
+                                "identity": "registry"
+                            },
+                            "identifier": "registry_credentials"
+                        },
+                        {
+                            "value": {
+                                "identity": "director"
+                            },
+                            "identifier": "director_credentials"
+                        },
+                        {
+                            "value": {
+                                "identity": "nats"
+                            },
+                            "identifier": "nats_credentials"
+                        },
+                        {
+                            "value": {
+                                "identity": "redis"
+                            },
+                            "identifier": "redis_credentials"
+                        },
+                        {
+                            "value": {
+                                "identity": "postgres"
+                            },
+                            "identifier": "postgres_credentials"
+                        },
+                        {
+                            "value": {
+                                "identity": "blobstore"
+                            },
+                            "identifier": "blobstore_credentials"
+                        },
+                        {
+                            "value": {
+                                "identity": "health_monitor"
+                            },
+                            "identifier": "health_monitor_credentials"
+                        },
+                        {
+                            "identifier": "director_ssl"
+                        }
+                    ],
+                    "instances": [
+                        {
+                            "value": 1,
+                            "identifier": "instances"
+                        }
+                    ],
+                    "resources": [
+                        {
+                            "value": 3072,
+                            "identifier": "ram"
+                        },
+                        {
+                            "value": 25600,
+                            "identifier": "ephemeral_disk"
+                        },
+                        {
+                            "value": 40960,
+                            "identifier": "persistent_disk"
+                        },
+                        {
+                            "value": 2,
+                            "identifier": "cpu"
+                        }
+                    ],
+                    "identifier": "director"
+                }
+            ],
+            "infrastructure_network_reference": "%NETWORK-GUID%",
+            "deployment_network_reference": "%NETWORK-GUID%",
+            "identifier": "p-bosh"
+        }
+    ]
+}
