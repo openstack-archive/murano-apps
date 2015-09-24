@@ -49,5 +49,10 @@ Methods:
 
           - $._environment.reporter.report($this, 'Instance is created. Deploying MySQL Puppet example')
           - $.instance.agent.call($template, $resources)
-          - $._environment.reporter.report($this, 'MySQL Puppet example is installed')
+          - If: $.instance.assignFloatingIp
+            Then:
+              - $host: $.instance.floatingIpAddress
+            Else:
+              - $host: $.instance.ipAddresses[0]
+          - $._environment.reporter.report($this, format('MySQL Puppet example is installed at {0} on {1} port', $host, $.port))
           - $.setAttr(deployed, true)

@@ -46,5 +46,10 @@ Methods:
 
           - $._environment.reporter.report($this, 'Instance is created. Deploying Orion Chef')
           - $.instance.agent.call($template, $resources)
-          - $._environment.reporter.report($this, 'Orion is installed')
+          - If: $.instance.assignFloatingIp
+            Then:
+              - $host: $.instance.floatingIpAddress
+            Else:
+              - $host: $.instance.ipAddresses[0]
+          - $._environment.reporter.report($this, format('Orion is installed at {0} on {1} port', $host, $.port))
           - $.setAttr(deployed, true)

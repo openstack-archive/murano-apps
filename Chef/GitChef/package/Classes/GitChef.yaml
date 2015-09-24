@@ -42,5 +42,10 @@ Methods:
 
           - $._environment.reporter.report($this, 'Instance is created. Deploying Git Chef')
           - $.instance.agent.call($template, $resources)
-          - $._environment.reporter.report($this, 'Git is installed')
+          - If: $.instance.assignFloatingIp
+            Then:
+              - $host: $.instance.floatingIpAddress
+            Else:
+              - $host: $.instance.ipAddresses[0]
+          - $._environment.reporter.report($this, format('Git Chef is installed at {0}', $host))
           - $.setAttr(deployed, true)
