@@ -59,12 +59,6 @@ Forms:
              Select to true to assign floating IP automatically
           initial: false
           required: false
-          widgetMedia:
-            css: {all: ['muranodashboard/css/checkbox.css']}
-        - name: dcInstances
-          type: integer
-          hidden: true
-          initial: 1
 
   - instanceConfiguration:
       fields:
