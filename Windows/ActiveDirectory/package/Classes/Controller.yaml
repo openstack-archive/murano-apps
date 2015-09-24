@@ -21,7 +21,6 @@ Properties:
 
   recoveryPassword:
     Contract: $.string().notNull()
-    Default: P@ssw0rd
 
 Methods:
   deploy:
