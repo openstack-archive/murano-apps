@@ -35,7 +35,6 @@ Properties:
 
   adminPassword:
     Contract: $.string().notNull()
-    Default: P@ssw0rd
 
 Methods:
   initialize:
