@@ -24,8 +24,6 @@ Extends:
 Properties:
   instance:
     Contract: $.class(res:Instance).notNull()
-  name:
-    Contract: $.string().notNull()
   database:
     Contract: $.string()
   username:

@@ -10,7 +10,7 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
-Version: 2.1
+Version: 2.2
 
 Templates:
   customJoinNet:
@@ -22,7 +22,6 @@ Templates:
 Application:
   ?:
     type: io.murano.apps.apache.ApacheHttpServer
-  name: $.appConfiguration.name
   enablePHP: $.appConfiguration.enablePHP
   instance:
     ?:
@@ -46,13 +45,6 @@ Forms:
           description: Apache License, Version 2.0
           hidden: true
           required: false
-        - name: name
-          type: string
-          label: Application Name
-          initial: 'ApacheHttpServer'
-          description: >-
-            Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
-            underline are allowed
         - name: enablePHP
           label: Enable PHP
           type: boolean

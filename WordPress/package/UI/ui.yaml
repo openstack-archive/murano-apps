@@ -10,12 +10,11 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
-Version: 2
+Version: 2.2
 
 Application:
   ?:
     type: io.murano.apps.WordPress
-  name: $.appConfiguration.name
   database: $.appConfiguration.database
   server: $.appConfiguration.server
   monitoring: $.appConfiguration.zabbix
@@ -32,13 +31,6 @@ Forms:
           description: Apache License, Version 2.0
           hidden: true
           required: false
-        - name: name
-          type: string
-          label: Application Name
-          initial: 'WordPress'
-          description: >-
-            Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
-            underline are allowed
         - name: database
           type: io.murano.databases.MySql
           label: Database Server

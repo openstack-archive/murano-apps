@@ -11,8 +11,6 @@ Extends: std:Application
 
 Properties:
 
-  name:
-    Contract: $.string().notNull()
   port:
     Contract: $.string().notNull()
   instance:

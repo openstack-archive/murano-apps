@@ -1,4 +1,4 @@
-Version: 2.1
+Version: 2.2
 
 Templates:
   customJoinNet:
@@ -10,7 +10,6 @@ Templates:
 Application:
   ?:
     type: io.murano.apps.HDPSandbox
-  name: $.appConfiguration.name
   instance:
     ?:
       type: io.murano.resources.LinuxMuranoInstance
@@ -24,15 +23,6 @@ Application:
       customNetworks: switch($.instanceConfiguration.network[0], $=null=>list(), $!=null=>$customJoinNet)
 
 Forms:
-  - appConfiguration:
-      fields:
-        - name: name
-          type: string
-          label: Application Name
-          initial: 'HDP-Sandbox'
-          description: >-
-            Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
-            underline are allowed
   - instanceConfiguration:
       fields:
         - name: flavor

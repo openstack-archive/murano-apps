@@ -22,8 +22,6 @@ Name: ZabbixAgent
 Extends: std:Application
 
 Properties:
-  name:
-    Contract: $.string().notNull()
   hostname:
     Contract: $.string().notNull()
   probe:
