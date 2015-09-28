@@ -4,6 +4,7 @@ Templates:
   primaryController:
     ?:
       type: io.murano.apps.activeDirectory.PrimaryController
+    recoveryPassword: $.appConfiguration.recoveryPassword
     host:
       ?:
         type: io.murano.apps.activeDirectory.Host
@@ -22,6 +23,7 @@ Templates:
   secondaryController:
     ?:
       type: io.murano.apps.activeDirectory.SecondaryController
+    recoveryPassword: $.appConfiguration.recoveryPassword
     host:
       ?:
         type: io.murano.apps.activeDirectory.Host
