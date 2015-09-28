@@ -22,8 +22,6 @@ Name: ApacheHttpServer
 Extends: std:Application
 
 Properties:
-  name:
-    Contract: $.string().notNull()
 
   enablePHP:
     Contract: $.bool()

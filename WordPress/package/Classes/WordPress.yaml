@@ -22,8 +22,6 @@ Name: WordPress
 Extends: std:Application
 
 Properties:
-  name:
-    Contract: $.string().notNull()
   server:
     Contract: $.class(srv:ApacheHttpServer).notNull()
   database:
