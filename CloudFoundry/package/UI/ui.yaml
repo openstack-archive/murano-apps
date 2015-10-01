@@ -60,6 +60,10 @@ Forms:
         - name: flavor
           type: flavor
           label: Instance flavor
+          requirements:
+            min_disk: 8
+            min_vcpus: 2
+            min_memory_mb: 2048
           description: >-
             Select registered in Openstack flavor. Consider that application performance
             depends on this parameter.

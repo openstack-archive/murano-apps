@@ -28,13 +28,13 @@ Properties:
 Methods:
   initialize:
     Body:
-      - $.environment: $.find(std:Environment).require()
+      - $._environment: $.find(std:Environment).require()
 
   deploy:
     Body:
       - If: not $.getAttr(deployed, false)
         Then:
-          - $.environment.reporter.report($this, 'Creating VM for CloudFoundry ')
+          - $._environment.reporter.report($this, 'Creating VM for CloudFoundry ')
           - $securityGroupIngress:
               - ToPort: 80
                 FromPort: 80
@@ -48,39 +48,53 @@ Methods:
                 FromPort: 443
                 IpProtocol: tcp
                 External: true
-          - $.environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+          - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
           - $.instance.deploy()
           - $resources: new(sys:Resources)
+
+          #NOTE(ddovbii) This is workaround which forbids installing CF to non-Ubuntu images
+          #As soon as we have the ability to filter images by distribution type
+          #(https://blueprints.launchpad.net/murano/+spec/better-image-filtering)
+          #this workaround should be deleted
+          - $template: $resources.yaml('CheckOS.template')
+          - $os: $.instance.agent.call($template, $resources)
+          - If: not $os.startsWith('Ubuntu 14.04')
+            Then:
+              - $msg: 'Unable to deploy. Only Ubuntu 14.04 is supported'
+              - $._environment.reporter.report_error($this, $msg)
+              - Throw: UnsupportedDistributionVersion
+                Message: $msg
+
           #All steps below actually follow the process in ./scripts/install.sh
           # Just add more interactivity to provide status
           # Install Ruby part
           - $template: $resources.yaml('InstallRuby.template')
-          - $.environment.reporter.report($this, '[1/6] Installing Ruby...')
+          - $._environment.reporter.report($this, '[1/6] Installing Ruby...')
           - $.instance.agent.call($template, $resources, 3600)
 
           #Clone base repos
           - $template: $resources.yaml('CloneRepos.template')
-          - $.environment.reporter.report($this, '[2/6]Cloning git repositories for BOSH and cf-release...')
+          - $._environment.reporter.report($this, '[2/6]Cloning git repositories for BOSH and cf-release...')
           - $.instance.agent.call($template, $resources, 3600)
 
           #Install Environment
           - $template: $resources.yaml('InstallEnvironment.template')
-          - $.environment.reporter.report($this, '[3/6]Install Environment...')
+          - $._environment.reporter.report($this, '[3/6]Install Environment...')
           - $.instance.agent.call($template, $resources, 3600)
 
           #Install CF release
           - $template: $resources.yaml('InstallCFRelease.template')
-          - $.environment.reporter.report($this, '[4/6]Installing cf-release...')
+          - $._environment.reporter.report($this, '[4/6]Installing cf-release...')
           - $.instance.agent.call($template, $resources, 7200)
 
           #Install CF CLI
           - $template: $resources.yaml('InstallCFcli.template')
-          - $.environment.reporter.report($this, '[5/6]Installing CF CLI...')
+          - $._environment.reporter.report($this, '[5/6]Installing CF CLI...')
           - $.instance.agent.call($template, $resources, 600)
 
           - $template: $resources.yaml('StartCloudFoundry.template')
-          - $.environment.reporter.report($this, '[6/6]Start CloudFoundry services...')
+          - $._environment.reporter.report($this, '[6/6]Start CloudFoundry services...')
           - $result: $.instance.agent.call($template, $resources, 3600)
-          - $.environment.reporter.report($this, 'CloudFoundry is started')
-          - $.environment.reporter.report($this, $result)
+          - $._environment.reporter.report($this, 'CloudFoundry is started')
+          - $._environment.reporter.report($this, $result)
           - $.setAttr(deployed, True)
