@@ -41,7 +41,7 @@ Forms:
       fields:
         - name: license
           type: string
-          description: ' '
+          description: Apache License, Version 2.0
           hidden: true
           required: false
         - name: assignFloatingIP
@@ -51,10 +51,6 @@ Forms:
              Select to assign floating IP automatically
           initial: true
           required: false
-        - name: dcInstances
-          type: integer
-          hidden: true
-          initial: 1
 
   - instanceConfiguration:
       fields:

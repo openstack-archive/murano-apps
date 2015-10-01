@@ -11,11 +11,11 @@
 #  under the License.
 
 Images:
-- Name: 'murano-bosh-cf-diego'
-  Hash: 'f1688ab306415289280d3946984e1583'
+- Name: 'debian-8-m-agent-chef-puppet'
+  Hash: '70aa6993c13c474bbf2939ae1b14acd7'
   Meta:
-    title: 'murano-bosh-cf-diego'
+    title: 'Debian 8 x64 (pre-installed murano-agent chef puppet)'
     type: 'linux'
   DiskFormat: 'qcow2'
   ContainerFormat: 'bare'
-  Url: 'http://murano-files.mirantis.com/murano-bosh-cf-diego.qcow2'
+  Url: 'http://murano-files.mirantis.com/debian-8-pupchef.qcow2'
