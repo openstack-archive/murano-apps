@@ -11,4 +11,4 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
-mysql --user=root --password=root -e "CREATE DATABASE $1"
+mysql --user=root --password=root -e "CREATE DATABASE \`$1\`"
