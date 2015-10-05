@@ -111,9 +111,9 @@ Methods:
         Then:
           - $._environment.reporter.report($this, 'Setting up Kubernetes cluster')
           - Parallel:
-              - Do: $.masterNode.deployInstance()
-              - Do: $.minionNodes.take($.nodeCount).pselect($.deployInstance())
-              - Do: $.gatewayNodes.take($.gatewayCount).pselect($.deployInstance())
+              - $.masterNode.deployInstance()
+              - $.minionNodes.take($.nodeCount).pselect($.deployInstance())
+              - $.gatewayNodes.take($.gatewayCount).pselect($.deployInstance())
 
           - $.masterNode.setupEtcd()
           - $.minionNodes.take($.nodeCount).select($.setupEtcd())
@@ -121,9 +121,9 @@ Methods:
 
           - $.masterNode.setupNode()
           - Parallel:
-              - Do: $.minionNodes.take($.nodeCount).pselect($.setupNode())
-              - Do: $.minionNodes.skip($.nodeCount).pselect($.removeFromCluster())
-              - Do: $.gatewayNodes.take($.gatewayCount).pselect($.setupNode())
+              - $.minionNodes.take($.nodeCount).pselect($.setupNode())
+              - $.minionNodes.skip($.nodeCount).pselect($.removeFromCluster())
+              - $.gatewayNodes.take($.gatewayCount).pselect($.setupNode())
           - $._updateServicePublicIps()
           - $.setAttr(lastNodeCount, $.nodeCount)
           - $.setAttr(lastGatewayCount, $.gatewayCount)
@@ -277,7 +277,7 @@ Methods:
 
     Body:
       - $serviceDefinition:
-          apiVersion: v1beta3
+          apiVersion: v1
           kind: Service
           metadata:
             labels:
