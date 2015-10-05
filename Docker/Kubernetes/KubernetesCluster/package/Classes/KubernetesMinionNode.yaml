@@ -87,7 +87,6 @@ Methods:
                 dockerRegistry => $._cluster.dockerRegistry
               ))
           - $.instance.agent.call($template, $resources)
-          - $._registerNode()
           - $.setAttr(nodeConfigured, true)
           - $msg: 'cAdvisor monitoring for Node {0} is now available at http://{1}:4194'
           - $ip: $.getIp()
@@ -95,30 +94,6 @@ Methods:
             Then:
               - $ip: coalesce($.instance.floatingIpAddress, $.getIp())
           - $._environment.reporter.report($this, $msg.format($.instance.name, $ip))
-
-
-  _registerNode:
-    Body:
-      - $resources: new(sys:Resources)
-      - $template: $resources.yaml('GetNodeCapabilities.template')
-      - $capacity: $.instance.agent.call($template, $resources)
-
-      - $nodeDefinition:
-          kind: Node
-          apiVersion: v1beta3
-          metadata:
-            name: $.getIp()
-            labels:
-              name: $.instance.name
-          spec:
-            externalID: $.id()
-            status:
-              capacity: $capacity
-
-      - $template: $resources.yaml('KubeRegisterNode.template').bind(dict(
-            nodeDefinition => $nodeDefinition
-          ))
-      - $._cluster.masterNode.instance.agent.call($template, $resources)
 
 
   removeFromCluster:
