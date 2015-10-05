@@ -124,6 +124,8 @@ Methods:
               - $.minionNodes.take($.nodeCount).pselect($.setupNode())
               - $.minionNodes.skip($.nodeCount).pselect($.removeFromCluster())
               - $.gatewayNodes.take($.gatewayCount).pselect($.setupNode())
+
+          - $._environment.stack.push()
           - $._updateServicePublicIps()
           - $.setAttr(lastNodeCount, $.nodeCount)
           - $.setAttr(lastGatewayCount, $.gatewayCount)
