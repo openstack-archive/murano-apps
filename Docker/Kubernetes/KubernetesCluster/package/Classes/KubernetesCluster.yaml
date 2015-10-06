@@ -488,3 +488,17 @@ Methods:
       - $._environment.reporter.report($this, 'Got archive from Kubernetes')
       - Return: new(std:File, base64Content => $result.content,
                     filename => 'application.tar.gz')
+
+
+  scaleRc:
+    Arguments:
+      - rcName:
+          Contract: $.string().notNull()
+      - newSize:
+          Contract: $.int().notNull()
+    Body:
+      - $template: $resources.yaml('ScaleRc.template').bind(dict(
+            rcName => $rcName,
+            newSize => $newSize
+          ))
+      - $.masterNode.instance.agent.call($template, $resources)
