@@ -35,6 +35,7 @@ Properties:
 
   replicas:
     Contract: $.int().notNull().check($ >= 0)
+    Usage: InOut
 
 
 Methods:
@@ -303,3 +304,26 @@ Methods:
   getInternalScopeId:
     Body:
       Return: $.kubernetesCluster.id()
+
+  scalePodDown:
+    Usage: Action
+    Body:
+      - If: $.replicas > 1
+        Then:
+          - $._environment.reporter.report($this, 'Scaling Pod down')
+          - $.replicas: $.replicas - 1
+          - $.kubernetesCluster.scaleRc(rcName => $._getReplicationControllerId(), newSize => $.replicas)
+        Else:
+          - $._environment.reporter.report($this, 'Cannot scale Pod down')
+
+
+  scalePodUp:
+    Usage: Action
+    Body:
+      - If: $.replicas > 0
+        Then:
+          - $._environment.reporter.report($this, 'Scaling Pod up')
+          - $.replicas: $.replicas + 1
+          - $.kubernetesCluster.scaleRc(rcName => $._getReplicationControllerId(), newSize => $.replicas)
+        Else:
+          - $._environment.reporter.report($this, 'Cannot scale Pod up')
