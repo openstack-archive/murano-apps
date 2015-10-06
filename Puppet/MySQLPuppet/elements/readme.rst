@@ -2,7 +2,7 @@ Puppet Elements
 ===============
 
 This folder contains necessary DIB elements to build Puppet image
-expected by "Puppet Example" Murano application.
+expected by "MySQL Puppet" Murano application.
 
 
 Prerequisites
@@ -35,7 +35,7 @@ Image building
 
 .. sourcecode:: bash
 
-    sudo ELEMENTS_PATH=${murano_agent_root}/contrib/elements:${murano_apps_root}/Example/PuppetExample/elements disk-image-create \
+    sudo ELEMENTS_PATH=${murano_agent_root}/contrib/elements:${murano_apps_root}/Puppet/MySQLPuppet/elements disk-image-create \
         vm ubuntu murano-agent puppet -o ubuntu14.04-x64-puppet
 
 Where ${murano_agent_root} is a path to murano-agent files

@@ -2,7 +2,7 @@ Chef Elements
 ===============
 
 This folder contains necessary DIB elements to build Chef image
-expected by "Chef Example" Murano application.
+expected by "Orion Chef" Murano application.
 
 
 Prerequisites
@@ -35,7 +35,7 @@ Image building
 
 .. sourcecode:: bash
 
-    sudo ELEMENTS_PATH=${murano_agent_root}/contrib/elements:${murano_apps_root}/Example/ChefExample/elements disk-image-create \
+    sudo ELEMENTS_PATH=${murano_agent_root}/contrib/elements:${murano_apps_root}/Chef/OrionChef/elements disk-image-create \
         vm ubuntu murano-agent chef -o ubuntu14.04-x64-chef
 
 Where ${murano_agent_root} is a path to murano-agent files
