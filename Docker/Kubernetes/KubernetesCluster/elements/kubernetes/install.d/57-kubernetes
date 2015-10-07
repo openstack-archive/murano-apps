@@ -3,9 +3,9 @@ install-packages curl wget linux-libc-dev git gcc libc6-dev bridge-utils haproxy
 
 SVC_ROOT=/opt/bin
 
-ETCD_LATEST_VERSION="v2.0.9"
-KUBE_LATEST_VERSION="v0.15.0"
-FLANNEL_LATEST_VERSION="v0.3.1"
+ETCD_LATEST_VERSION="v2.0.13"
+KUBE_LATEST_VERSION="v1.0.6"
+FLANNEL_LATEST_VERSION="v0.5.3"
 
 ETCD_LATEST_URL="https://github.com/coreos/etcd/releases/download/${ETCD_LATEST_VERSION}/etcd-${ETCD_LATEST_VERSION}-linux-amd64.tar.gz"
 KUBE_LATEST_URL="https://github.com/GoogleCloudPlatform/kubernetes/releases/download/${KUBE_LATEST_VERSION}/kubernetes.tar.gz"
@@ -33,8 +33,6 @@ tar xzvf ${SVC_ROOT}/kubernetes/server/kubernetes-server-linux-amd64.tar.gz
 mv ${SVC_ROOT}/kubernetes ${SVC_ROOT}/kubernetes-latest
 
 cp ${SVC_ROOT}/kubernetes-latest/server/bin/* ${SVC_ROOT}/
-
-rm -rf ${SVC_ROOT}/kubernetes-latest
 
 # Install Go
 wget -O go.tar.gz https://storage.googleapis.com/golang/go1.4.2.linux-amd64.tar.gz
