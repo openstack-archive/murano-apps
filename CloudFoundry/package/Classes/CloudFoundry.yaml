@@ -97,4 +97,4 @@ Methods:
           - $result: $.instance.agent.call($template, $resources, 3600)
           - $._environment.reporter.report($this, 'CloudFoundry is started')
           - $._environment.reporter.report($this, $result)
-          - $.setAttr(deployed, True)
+          - $.setAttr(deployed, true)
