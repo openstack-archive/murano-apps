@@ -17,7 +17,6 @@ mkdir /var/log/kubernetes
 mkdir -p /var/run/murano-kubernetes
 
 sed -i.bkp "s/%%MASTER_IP%%/$2/g" default_scripts/kube-scheduler
-sed -i.bkp "s/%%IP%%/$2/g" default_scripts/kube-scheduler
 
 cp -f default_scripts/kube-apiserver /etc/default/
 cp -f default_scripts/kube-scheduler /etc/default/
