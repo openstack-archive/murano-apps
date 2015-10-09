@@ -215,12 +215,14 @@ Methods:
       - name:
           Contract: $.string().notNull()
     Body:
-      - $._loadCurrentPodDefinition()
-      - $._deleteContainer($name)
-      - $.kubernetesCluster.deleteServices(
-            applicationName => $name,
-            podId => $._getPodName())
-      - $.deploy()
+      - If: $.kubernetesCluster.isAvailable()
+        Then:
+          - $._loadCurrentPodDefinition()
+          - $._deleteContainer($name)
+          - $.kubernetesCluster.deleteServices(
+                applicationName => $name,
+                podId => $._getPodName())
+          - $.deploy()
 
 
   _generateVolumeName:

@@ -70,3 +70,7 @@ Methods:
           - $ip: coalesce($.instance.floatingIpAddress, $.getIp())
           - $._environment.reporter.report($this, $msg.format($ip))
 
+  isAvailable:
+    Body:
+      Return: $.instance.isDeployed()
+

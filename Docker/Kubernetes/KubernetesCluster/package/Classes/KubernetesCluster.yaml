@@ -63,11 +63,14 @@ Properties:
     Default: []
     Usage: Out
 
-
 Methods:
   initialize:
     Body:
       - $._environment: $.find(std:Environment).require()
+
+  isAvailable:
+    Body:
+      - Return: $.masterNode.isAvailable()
 
 
   deploy:
