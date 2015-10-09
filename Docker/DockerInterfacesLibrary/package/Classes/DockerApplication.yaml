@@ -61,7 +61,6 @@ Methods:
 
   destroy:
     Body:
-      - $.host.deploy()
       - If: $.getAttr(container, null) != null
         Then:
           - $container: $.getContainer()

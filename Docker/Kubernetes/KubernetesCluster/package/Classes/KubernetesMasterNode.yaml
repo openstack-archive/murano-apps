@@ -70,3 +70,9 @@ Methods:
           - $ip: coalesce($.instance.floatingIpAddress, $.getIp())
           - $._environment.reporter.report($this, $msg.format($ip))
 
+  isAvailable:
+    Body:
+      - $template: $._environment.stack.current()
+      - $resources: $template.get(resources)
+      - Return: $resources != null and $.instance.name in $resources
+

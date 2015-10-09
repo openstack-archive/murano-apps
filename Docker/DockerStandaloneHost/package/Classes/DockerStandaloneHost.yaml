@@ -273,7 +273,11 @@ Methods:
       - name:
           Contract: $.string().notNull()
     Body:
-      - If: $name in $.containers
+      - $template: $._environment.stack.current()
+      - $resources: $template.get(resources)
+      - $isInstanceDeployed: $resources != null and $.instance.name in $resources
+
+      - If: $name in $.containers and $isInstanceDeployed
         Then:
           - $._environment.reporter.report($this, 'Deleting container {0}'.format($name))
           - $._removeApplicationEndpoints($name)
