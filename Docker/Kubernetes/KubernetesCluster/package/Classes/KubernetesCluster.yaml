@@ -503,6 +503,7 @@ Methods:
       - newSize:
           Contract: $.int().notNull()
     Body:
+      - $resources: new(sys:Resources)
       - $template: $resources.yaml('ScaleRc.template').bind(dict(
             rcName => $rcName,
             newSize => $newSize

@@ -19,7 +19,7 @@ Parameters:
   newSize: $newSize
 
 Body: |
-  return scaleRc('{0} {1}'.format(args.rcName, args.newSize).stdout
+  return scaleRc('{0} {1}'.format(args.rcName, args.newSize)).stdout
 
 Scripts:
   scaleRc:
