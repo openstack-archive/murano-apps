@@ -59,7 +59,7 @@ Methods:
           - If: $podDefinition = null
             Then:
               - $podDefinition:
-                  apiVersion: v1beta3
+                  apiVersion: v1
                   kind: Pod
                   metadata:
                     name: $podName
@@ -280,7 +280,7 @@ Methods:
           Contract: {}
     Body:
       Return:
-        apiVersion: v1beta3
+        apiVersion: v1
         kind: ReplicationController
         metadata:
           name: $._getReplicationControllerId()
