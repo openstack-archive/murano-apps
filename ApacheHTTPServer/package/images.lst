@@ -1,8 +1,0 @@
-Images:
-- Name: 'debian-8-m-agent.qcow2'
-  Hash: 'c05398176ff18ca4d011b3550fa174e3'
-  Meta:
-    title: 'Debian 8 x64 (pre-installed murano-agent)'
-    type: 'linux'
-  DiskFormat: qcow2
-  ContainerFormat: bare

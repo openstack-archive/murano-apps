@@ -1,8 +1,0 @@
-Images:
-- Name: 'hdp-sandbox'
-  Meta:
-    title: 'HDP Sandbox 2.2'
-    type: 'linux'
-  DiskFormat: vmdk
-  ContainerFormat: bare
-  Url: 'http://sahara-files.mirantis.com/mox30/hdp-sandbox-2.2-rc12.vmdk'
