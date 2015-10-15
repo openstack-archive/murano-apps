@@ -1,9 +1,0 @@
-Images:
-- Name: 'ubuntu14.04-x64-kubernetes'
-  Hash: '99d8b54136369f93eabec911a3bbea11'
-  Meta:
-    title: 'ubuntu14.04-x64-kubernetes'
-    type: 'linux'
-  DiskFormat: 'qcow2'
-  ContainerFormat: 'bare'
-  Url: 'http://murano-files.mirantis.com/ubuntu14.04-x64-kubernetes.qcow2'
