@@ -31,6 +31,9 @@ Properties:
   dockerRegistry:
     Contract: $.string()
 
+  dockerMirror:
+    Contract: $.string()
+
   applicationEndpoints:
     Contract:
       - port: $.int().notNull().check($ > 0)
@@ -65,11 +68,13 @@ Methods:
           - $resources: new(sys:Resources)
           - $template: $resources.yaml('StartDocker.template')
           - $.instance.agent.call($template, $resources)
-          - If: $.dockerRegistry != null and $.dockerRegistry != ''
+          - If: $.dockerMirror != null and $.dockerMirror != ''
+                or $.dockerRegistry != null and $.dockerRegistry != ''
             Then:
-              - $._environment.reporter.report($this, 'Configuring Docker registry')
-              - $template: $resources.yaml('SetupDockerRegistry.template').bind(dict(
-                    dockerRegistry => $.dockerRegistry
+              - $._environment.reporter.report($this, 'Configuring Docker options')
+              - $template: $resources.yaml('SetupDockerOptions.template').bind(dict(
+                    dockerRegistry => $.dockerRegistry,
+                    dockerMirror => $.dockerMirror
                   ))
               - $.instance.agent.call($template, $resources)
           - $._environment.reporter.report($this, 'Docker Server is up and running')

@@ -12,5 +12,5 @@
 #  under the License.
 
 source /etc/default/docker
-DOCKER_OPTS+=" --insecure-registry $1"
+DOCKER_OPTS+=" --registry-mirror=$1"
 echo DOCKER_OPTS=\"$DOCKER_OPTS\" > /etc/default/docker

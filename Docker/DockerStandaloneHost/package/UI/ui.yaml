@@ -17,6 +17,7 @@ Application:
     type: io.murano.apps.docker.DockerStandaloneHost
   name: $.appConfiguration.name
   dockerRegistry: $.appConfiguration.dockerRegistry
+  dockerMirror: $.appConfiguration.dockerMirror
   instance:
     ?:
       type: io.murano.resources.LinuxMuranoInstance
@@ -53,7 +54,13 @@ Forms:
           type: string
           label: Custom Docker registry URL
           description: >-
-            URL of docker repository mirror to use. Leave empty for Docker default
+            Host IP or domain name of custom Docker registry to use. Leave empty for Docker default
+          required: false
+        - name: dockerMirror
+          type: string
+          label: Docker registry mirror URL
+          description: >-
+            URL of Docker registry mirror to use. Leave empty to not use one
           required: false
 
   - instanceConfiguration:
