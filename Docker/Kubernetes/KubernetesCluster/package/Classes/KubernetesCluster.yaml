@@ -49,6 +49,9 @@ Properties:
   dockerRegistry:
     Contract: $.string()
 
+  dockerMirror:
+    Contract: $.string()
+
   serviceEndpoints:
     Contract:
       - port: $.int().notNull().check($ > 0)
