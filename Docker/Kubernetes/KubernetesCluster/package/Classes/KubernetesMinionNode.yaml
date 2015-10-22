@@ -79,7 +79,7 @@ Methods:
                 External: $.exposeCAdvisor
           - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
 
-          - $._environment.reporter.report($, 'Setup Kubernetes Minion on {0}'.format($.instance.name))
+          - $._environment.reporter.report($, 'Setup Kubernetes Node on {0}'.format($.instance.name))
           - $template: $resources.yaml('KubeMinionSetup.template').bind(dict(
                 name => $.instance.name,
                 ip => $.getIp(),
@@ -100,7 +100,7 @@ Methods:
     Body:
       - If: $.getAttr(nodeConfigured, false)
         Then:
-          - $._environment.reporter.report($this, 'Deleting Kubernetes Minion')
+          - $._environment.reporter.report($this, 'Deleting Kubernetes Node')
           - $resources: new(sys:Resources)
           - $template: $resources.yaml('RemoveMinion.template').bind(dict(
                 nodeId => $.getIp()
