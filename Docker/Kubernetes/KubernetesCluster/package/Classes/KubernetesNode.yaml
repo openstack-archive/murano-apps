@@ -26,8 +26,17 @@ Properties:
 
 Methods:
   getIp:
+    Arguments:
+      - preferFloatingIp:
+          Contract: $.bool().notNull()
+          Default: false
     Body:
-      Return: $.instance.ipAddresses[0]
+      - $ip: $.instance.ipAddresses[0]
+      - If: $preferFloatingIp
+        Then:
+          - Return: coalesce($.instance.floatingIpAddress, $ip)
+        Else:
+          - Return: $.instance.ipAddresses[0]
 
 
   deployInstance:
@@ -69,3 +78,4 @@ Methods:
 
   setupEtcd:
   setupNode:
+  removeFromCluster:

@@ -12,21 +12,21 @@
 
 FormatVersion: 2.0.0
 Version: 1.0.0
-Name: Remove Kubernetes Node
+Name: Remove etcd member
 
 Parameters:
   nodeId: $nodeId
 
 Body: |
-  removeMinion(args.nodeId)
+  removeMember(args.nodeId)
 
 Scripts:
-  removeMinion:
+  removeMember:
     Type: Application
     Version: 1.0.0
-    EntryPoint: removeMinion.sh
+    EntryPoint: removeEtcdMember.sh
     Files: []
     Options:
-      captureStdout: true
-      captureStderr: true
-
+      captureStdout: false
+      captureStderr: false
+      verifyExitcode: false

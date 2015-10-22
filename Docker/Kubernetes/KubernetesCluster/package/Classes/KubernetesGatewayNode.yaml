@@ -69,5 +69,22 @@ Methods:
                 masterIp => $._cluster.masterNode.getIp()
               ))
           - $.instance.agent.call($template, $resources)
+          - $._environment.reporter.report(
+                $this, 'Gateway {0} is now available at {1}'.format($.instance.name, $.getIp(true)))
           - $.setAttr(nodeConfigured, true)
 
+  removeFromCluster:
+    Body:
+      - If: $.getAttr(nodeConfigured, false)
+        Then:
+          - $._environment.reporter.report($this, 'Deleting Gateway Node')
+          - $resources: new(sys:Resources)
+          - $template: $resources.yaml('EtcdRemoveMember.template').bind(dict(
+                nodeId => $.getIp()
+              ))
+          - $.instance.agent.call($template, $resources)
+          - $._releaseNodeResources()
+          - $._environment.reporter.report($this, 'Gateway {0} at {1} was deleted'.format($.instance.name, $.getIp(true)))
+          - $.setAttr(nodeConfigured, false)
+          - $.setAttr(etcdConfigured, false)
+          - $.setAttr(instanceDeployed, false)
