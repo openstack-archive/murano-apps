@@ -89,10 +89,7 @@ Methods:
           - $.instance.agent.call($template, $resources)
           - $.setAttr(nodeConfigured, true)
           - $msg: 'cAdvisor monitoring for Node {0} is now available at http://{1}:4194'
-          - $ip: $.getIp()
-          - If: $.exposeCAdvisor
-            Then:
-              - $ip: coalesce($.instance.floatingIpAddress, $.getIp())
+          - $ip: $.getIp($.exposeCAdvisor)
           - $._environment.reporter.report($this, $msg.format($.instance.name, $ip))
 
 
@@ -102,10 +99,17 @@ Methods:
         Then:
           - $._environment.reporter.report($this, 'Deleting Kubernetes Minion')
           - $resources: new(sys:Resources)
+          - $template: $resources.yaml('EtcdRemoveMember.template').bind(dict(
+                nodeId => $.getIp()
+              ))
+          - $.instance.agent.call($template, $resources)
           - $template: $resources.yaml('RemoveMinion.template').bind(dict(
                 nodeId => $.getIp()
               ))
           - $._cluster.masterNode.instance.agent.call($template, $resources)
           - $.instance.releaseResources()
-          - $._environment.reporter.report($this, 'Node {0} deleted'.format($.instance.name))
+          - $._environment.reporter.report($this, 'Node {0} was deleted'.format($.instance.name))
           - $.setAttr(nodeConfigured, false)
+          - $.setAttr(etcdConfigured, false)
+          - $.setAttr(instanceDeployed, false)
+
