@@ -80,20 +80,20 @@ Forms:
             underline are allowed
         - name: minionCount
           type: integer
-          label: Initial/current number of minions
+          label: Initial/current number of Kubernetes nodes
           initial: 2
           minValue: 1
           required: true
           description: >-
-            Select number of minions
+            Select number of Kubernetes nodes
         - name: maxMinionCount
           type: integer
-          label: Maximum number of minions
+          label: Maximum number of Kubernetes nodes
           initial: 3
           required: true
           minValue: 1
           description: >-
-            Select maximum number of minions
+            Select maximum number of Kubernetes nodes
         - name: assignFloatingIP
           type: boolean
           initial: true
@@ -125,7 +125,7 @@ Forms:
           type: integer
           label: Initial/current number of gateway nodes
           initial: 1
-          minValue: 0
+          minValue: 1
           required: true
           description: >-
             External traffic will be routed through gateway nodes.
