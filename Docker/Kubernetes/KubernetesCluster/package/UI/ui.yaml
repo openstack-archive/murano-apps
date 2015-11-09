@@ -63,6 +63,7 @@ Application:
   gatewayCount: $.appConfiguration.gatewayCount
   gatewayNodes: repeat($gatewayNode, $.appConfiguration.maxGatewayCount)
   dockerRegistry: $.appConfiguration.dockerRegistry
+  dockerMirror: $.appConfiguration.dockerMirror
 
 
 Forms:
@@ -164,8 +165,15 @@ Forms:
           type: string
           label: Custom Docker registry URL
           description: >-
-            URL of docker repository mirror to use.
+            Host IP or domain name of custom Docker registry to use.
             Leave empty to use Docker default.
+          required: false
+        - name: dockerMirror
+          type: string
+          label: Docker registry mirror URL
+          description: >-
+            URL of Docker registry mirror to use.
+            Leave empty to not use one.
           required: false
 
   - instanceConfiguration:
