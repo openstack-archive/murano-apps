@@ -38,7 +38,7 @@ Methods:
     Body:
       Return:
         name: $.name
-        image: 'tidchile/fiware-orion'
+        image: 'fiware/orion'
         ports:
           - port: 1026
             scope: $._scope
