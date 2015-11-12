@@ -18,6 +18,7 @@ Application:
   name: $.appConfiguration.name
   dockerRegistry: $.appConfiguration.dockerRegistry
   dockerMirror: $.appConfiguration.dockerMirror
+  gcloudKey: $.appConfiguration.gcloudKey
   instance:
     ?:
       type: io.murano.resources.LinuxMuranoInstance
@@ -61,6 +62,15 @@ Forms:
           label: Docker registry mirror URL
           description: >-
             URL of Docker registry mirror to use. Leave empty to not use one
+          required: false
+        - name: gcloudKey
+          type: string
+          label: Google registry key
+          regexpValidator: '^{(\s*"(\\(["\\\/bfnrt]|u[a-fA-F0-9]{4})|[^"\\\0-\x1F\x7F]+)*"\s*:\s*"(\\(["\\\/bfnrt]|u[a-fA-F0-9]{4})|[^"\\\0-\x1F\x7F]+)*"\s*(,|\s*}$))*$'
+          errorMessages:
+            invalid: Text should be a valid JSON.
+          description: >-
+            Contents of JSON key file. Used to authenticate to the Google Container Registry
           required: false
 
   - instanceConfiguration:

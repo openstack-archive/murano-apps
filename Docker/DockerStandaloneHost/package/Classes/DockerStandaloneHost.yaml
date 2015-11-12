@@ -34,6 +34,9 @@ Properties:
   dockerMirror:
     Contract: $.string()
 
+  gcloudKey:
+    Contract: $.string()
+
   applicationEndpoints:
     Contract:
       - port: $.int().notNull().check($ > 0)
@@ -75,6 +78,13 @@ Methods:
               - $template: $resources.yaml('SetupDockerOptions.template').bind(dict(
                     dockerRegistry => $.dockerRegistry,
                     dockerMirror => $.dockerMirror
+                  ))
+              - $.instance.agent.call($template, $resources)
+          - If: $.gcloudKey != null and $.gcloudKey != ''
+            Then:
+              - $._environment.reporter.report($this, 'Authenticating to Google Container Registry')
+              - $template: $resources.yaml('LoginToGoogleRegistry.template').bind(dict(
+                    gcloudKey => $.gcloudKey
                   ))
               - $.instance.agent.call($template, $resources)
           - $._environment.reporter.report($this, 'Docker Server is up and running')
