@@ -29,10 +29,10 @@ include "common.sh"
 
 mkdir -p /root/workspace
 install -D -g root -o root -m 0644 config.json /root/workspace
-install -D -g root -o root -m 0644 manifest.yml /root/workspace
+install -D -g root -o root -m 0644 manifest.yaml /root/workspace
 
 IP=$(ip addr | grep 'inet .*global' | cut -f 6 -d ' ' | cut -f1 -d '/' | head -n 1)
-sed -i "s/_local_ip_/$IP/g" /root/workspace/manifest.yml
+sed -i "s/_local_ip_/$IP/g" /root/workspace/manifest.yaml
 
 apt-get update
 apt-get -o Dpkg::Options::="--force-confnew" -y install git build-essential ruby ruby-dev libxml2-dev libsqlite3-dev libxslt1-dev libpq-dev libmysqlclient-dev
