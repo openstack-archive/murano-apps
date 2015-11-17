@@ -20,7 +20,7 @@ Parameters:
 
 Body: |
   import json
-  patch = json.dumps({'apiVersion': 'v1beta3', 'spec': {'publicIPs': args.publicIPs}})
+  patch = json.dumps({'apiVersion': 'v1', 'spec': {'publicIPs': args.publicIPs}})
   for service in args.services:
     patchService("{0} '{1}'".format(service, patch))
 
