@@ -35,5 +35,37 @@ Methods:
       - $.instance.deploy()
 
 
+  _releaseNodeResources:
+    Body:
+      - $environment: $.find(std:Environment).require()
+      - $netId: $environment.defaultNetworks.environment.id()
+      - $vmName: $.instance.name
+      - $template: $environment.stack.current()
+
+      - $patches:
+          - op: remove
+            path: format('/outputs/{0}-assigned-ips', $vmName)
+          - op: remove
+            path: format('/resources/port-{0}-{1}', $netId, $vmName)
+          - op: remove
+            path: format('/resources/{0}', $vmName)
+
+      - If: $.instance.assignFloatingIp
+        Then:
+          - $outFip:
+              op: remove
+              path: format('/outputs/{0}-floatingIPaddress', $vmName)
+          - $fip:
+              op: remove
+              path: format('/resources/fip-{0}-{1}', $netId, $vmName)
+          - $patches: $patches + list($fip, $outFip)
+
+      - $template: $template.patch($patches)
+      - $environment.stack.setTemplate($template)
+      - $environment.stack.push()
+
+      - $.instance.setAttr(fipAssigned, false)
+
+
   setupEtcd:
   setupNode:
