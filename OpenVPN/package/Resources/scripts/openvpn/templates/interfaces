@@ -1,0 +1,21 @@
+auto lo
+iface lo inet loopback
+
+auto br0
+iface br0 inet dhcp
+#address 10.20.0.73
+#netmask 255.255.255.0
+#gateway 10.20.0.1
+hwaddress ether %%HARDWARE_ADDR%%
+bridge-ports eth0
+bridge_fd 9
+bridge_hello 2
+bridge_maxage 112
+bridge_stp off
+
+iface eth0 inet manual
+up ifconfig $IFACE 0.0.0.0 up
+up ip link set $IFACE promisc on
+down ipp link set $IFACE promisc off
+down ifconfig $IFACE down
+

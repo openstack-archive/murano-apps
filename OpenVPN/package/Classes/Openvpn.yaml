@@ -1,0 +1,87 @@
+#  Licensed under the Apache License, Version 2.0 (the "License"); you may
+#  not use this file except in compliance with the License. You may obtain
+#  a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#  License for the specific language governing permissions and limitations
+#  under the License.
+
+Namespaces:
+  =: io.murano.apps
+  std: io.murano
+  res: io.murano.resources
+  sys: io.murano.system
+
+
+Name: OpenVpn
+
+Extends: std:Application
+
+Properties:
+
+  tapDhcpBegin:
+    Contract: $.string().notNull()
+  tapDhcpEnd:
+    Contract: $.string().notNull()
+  netmask:
+    Contract: $.string().notNull()
+  gceUserName:
+    Contract: $.string().notNull()
+  gcePassword:
+    Contract: $.string().notNull()
+  gceNodesIp:
+    Contract: $.string().notNull()
+  publicServerPort:
+    Contract: $.string().notNull()
+  publicServerIp:
+    Contract: $.string().notNull()  
+
+  instance:
+    Contract: $.class(res:Instance).notNull()
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+  deploy:
+    Body:
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $._environment.reporter.report($this, 'Creating VM for Openvpn Server.')
+          - $securityGroupIngress:
+            - ToPort: 80
+              FromPort: 80
+              IpProtocol: tcp
+              External: true
+            - ToPort: 443
+              FromPort: 443
+              IpProtocol: tcp
+              External: true
+          - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+          - $.instance.deploy()
+          - $resources: new(sys:Resources)
+          - $template: $resources.yaml('DeployOpenvpn.template').bind(dict(
+                tapDhcpBegin => $.tapDhcpBegin,
+                tapDhcpEnd => $.tapDhcpEnd,
+                netmask => $.netmask,
+                gceUserName => $.gceUserName,
+                gcePassword => $.gcePassword,
+                gceNodesIp => $.gceNodesIp,
+                publicServerPort => $.publicServerPort,
+                publicServerIp => $.publicServerIp
+              ))
+          - $._environment.reporter.report($this, 'Instance is created. Deploying Openvpn server')
+          - $.instance.agent.call($template, $resources)
+          - $._environment.reporter.report($this, 'Openvpn server is installed.')
+          - If: $.instance.assignFloatingIp
+            Then:
+              - $host: $.instance.floatingIpAddress
+            Else:
+              - $host: $.instance.ipAddresses[0]
+          - $._environment.reporter.report($this, format('Openvpn is available at /{0}', $host))
+          - $.setAttr(deployed, true)
