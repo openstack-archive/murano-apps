@@ -18,6 +18,7 @@ Application:
   name: $.appConfiguration.name
   host: $.appConfiguration.host
   publish: $.appConfiguration.publish
+  mongodb: $.mongoConfig.mongoDB
 
 Forms:
   - appConfiguration:
@@ -48,3 +49,12 @@ Forms:
           required: false
           description: >-
             Check if you intend to access application from the Internet
+
+  - mongoConfig:
+      fields:
+        - name: mongoDB
+          type: io.murano.apps.docker.DockerMongoDB
+          label: MongoDB instance
+          required: true
+          description: >-
+            Please select existing MongoDB instance or add a new one

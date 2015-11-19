@@ -26,6 +26,8 @@ Properties:
     Contract: $.bool().notNull()
     Default: true
 
+  mongodb:
+    Contract: $.class(DockerMongoDB).notNull()
 
 Methods:
   initialize:
@@ -33,16 +35,23 @@ Methods:
       - $._environment: $.find(std:Environment).require()
       - $._scope: switch($.publish, $ => public, not $ => internal)
 
+  deploy:
+    Body:
+      - $.mongodb.deploy()
+      - $.super($.deploy())
 
   getContainer:
     Body:
-      Return:
-        name: $.name
-        image: 'tidchile/fiware-orion'
-        ports:
-          - port: 1026
-            scope: $._scope
-
+      - $mongoendopoint: $.getConnectionTo($.mongodb, 27017)
+      - Return:
+          name: $.name
+          image: 'fiware/orion'
+          env:
+             MONGODB_HOST: $mongoendpoint.host
+          ports:
+            - port: 1026
+              scope: $._scope
+          commands: format('-dbhost {0}', $mongoendpoint.host)
 
   onInstallationStart:
     Body:
