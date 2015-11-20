@@ -38,7 +38,6 @@ mkdir -p /opt/openvpn
 mkdir -p /opt/openvpn/templates
 cp openvpn/client.sh /opt/openvpn
 cp openvpn/server.sh /opt/openvpn
-cp openvpn/templates/bridge.sh /opt/openvpn/templates
 cp openvpn/templates/client.conf /opt/openvpn/templates
 cp openvpn/templates/down.sh /opt/openvpn/templates
 cp openvpn/templates/interfaces /opt/openvpn/templates
