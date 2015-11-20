@@ -35,7 +35,6 @@ Scripts:
     Files:
       - openvpn/client.sh
       - openvpn/server.sh
-      - openvpn/templates/bridge.sh
       - openvpn/templates/client.conf
       - openvpn/templates/down.sh
       - openvpn/templates/interfaces
