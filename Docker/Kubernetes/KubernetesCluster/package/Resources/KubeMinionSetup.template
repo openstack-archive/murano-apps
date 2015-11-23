@@ -20,12 +20,15 @@ Parameters:
   masterIp: $masterIp
   dockerRegistry: $dockerRegistry
   dockerMirror: $dockerMirror
+  gcloudKey: $gcloudKey
 
 Body: |
   if args.dockerRegistry:
     setupRegistry(args.dockerRegistry)
   if args.dockerMirror:
     setupMirror(args.dockerMirror)
+  if args.gcloudKey:
+    loginToGoogleRegistry("'{0}'".format(args.gcloudKey))
   restartDocker()
   setup('{0} {1} {2}'.format(args.name, args.ip, args.masterIp))
 
@@ -59,6 +62,15 @@ Scripts:
     Type: Application
     Version: 1.0.0
     EntryPoint: setupDockerMirror.sh
+    Files: []
+    Options:
+      captureStdout: true
+      captureStderr: true
+
+  loginToGoogleRegistry:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: loginToGoogleRegistry.sh
     Files: []
     Options:
       captureStdout: true
