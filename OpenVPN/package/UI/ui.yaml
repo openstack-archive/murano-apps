@@ -28,8 +28,8 @@ Application:
   gceUserName: $.clientConfiguration.gceUserName
   gcePassword: $.clientConfiguration.gcePassword
   gceNodesIp: $.clientConfiguration.gceNodesIp
-  publicServerPort: $.clientConfiguration.publicServerPort
-  publicServerIp: $.clientConfiguration.publicServerIp
+  publicServerPort: $.appConfiguration.publicServerPort
+  publicServerIp: $.appConfiguration.publicServerIp
   instance:
     ?:
       type: io.murano.resources.LinuxMuranoInstance
@@ -62,39 +62,66 @@ Forms:
           label: Netmask
           required: True
           description: Provide a netmask for Tap DHCP range.
+        - name: publicServerPort
+          type: string
+          label: Gateway Server Port
+          required: True
+          description: Provide Gateway Server Port.
+        - name: publicServerIp
+          type: string
+          label: Gateway Server IP
+          required: True
+          description: Provide Gateway Server IP.
         - name: assignFloatingIP
           type: boolean
           label: Assign Floating IP
           initial: True
+          required: false
+  - cloudConfiguration:
+      fields:
+        - name: title
+          type: string
+          required: false
+          hidden: true
+          description: Select a cloud compute service
+        - name: isGCE
+          type: boolean
+          label: GCE
+          initial: true
+          required: false
+        - name: isAWS
+          type: boolean
+          label: AWS
+          initial: false
+          required: false
+        - name: isAzure
+          type: boolean
+          label: Azure
+          initial: false
+          required: false
+        - name: isCustom
+          type: boolean
+          label: Custom
+          initial: false
           required: false
 
   - clientConfiguration:
       fields:
         - name: gceUserName
           type: string
-          label: GCE User Name
-          required: True
-          description: Provide GCE User Name.
+          label: GCE Username
+          required: true
+          description: Provide GCE Username.
         - name: gcePassword
           type: string
           label: GCE Password
-          required: True
-          description: Provide Gce Password.
+          required: true
+          description: Provide GCE Password.
         - name: gceNodesIp
           type: string
           label: GCE Nodes IP
-          required: True
+          required: true
           description: Provide GCE Nodes IP.
-        - name: publicServerPort
-          type: string
-          label: Public Server Port
-          required: True
-          description: Provide Public Server Port.
-        - name: publicServerIp
-          type: string
-          label: Public Server IP
-          required: True
-          description: Provide Public Server IP.
 
   - instanceConfiguration:
       fields:
