@@ -85,7 +85,8 @@ Methods:
                 ip => $.getIp(),
                 masterIp => $._cluster.masterNode.getIp(),
                 dockerRegistry => $._cluster.dockerRegistry,
-                dockerMirror => $._cluster.dockerMirror
+                dockerMirror => $._cluster.dockerMirror,
+                gcloudKey => $._cluster.gcloudKey
               ))
           - $.instance.agent.call($template, $resources)
           - $.setAttr(nodeConfigured, true)

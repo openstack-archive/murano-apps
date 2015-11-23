@@ -53,6 +53,9 @@ Properties:
   dockerMirror:
     Contract: $.string()
 
+  gcloudKey:
+    Contract: $.string()
+
   serviceEndpoints:
     Contract:
       - port: $.int().notNull().check($ > 0)
