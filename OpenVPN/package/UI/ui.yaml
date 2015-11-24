@@ -83,7 +83,7 @@ Forms:
           type: string
           required: false
           hidden: true
-          description: Select a cloud compute service
+          description: Select a public cloud compute provider.
         - name: isGCE
           type: boolean
           label: GCE
@@ -99,9 +99,9 @@ Forms:
           label: Azure
           initial: false
           required: false
-        - name: isCustom
+        - name: isRackspace
           type: boolean
-          label: Custom
+          label: Rackspace
           initial: false
           required: false
 
