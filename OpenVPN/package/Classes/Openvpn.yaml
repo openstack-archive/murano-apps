@@ -83,5 +83,5 @@ Methods:
               - $host: $.instance.floatingIpAddress
             Else:
               - $host: $.instance.ipAddresses[0]
-          - $._environment.reporter.report($this, format('Openvpn is available at /{0}', $host))
+          - $._environment.reporter.report($this, format('Openvpn is available at {0}', $host))
           - $.setAttr(deployed, true)
