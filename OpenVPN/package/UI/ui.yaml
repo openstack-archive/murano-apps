@@ -83,45 +83,30 @@ Forms:
           type: string
           required: false
           hidden: true
-          description: Select a public cloud compute provider.
+          description: Select a public cloud service provider.
         - name: isGCE
           type: boolean
           label: GCE
           initial: true
-          required: false
-        - name: isAWS
-          type: boolean
-          label: AWS
-          initial: false
-          required: false
-        - name: isAzure
-          type: boolean
-          label: Azure
-          initial: false
-          required: false
-        - name: isRackspace
-          type: boolean
-          label: Rackspace
-          initial: false
           required: false
 
   - clientConfiguration:
       fields:
         - name: gceUserName
           type: string
-          label: GCE Username
+          label: Username
           required: true
-          description: Provide GCE Username.
+          description: Provide a cloud service username.
         - name: gcePassword
           type: string
-          label: GCE Password
+          label: Password
           required: true
-          description: Provide GCE Password.
+          description: Provide a cloud service password.
         - name: gceNodesIp
           type: string
-          label: GCE Nodes IP
+          label: Nodes IP
           required: true
-          description: Provide GCE Nodes IP.
+          description: Provide a cloud service nodes IP.
 
   - instanceConfiguration:
       fields:
@@ -165,7 +150,7 @@ Forms:
         - name: unitNamingPattern
           type: string
           label: Instance Naming Pattern
-          required: false
+          required: true
           maxLength: 64
           regexpValidator: '^[a-zA-z][-_\w]*$'
           errorMessages:
