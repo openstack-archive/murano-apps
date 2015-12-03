@@ -16,6 +16,6 @@ bridge_stp off
 iface eth0 inet manual
 up ifconfig $IFACE 0.0.0.0 up
 up ip link set $IFACE promisc on
-down ipp link set $IFACE promisc off
+down ip link set $IFACE promisc off
 down ifconfig $IFACE down
 
