@@ -24,6 +24,7 @@ run Docker applications:
 * Kubernetes: an open source container cluster manager by Google. It allows
   to schedule and run Docker applications on multiple clustered nodes.
   Application both installs Kubernetes and provides capabilities to run
-  Docker applications similar to DockerStandaloneHost.
+  Docker applications similar to DockerStandaloneHost. See
+  Kubernetes/README.rst for more details.
 
 * Applications: Examples of some of the most popular Docker applications.
