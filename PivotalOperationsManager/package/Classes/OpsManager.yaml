@@ -1,0 +1,129 @@
+#  Licensed under the Apache License, Version 2.0 (the "License"); you may
+#  not use this file except in compliance with the License. You may obtain
+#  a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#  License for the specific language governing permissions and limitations
+#  under the License.
+
+Namespaces:
+  =: io.murano.apps.pivotal
+  std: io.murano
+  res: io.murano.resources
+  sys: io.murano.system
+
+
+Name: PivotalOpsManager
+
+Extends: std:Application
+
+Properties:
+  instance:
+    Contract: $.class(OpsManagerInstance).notNull()
+
+  username:
+    Contract: $.string().notNull()
+
+  password:
+    Contract: $.string().notNull()
+
+  osUser:
+    Contract: $.string().notNull()
+
+  osPass:
+    Contract: $.string().notNull()
+
+  osTenant:
+    Contract: $.string().notNull()
+
+  sshKey:
+    Contract: $.string().notNull()
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+  deploy:
+    Body:
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $._environment.reporter.report($this, 'Configuring security groups.')
+          - $securityGroupIngress:
+            - ToPort: 80
+              FromPort: 80
+              IpProtocol: tcp
+              External: true
+            - ToPort: 443
+              FromPort: 443
+              IpProtocol: tcp
+              External: true
+          - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+
+          - $._environment.reporter.report($this, 'Deploying network for Ops Manager.')
+          - If: $.instance.networks.useEnvironmentNetwork and $._environment.defaultNetworks.environment!=null
+            Then:
+              - $._environment.defaultNetworks.environment.deploy()
+              - $networkInfo: $._environment.defaultNetworks.environment.describe()
+          - If: $.instance.networks.useFlatNetwork and $.environment.defaultNetworks.flat!=null
+            Then:
+              - $._environment.defaultNetworks.flat.deploy()
+              - $networkInfo: $._environment.defaultNetworks.flat.describe()
+          - If: len($.instance.networks.customNetworks) > 0
+            Then:
+              - $.instance.networks.customNetworks.pselect($.deploy())
+              - $networkInfo: $.instance.networks.customNetworks.first().describe()
+
+          - $._environment.reporter.report($this, 'Preparing data for configuring Ops Manager.')
+          - $resources: new(sys:Resources)
+          - $configFile: $resources.string('installation.yml')
+          - $initScript: $resources.string('init.sh')
+          - $guid: format('guid-{0}', randomName())
+          - $azoneId: format('azone-{0}', randomName())
+          - $directorId: format('director-{0}', randomName())
+
+          - $configReplacements:
+              "%GUID%": str('guid-' + randomName())
+              "%AUTH-URL%": config(keystone_authtoken, auth_uri)
+              "%OSUSER%": $.osUser
+              "%OSPASS%": $.osPass
+              "%OSTENANT%": $.osTenant
+              "%KEY-NAME%": $.instance.keyname
+              "%SSH-PRIVATE-KEY%": $.sshKey
+              "%AZONE-ID%": str('azone-' + randomName())
+              "%AZONE%": $.instance.availabilityZone
+              "%DIRECTOR-ID%": str('director-' + randomName())
+              "%PRODUCT-ID%": str('p-bosh-' + randomName())
+
+          - If: $networkInfo.provider = 'Neutron'
+            Then:
+              - $networkReplacements:
+                  "%NETWORK-GUID%": str('net-' + randomName())
+                  "%NETWORK-NAME%": $networkInfo.netName
+                  "%OS-NETWORK-ID%": $networkInfo.netId
+                  "%CIDR%": $networkInfo.cidr
+                  "%GATEWAY%": $networkInfo.gateway
+                  "%DNS%": $networkInfo.dns.first()
+              - $configReplacements: $configReplacements.mergeWith($networkReplacements)
+
+          - $scriptReplacements:
+              "%USER%": $.username
+              "%PASS%": $.password
+              "%INSTALL_CONFIG_BASE64%": base64encode($configFile.replace($configReplacements))
+
+          - $data: $initScript.replace($scriptReplacements)
+          - $.instance.setInitData($data)
+          - $._environment.reporter.report($this, 'Creating VM for Ops Manager.')
+          - $.instance.deploy()
+          - $._environment.reporter.report($this, 'Instance created.')
+          - If: $.instance.assignFloatingIp
+            Then:
+              - $host: $.instance.floatingIpAddress
+            Else:
+              - $host: $.instance.ipAddresses[0]
+          - $._environment.reporter.report($this, format('OpsManager is available at https://{0}', $host))
+          - $.setAttr(deployed, true)
