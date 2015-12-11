@@ -59,6 +59,6 @@ Methods:
             Then:
               - $address: $.instance.floatingIpAddress
             Else:
-              - $address: $.server.instance.ipAddresses[0]
+              - $address: $.instance.ipAddresses[0]
           - $._environment.reporter.report($this, 'Tomcat is available at http://{0}:{1}'.format($address, 8080))
           - $.setAttr(deployed, true)
