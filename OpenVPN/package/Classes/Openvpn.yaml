@@ -38,7 +38,15 @@ Properties:
   publicServerPort:
     Contract: $.string().notNull()
   publicServerIp:
-    Contract: $.string().notNull()  
+    Contract: $.string().notNull()
+  openstackIP:
+    Contract: $.string()
+  tenantName:
+    Contract: $.string()
+  userName:
+    Contract: $.string()
+  userPassword:
+    Contract: $.string()  
 
   instance:
     Contract: $.class(res:Instance).notNull()
@@ -73,7 +81,13 @@ Methods:
                 gcePassword => $.gcePassword,
                 gceNodesIp => $.gceNodesIp,
                 publicServerPort => $.publicServerPort,
-                publicServerIp => $.publicServerIp
+                publicServerIp => $.publicServerIp,
+                instanceName => $.instance.name,
+                envName => $._environment.name,
+                openstackIP => $.openstackIP,
+                tenantName => $.tenantName,
+                userName => $.userName,
+                userPassword => $.userPassword
               ))
           - $._environment.reporter.report($this, 'Instance is created. Deploying Openvpn server')
           - $.instance.agent.call($template, $resources)
@@ -84,4 +98,18 @@ Methods:
             Else:
               - $host: $.instance.ipAddresses[0]
           - $._environment.reporter.report($this, format('Openvpn is available at {0}', $host))
+          - $.setupReSTServer()
           - $.setAttr(deployed, true)
+
+  setupReSTServer:
+    Body:
+          - $resources: new(sys:Resources)
+          - $template: $resources.yaml('SetupReSTServer.template')
+          - $._environment.reporter.report($this, 'Creating ReST Service')
+          - $.instance.agent.call($template, $resources)
+          - If: $.instance.assignFloatingIp
+            Then:
+              - $host: $.instance.floatingIpAddress
+            Else:
+              - $host: $.instance.ipAddresses[0]
+          - $._environment.reporter.report($this, format('ReST Server available at  http://{0}:5000', $host))
