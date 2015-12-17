@@ -30,6 +30,10 @@ Application:
   gceNodesIp: $.clientConfiguration.gceNodesIp
   publicServerPort: $.appConfiguration.publicServerPort
   publicServerIp: $.appConfiguration.publicServerIp
+  openstackIP: $.hostConfiguration.openstackIP
+  tenantName: $.hostConfiguration.tenantName
+  userName: $.hostConfiguration.userName
+  userPassword: $.hostConfiguration.userPassword
   instance:
     ?:
       type: io.murano.resources.LinuxMuranoInstance
@@ -77,6 +81,34 @@ Forms:
           label: Assign Floating IP
           initial: True
           required: false
+  - hostConfiguration:
+      fields:
+        - name: openstackIP
+          type: string
+          required: false
+          label: OpenStack IP
+          description: >-
+            Provide OpenStack Endpoint IP
+        - name: tenantName
+          type: string
+          required: false
+          initial: admin
+          label: Tenant Name
+          description: >-
+            Provide tenant name.
+        - name: userName
+          type: string
+          required: false
+          initial: admin
+          label: User Name
+          description: >-
+            Provide user name.
+        - name: userPassword
+          type: string
+          required: false
+          label: Password
+          description: >-
+            Provide password for user.
   - cloudConfiguration:
       fields:
         - name: title
