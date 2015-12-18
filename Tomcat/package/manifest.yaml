@@ -20,3 +20,4 @@ Author: 'Mirantis, Inc'
 Tags: [Servlets, Server, Pages, Java]
 Classes:
  io.murano.apps.apache.Tomcat: Tomcat.yaml
+ io.murano.test.TomcatTest: TomcatTest.yaml

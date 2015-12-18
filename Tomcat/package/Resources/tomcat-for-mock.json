@@ -1,0 +1,41 @@
+{"Attributes": [], "Objects": {
+    "defaultNetworks": {
+        "environment": {
+            "name": "quick-env-1-network",
+            "?": {
+                "type": "io.murano.resources.NeutronNetwork",
+                "id": "326e367d49f34d4c8d3b234d053411f3"
+            }
+        },
+        "flat": null
+    },
+    "name": "test",
+    "?": {
+        "type": "io.murano.Environment",
+        "id": "41549905e496409685339575dbd01894"
+    },
+    "applications": [
+        {
+            "instance": {
+                "availabilityZone": "nova",
+                "name": "cnxubigthiddg2",
+                "assignFloatingIp": false,
+                "keyname": "kate",
+                "flavor": "m1.medium",
+                "image": "283aa37f-d18a-48fc-b94e-c0721dbcf059",
+                "?": {
+                    "type": "io.murano.resources.LinuxMuranoInstance",
+                    "id": "13e3c264-f002-4958-a619-94d13d7fa3f5"
+                }
+            },
+            "name": "Tomcat",
+            "?": {
+                "_26411a1861294160833743e45d0eaad9": {
+                    "name": "Apache Tomcat"
+                },
+                "type": "io.murano.apps.apache.Tomcat",
+                "id": "312534e2-f1aa-4ed3-811c-7f5c10530484"
+            }
+        }
+    ]
+}}
