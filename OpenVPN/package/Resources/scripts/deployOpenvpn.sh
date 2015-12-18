@@ -61,5 +61,4 @@ cp openvpn/templates/up.sh /opt/openvpn/templates
 
 bash /opt/openvpn/server.sh >> /tmp/openvpn-server.log
 bash /opt/openvpn/client.sh >> /tmp/openvpn-client.log
-python /opt/openvpn/portDisable.py >> /tmp/openvpn-port.log
 
