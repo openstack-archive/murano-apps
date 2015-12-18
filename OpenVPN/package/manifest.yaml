@@ -19,7 +19,7 @@ Description: |
  extension using the industry standard SSL/TLS protocol, supports flexible client 
  authentication methods based on certificates, smart cards, and/or username/password credentials, 
  and allows user or group-specific access control policies using firewall rules applied to the VPN virtual interface. 
-Author: 'Vedams'
+Author: 'Biarca'
 Tags: [Openvpn server]
 Classes:
  io.murano.apps.Openvpn: Openvpn.yaml
