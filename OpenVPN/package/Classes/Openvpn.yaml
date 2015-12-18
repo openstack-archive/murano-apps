@@ -97,9 +97,20 @@ Methods:
               - $host: $.instance.floatingIpAddress
             Else:
               - $host: $.instance.ipAddresses[0]
-          - $._environment.reporter.report($this, format('Openvpn is available at {0}', $host))
+          - $.setupPortDisable()
           - $.setupReSTServer()
+          - $._environment.reporter.report($this, format('Openvpn is available at {0}', $host))
           - $.setAttr(deployed, true)
+  
+  setupPortDisable:
+    Body:
+          - $resources: new(sys:Resources)
+          - $template: $resources.yaml('SetupPortDisable.template')
+          - $._environment.reporter.report($this, 'Removing security group')
+          - $._environment.reporter.report($this, 'Disabling security port')
+          - $.instance.agent.call($template, $resources)
+          - $._environment.reporter.report($this, 'Security group removed')
+          - $._environment.reporter.report($this, 'Security port disabled')
 
   setupReSTServer:
     Body:
