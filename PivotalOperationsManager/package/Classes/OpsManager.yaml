@@ -47,6 +47,7 @@ Methods:
   initialize:
     Body:
       - $._environment: $.find(std:Environment).require()
+      - $._networkInfo: null
 
   deploy:
     Body:
@@ -65,18 +66,7 @@ Methods:
           - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
 
           - $._environment.reporter.report($this, 'Deploying network for Ops Manager.')
-          - If: $.instance.networks.useEnvironmentNetwork and $._environment.defaultNetworks.environment!=null
-            Then:
-              - $._environment.defaultNetworks.environment.deploy()
-              - $networkInfo: $._environment.defaultNetworks.environment.describe()
-          - If: $.instance.networks.useFlatNetwork and $.environment.defaultNetworks.flat!=null
-            Then:
-              - $._environment.defaultNetworks.flat.deploy()
-              - $networkInfo: $._environment.defaultNetworks.flat.describe()
-          - If: len($.instance.networks.customNetworks) > 0
-            Then:
-              - $.instance.networks.customNetworks.pselect($.deploy())
-              - $networkInfo: $.instance.networks.customNetworks.first().describe()
+          - $._deployNetwork()
 
           - $._environment.reporter.report($this, 'Preparing data for configuring Ops Manager.')
           - $resources: new(sys:Resources)
@@ -99,16 +89,29 @@ Methods:
               "%DIRECTOR-ID%": str('director-' + randomName())
               "%PRODUCT-ID%": str('p-bosh-' + randomName())
 
-          - If: $networkInfo.provider = 'Neutron'
+          - If: $._networkInfo != null
             Then:
-              - $networkReplacements:
-                  "%NETWORK-GUID%": str('net-' + randomName())
-                  "%NETWORK-NAME%": $networkInfo.netName
-                  "%OS-NETWORK-ID%": $networkInfo.netId
-                  "%CIDR%": $networkInfo.cidr
-                  "%GATEWAY%": $networkInfo.gateway
-                  "%DNS%": $networkInfo.dns.first()
-              - $configReplacements: $configReplacements.mergeWith($networkReplacements)
+              - If: $._networkInfo.provider = 'Neutron'
+                Then:
+                  # NOTE(ddovbii): Add first 10 addresses to excluded IP
+                  # ranges as it specified in docs
+                  - $lastIp: $._networkInfo.gateway.split('.')
+                  - $lastIp[3]: 10
+                  - $lastIp: $lastIp.join('.')
+                  # Create replacements for network settings
+                  - $networkReplacements:
+                      "%NETWORK-GUID%": str('net-' + randomName())
+                      "%NETWORK-NAME%": $._networkInfo.netName
+                      "%OS-NETWORK-ID%": $._networkInfo.netId
+                      "%CIDR%": $._networkInfo.cidr
+                      "%GATEWAY%": $._networkInfo.gateway
+                      "%DNS%": $._networkInfo.dns.first()
+                      "%FIRST_IP%": $._networkInfo.gateway
+                      "%LAST_IP%": $lastIp
+                  # Merge network replacements with common list of replacements
+                  - $configReplacements: $configReplacements.mergeWith($networkReplacements)
+                Else:
+                  - $._environment.reporter.report($this, 'Unable to configure network.')
 
           - $scriptReplacements:
               "%USER%": $.username
@@ -127,3 +130,21 @@ Methods:
               - $host: $.instance.ipAddresses[0]
           - $._environment.reporter.report($this, format('OpsManager is available at https://{0}', $host))
           - $.setAttr(deployed, true)
+
+  _deployNetwork:
+    Body:
+      # Determine which type of network is used and deploy it.
+      # _networkInfo stores details of deployed network
+      - If: $.instance.networks.useEnvironmentNetwork and $._environment.defaultNetworks.environment!=null
+        Then:
+          - $._environment.defaultNetworks.environment.deploy()
+          - $._networkInfo: $._environment.defaultNetworks.environment.describe()
+      - If: $.instance.networks.useFlatNetwork and $.environment.defaultNetworks.flat!=null
+        Then:
+          - $._environment.defaultNetworks.flat.deploy()
+          - $._networkInfo: $._environment.defaultNetworks.flat.describe()
+      - If: len($.instance.networks.customNetworks) > 0
+        Then:
+          - $.instance.networks.customNetworks.pselect($.deploy())
+          - $._networkInfo: $.instance.networks.customNetworks.first().describe()
+

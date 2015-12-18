@@ -19,7 +19,8 @@
                 "iaas_network_identifier": "%OS-NETWORK-ID%",
                 "subnet": "%CIDR%",
                 "dns": "%DNS%",
-                "gateway": "%GATEWAY%"
+                "gateway": "%GATEWAY%",
+                "reserved_ip_ranges": "%FIRST_IP%-%LAST_IP%"
             }
         ],
         "iaas_configuration": {
