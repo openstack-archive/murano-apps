@@ -47,6 +47,7 @@ Methods:
   initialize:
     Body:
       - $._environment: $.find(std:Environment).require()
+      - $._securityGroupName: ''
       - $._networkInfo: null
 
   deploy:
@@ -54,16 +55,7 @@ Methods:
       - If: not $.getAttr(deployed, false)
         Then:
           - $._environment.reporter.report($this, 'Configuring security groups.')
-          - $securityGroupIngress:
-            - ToPort: 80
-              FromPort: 80
-              IpProtocol: tcp
-              External: true
-            - ToPort: 443
-              FromPort: 443
-              IpProtocol: tcp
-              External: true
-          - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+          - $._configureSecurityGroup()
 
           - $._environment.reporter.report($this, 'Deploying network for Ops Manager.')
           - $._deployNetwork()
@@ -88,6 +80,7 @@ Methods:
               "%AZONE%": $.instance.availabilityZone
               "%DIRECTOR-ID%": str('director-' + randomName())
               "%PRODUCT-ID%": str('p-bosh-' + randomName())
+              "%SEC-GROUP-NAME%": $._securityGroupName
 
           - If: $._networkInfo != null
             Then:
@@ -148,3 +141,40 @@ Methods:
           - $.instance.networks.customNetworks.pselect($.deploy())
           - $._networkInfo: $.instance.networks.customNetworks.first().describe()
 
+  _configureSecurityGroup:
+    Body:
+      - $securityGroupIngress:
+            - ToPort: 80
+              FromPort: 80
+              IpProtocol: tcp
+              External: true
+            - ToPort: 443
+              FromPort: 443
+              IpProtocol: tcp
+              External: true
+            - ToPort: 25555
+              FromPort: 25555
+              IpProtocol: tcp
+              External: true
+            - ToPort: 65535
+              FromPort: 1
+              IpProtocol: tcp
+              External: false
+            - ToPort: 65535
+              FromPort: 1
+              IpProtocol: udp
+              External: false
+      - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+
+      - $securityGroupKey: coalesce(
+            $.instance.securityGroupName,
+            $._environment.securityGroupManager.defaultGroupName
+          )
+      - $._securityGroupName: format('{0}-{1}', $securityGroupKey, randomName())
+      - $template:
+          resources:
+            $securityGroupKey:
+              properties:
+                name: $._securityGroupName
+      - $._environment.stack.updateTemplate($template)
+      - $._environment.stack.push()

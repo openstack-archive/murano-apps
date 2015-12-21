@@ -29,6 +29,7 @@
             "password": "%OSPASS%",
             "tenant": "%OSTENANT%",
             "ignore_server_availability_zone": false,
+            "security_group": "%SEC-GROUP-NAME%",
             "key_pair_name": "%KEY-NAME%",
             "ssh_private_key": "%SSH-PRIVATE-KEY%",
             "region": "RegionOne"
