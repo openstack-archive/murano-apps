@@ -15,8 +15,7 @@ Type: Application
 FullName: io.murano.apps.pivotal.OpsManager
 Name: Pivotal Operations Manager
 Description: |
- Operations Manager is a web application that you use to
- deploy and manage a Pivotal Cloud Foundry.
+ Operations Manager is a web application that you use to deploy and manage a Pivotal Cloud Foundry.
 Author: 'Mirantis, Inc'
 Tags: [PAAS, Cloud Foundry]
 Classes:

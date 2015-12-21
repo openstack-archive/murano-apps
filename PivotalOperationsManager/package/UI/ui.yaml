@@ -136,7 +136,7 @@ Forms:
           description: >-
             Enter a password of your current OpenStack user
         - name: sshKey
-          type: string
+          type: text
           label: SSH Private Key
           description: >-
             In a text editor, open the key pair file, copy and paste the content of file into the field
