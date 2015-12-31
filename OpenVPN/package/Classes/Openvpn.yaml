@@ -29,12 +29,15 @@ Properties:
     Contract: $.string().notNull()
   netmask:
     Contract: $.string().notNull()
+  isGCE:
+    Contract: $.bool()
+    Default: false
   gceUserName:
-    Contract: $.string().notNull()
+    Contract: $.string()
   gcePassword:
-    Contract: $.string().notNull()
+    Contract: $.string()
   gceNodesIp:
-    Contract: $.string().notNull()
+    Contract: $.string()
   publicServerPort:
     Contract: $.string().notNull()
   publicServerIp:
@@ -47,7 +50,6 @@ Properties:
     Contract: $.string()
   userPassword:
     Contract: $.string()  
-
   instance:
     Contract: $.class(res:Instance).notNull()
 
@@ -92,6 +94,11 @@ Methods:
           - $._environment.reporter.report($this, 'Instance is created. Deploying Openvpn server')
           - $.instance.agent.call($template, $resources)
           - $._environment.reporter.report($this, 'Openvpn server is installed.')
+          - If: $.isGCE
+            Then:
+              - $.configureClients()
+            Else:
+              - $._environment.reporter.report($this, 'Client(s) is not configured because a public cloud service provider not selected..') 
           - If: $.instance.assignFloatingIp
             Then:
               - $host: $.instance.floatingIpAddress
@@ -101,6 +108,19 @@ Methods:
           - $.setupReSTServer()
           - $._environment.reporter.report($this, format('Openvpn is available at {0}', $host))
           - $.setAttr(deployed, true)
+
+  configureClients:
+    Body:
+      - If: $.gceUserName != "" and $.gcePassword != ""  and $.gceNodesIp !=""
+        Then:
+          - $resources: new(sys:Resources)
+          - $._environment.reporter.report($this, 'Configuring client(s)')
+          - $template: $resources.yaml('DeployClients.template')
+          - $.instance.agent.call($template, $resources)
+          - $._environment.reporter.report($this, 'Client(s) are configured.')
+        Else:
+          - $._environment.reporter.report($this, 'Not configuring clients. Wrong inputs')
+            
   
   setupPortDisable:
     Body:
