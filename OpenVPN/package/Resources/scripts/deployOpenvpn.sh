@@ -34,19 +34,19 @@ echo "TAP_DHCP_END=${2}" >> ${openvpn_conf}
 echo "netmask=${3}" >> ${openvpn_conf}
 echo " " >> ${openvpn_conf}
 echo "[GCE]" >> ${openvpn_conf}
-echo "gceUserName=${4}" >> ${openvpn_conf}
-echo "gcePassword=${5}" >> ${openvpn_conf}
-echo "gceNodesIp=${6}" >> ${openvpn_conf}
-echo "publicServerPort=${7}" >> ${openvpn_conf}
-echo "publicServerIp=${8}" >> ${openvpn_conf}
+echo "gceUserName=${12}" >> ${openvpn_conf}
+echo "gcePassword=${13}" >> ${openvpn_conf}
+echo "gceNodesIp=${14}" >> ${openvpn_conf}
+echo "publicServerPort=${4}" >> ${openvpn_conf}
+echo "publicServerIp=${5}" >> ${openvpn_conf}
 echo " " >> ${openvpn_conf}
 echo "[INSTANCE]" >> ${openvpn_conf}
-echo "instanceName=${9}" >> ${openvpn_conf}
-echo "envName=${10}" >> ${openvpn_conf}
-echo "OPENSTACK_IP=${11}" >> ${openvpn_conf}
-echo "tenant=${12}" >> ${openvpn_conf}
-echo "username=${13}" >> ${openvpn_conf}
-echo "password=${14}" >> ${openvpn_conf}
+echo "instanceName=${6}" >> ${openvpn_conf}
+echo "envName=${7}" >> ${openvpn_conf}
+echo "OPENSTACK_IP=${8}" >> ${openvpn_conf}
+echo "tenant=${9}" >> ${openvpn_conf}
+echo "username=${10}" >> ${openvpn_conf}
+echo "password=${11}" >> ${openvpn_conf}
 
 mkdir -p /opt/openvpn
 mkdir -p /opt/openvpn/templates
@@ -60,5 +60,3 @@ cp openvpn/templates/server.conf /opt/openvpn/templates
 cp openvpn/templates/up.sh /opt/openvpn/templates
 
 bash /opt/openvpn/server.sh >> /tmp/openvpn-server.log
-bash /opt/openvpn/client.sh >> /tmp/openvpn-client.log
-

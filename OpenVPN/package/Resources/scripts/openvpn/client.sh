@@ -53,7 +53,7 @@ function gen_cert()
     cd /etc/openvpn/easy-rsa
     source ./vars
     ./pkitool ${clientname}
-
+    
     sshpass -p ${gcePassword} ssh-copy-id ${gceUserName}@${gceIp} -o "StrictHostKeyChecking=no"
 
     ssh ${gceUserName}@${gceIp} uptime
@@ -70,8 +70,10 @@ function gen_cert()
     ssh ${gceUserName}@${gceIp} sudo service openvpn restart
 }
 
-
+# Client IPs stores in array
 create_client_array
+
+#parsing client IP from array and generating certificates for clients on OpenVPN Server
 for ip in "${CLIENTS_ARRAY[@]}"
 do
   
