@@ -34,6 +34,7 @@ Application:
   tenantName: $.hostConfiguration.tenantName
   userName: $.hostConfiguration.userName
   userPassword: $.hostConfiguration.userPassword
+  isGCE: $.clientConfiguration.isGCE
   instance:
     ?:
       type: io.murano.resources.LinuxMuranoInstance
@@ -54,90 +55,89 @@ Forms:
         - name: tapDhcpBegin
           type: string
           label: Tap DHCP Begin
-          required: True
-          description: Provide starting IP address for Tap DHCP range.
+          required: true
+          description: Provide starting IP address for Tap DHCP range for selected OpenVPN network.
         - name: tapDhcpEnd
           type: string
           label: Tap DHCP End
-          required: True
-          description: Provide ending IP address for Tap DHCP range.
+          required: true
+          description: Provide ending IP address for Tap DHCP range for selected OpenVPN network.
         - name: netmask
           type: string
           label: Netmask
-          required: True
+          required: true
           description: Provide a netmask for Tap DHCP range.
         - name: publicServerPort
           type: string
           label: Gateway Server Port
-          required: True
+          required: true
           description: Provide Gateway Server Port.
         - name: publicServerIp
           type: string
           label: Gateway Server IP
-          required: True
+          required: true
           description: Provide Gateway Server IP.
         - name: assignFloatingIP
           type: boolean
           label: Assign Floating IP
-          initial: True
+          initial: true
           required: false
   - hostConfiguration:
       fields:
         - name: openstackIP
           type: string
-          required: false
+          required: true
           label: OpenStack IP
           description: >-
             Provide OpenStack Endpoint IP
         - name: tenantName
           type: string
-          required: false
+          required: true
           initial: admin
           label: Tenant Name
           description: >-
             Provide tenant name.
         - name: userName
           type: string
-          required: false
+          required: true
           initial: admin
           label: User Name
           description: >-
             Provide user name.
         - name: userPassword
           type: string
-          required: false
+          required: true
           label: Password
           description: >-
             Provide password for user.
-  - cloudConfiguration:
+
+  - clientConfiguration:
       fields:
         - name: title
           type: string
           required: false
           hidden: true
-          description: Select a public cloud service provider.
+          description: OpenVPN client(s) configuration
         - name: isGCE
           type: boolean
           label: GCE
           initial: true
           required: false
-
-  - clientConfiguration:
-      fields:
+          description: Select a public cloud service provider.
         - name: gceUserName
           type: string
           label: Username
-          required: true
+          required: false
           description: Provide a cloud service username.
         - name: gcePassword
           type: string
           label: Password
-          required: true
+          required: false
           description: Provide a cloud service password.
         - name: gceNodesIp
           type: string
           label: Nodes IP
-          required: true
+          required: false
           description: Provide a cloud service nodes IP.
 
   - instanceConfiguration:
