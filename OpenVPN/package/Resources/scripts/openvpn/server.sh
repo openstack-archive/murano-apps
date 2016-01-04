@@ -42,3 +42,8 @@ sudo sed -ie s/BRIDGE_END_TAP_IP/${TAP_DHCP_END}/ /opt/openvpn/templates/server.
 sudo cp /opt/openvpn/templates/server.conf /etc/openvpn/server.conf
 sudo service openvpn start
 
+# ssh key Generating
+if [ ! -f ~/.ssh/id_rsa ]; then
+   ssh-keygen -t rsa -f  ~/.ssh/id_rsa -N ''
+fi
+

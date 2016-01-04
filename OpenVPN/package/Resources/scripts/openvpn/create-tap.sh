@@ -52,8 +52,9 @@ function gen_cert()
     source ./vars
     ./pkitool ${clientname}
  
-    
-    ssh-keygen -f "/root/.ssh/known_hosts" -R ${gceIp}
+    if [ -f ~/ssh/known_hosts ] ; then
+      ssh-keygen -f ~/ssh/known_hosts -R ${gceIp}
+    fi
     ssh-keyscan ${gceIp} >> ~/.ssh/known_hosts
 
     ssh ${gceUserName}@${gceIp} uptime
