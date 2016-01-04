@@ -128,17 +128,17 @@ Forms:
           type: string
           label: Username
           required: false
-          description: Provide a cloud service username.
+          description: Provide cloud instance privileged username.
         - name: gcePassword
           type: string
           label: Password
           required: false
-          description: Provide a cloud service password.
+          description: Provide privileged user password.
         - name: gceNodesIp
           type: string
           label: Nodes IP
           required: false
-          description: Provide a cloud service nodes IP.
+          description: Provide comma separated external IP details.
 
   - instanceConfiguration:
       fields:

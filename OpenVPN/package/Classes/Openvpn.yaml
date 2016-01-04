@@ -91,14 +91,14 @@ Methods:
                 userName => $.userName,
                 userPassword => $.userPassword
               ))
-          - $._environment.reporter.report($this, 'Instance is created. Deploying Openvpn server')
+          - $._environment.reporter.report($this, 'Instance is created. Deploying Openvpn server.')
           - $.instance.agent.call($template, $resources)
           - $._environment.reporter.report($this, 'Openvpn server is installed.')
           - If: $.isGCE
             Then:
               - $.configureClients()
             Else:
-              - $._environment.reporter.report($this, 'Client(s) is not configured because a public cloud service provider not selected..') 
+              - $._environment.reporter.report($this, 'No client(s) are configured as a public cloud service provider is not selected.') 
           - If: $.instance.assignFloatingIp
             Then:
               - $host: $.instance.floatingIpAddress
@@ -119,24 +119,24 @@ Methods:
           - $.instance.agent.call($template, $resources)
           - $._environment.reporter.report($this, 'Client(s) are configured.')
         Else:
-          - $._environment.reporter.report($this, 'Not configuring clients. Wrong inputs')
+          - $._environment.reporter.report($this, 'Not configuring clients. Wrong inputs.')
             
   
   setupPortDisable:
     Body:
           - $resources: new(sys:Resources)
           - $template: $resources.yaml('SetupPortDisable.template')
-          - $._environment.reporter.report($this, 'Removing security group')
-          - $._environment.reporter.report($this, 'Disabling security port')
+          - $._environment.reporter.report($this, 'Removing security group.')
+          - $._environment.reporter.report($this, 'Disabling security port.')
           - $.instance.agent.call($template, $resources)
-          - $._environment.reporter.report($this, 'Security group removed')
-          - $._environment.reporter.report($this, 'Security port disabled')
+          - $._environment.reporter.report($this, 'Security group removed.')
+          - $._environment.reporter.report($this, 'Security port disabled.')
 
   setupReSTServer:
     Body:
           - $resources: new(sys:Resources)
           - $template: $resources.yaml('SetupReSTServer.template')
-          - $._environment.reporter.report($this, 'Creating ReST Service')
+          - $._environment.reporter.report($this, 'Creating ReST Service.')
           - $.instance.agent.call($template, $resources)
           - If: $.instance.assignFloatingIp
             Then:
