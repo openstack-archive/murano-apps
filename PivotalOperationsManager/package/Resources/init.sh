@@ -1,5 +1,6 @@
 #!/bin/sh
 
+# Wait until service starts
 while true; do
     sleep 30
     if ps ax | grep -v grep | grep ruby > /dev/null
@@ -8,42 +9,52 @@ while true; do
     fi
 done
 
+# Create folder for murano actions
 mkdir /tmp/murano
+
+# Register user in ops manager
+echo 'Create the first user:\n' >> /tmp/murano/ops-config.log
 
 curl "https://localhost/api/setup" -d \
 'setup[user_name]=%USER%&setup[password]=%PASS%&setup[password_confirmation]=%PASS%&setup[eula_accepted]=true' \
 -X POST --insecure >> /tmp/murano/ops-config.log
 
+# Write user's settings to file
 installConfigBase64='%INSTALL_CONFIG_BASE64%'
+echo $installConfigBase64 | base64 -d > /tmp/murano/user-installation.yml
 
-echo $installConfigBase64 | base64 -d > /tmp/murano/installation.yml
+# Write python script to file
+mergeSettingsScript='%MERGE_SETTINGS_BASE64%'
+echo $mergeSettingsScript | base64 -d > /tmp/murano/merge_settings.py
 
-perl -i -pe 's/\r\n$/\\n/g' /tmp/murano/installation.yml
+# Replace 'line break' symbol with text 'line break'
+# Without this action Ops manager gets incorrect ssh private key
+perl -i -pe 's/\r\n$/\\n/g' /tmp/murano/user-installation.yml
 
-cat << EOF > /tmp/murano/get_ver.py
-#!/usr/bin/python
-import json
-import requests
+# Get installation settings of 'bare' Ops Manager
+curl "https://localhost/api/installation_settings" -X GET \
+-u %USER%:%PASS% --insecure > /tmp/murano/bare-installation.yml
 
-r = requests.get('https://localhost/api/products', auth=('%USER%', '%PASS%'), verify = False)
-products = r.json()
-omver = ''
-for prod in products:
-    if prod["name"] == "p-bosh":
-        omver = prod["product_version"]
-        break
-print omver
-EOF
+# Merge settings
+echo "Merging installation settings\n" >> /tmp/murano/ops-config.log
+python /tmp/murano/merge_settings.py >> /tmp/murano/ops-config.log
 
-chmod 755 /tmp/murano/get_ver.py
+if [ ! -f /tmp/murano/installation.yml ]; then
+    echo "File with settings is not found!" >> /tmp/murano/ops-config.log
+    wc_notify --data-binary '{"status": "FAILURE"}'
+fi
 
-VER=$(/tmp/murano/get_ver.py)
-
-sed -i "s/%VER%/${VER}/g" /tmp/murano/installation.yml
-
+echo "Importing settings to Ops Manager:\n" >> /tmp/murano/ops-config.log
 curl "https://localhost/api/installation_settings" -F \
 'installation[file]=@/tmp/murano/installation.yml' -X POST \
 -u %USER%:%PASS% --insecure >> /tmp/murano/ops-config.log
+
+# Save log
+mkdir /var/log/murano
+mv /tmp/murano/ops-config.log /var/log/murano/
+
+# Clear data
+rm -rf /tmp/murano
 
 # Notify Heat that configuration process is done
 wc_notify --data-binary '{"status": "SUCCESS"}'

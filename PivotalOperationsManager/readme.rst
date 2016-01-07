@@ -1,4 +1,5 @@
-*Pivotal Ops Manager for Murano*
+Pivotal Ops Manager for Murano
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This application allows to deploy Pivotal Operations Manager and configure
 Manager Director
