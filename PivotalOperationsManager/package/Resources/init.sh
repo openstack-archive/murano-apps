@@ -44,3 +44,6 @@ sed -i "s/%VER%/${VER}/g" /tmp/murano/installation.yml
 curl "https://localhost/api/installation_settings" -F \
 'installation[file]=@/tmp/murano/installation.yml' -X POST \
 -u %USER%:%PASS% --insecure >> /tmp/murano/ops-config.log
+
+# Notify Heat that configuration process is done
+wc_notify --data-binary '{"status": "SUCCESS"}'

@@ -22,13 +22,12 @@ Methods:
   initialize:
     Body:
       - $.customUserData: null
-      - $.swConfigResourceName: $.name + '-' + 'swcf'
+
 
   prepareUserData:
     Body:
       - Return:
-          data:
-            get_resource: $.swConfigResourceName
+          data: $.customUserData
           format: RAW
 
   setInitData:
@@ -36,14 +35,26 @@ Methods:
       - initData:
           Contract: $.notNull()
     Body:
+      - $.customUserData:
+          str_replace:
+            template:
+              $initData
+            params:
+              wc_notify:
+                get_attr: ['wait_handle', 'curl_cli']
+
+      # It used to check if cloud-init finished the work on VM
       - $template:
            resources:
-             $.swConfigResourceName:
-               type: 'OS::Heat::SoftwareConfig'
+             wait_condition:
+               type: 'OS::Heat::WaitCondition'
                properties:
-                 config:
-                   $initData
+                 handle: {get_resource: wait_handle}
+                 count: 1
+                 timeout: 600
+
+             wait_handle:
+               type: 'OS::Heat::WaitConditionHandle'
 
       - $environment: $.find(std:Environment).require()
       - $environment.stack.updateTemplate($template)
-      - $environment.stack.push()
