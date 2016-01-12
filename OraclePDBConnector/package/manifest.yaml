@@ -1,0 +1,28 @@
+#
+# Copyright 2015 Oracle and/or its affiliates. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+Format: 1.0
+Type: Application
+FullName: com.oracle.db.muranoPdb.OraclePDB
+Name: Oracle PDB Connector
+Description: |
+  Oracle PDB Connector is a Murano application that provides OpenStack cloud users with means for self-service provisioning of Oracle Database 12c and Oracle Multitenant Pluggable DataBases (PDBs). This is an unsupported technology preview release not intended for use in production environments.
+
+Author: 'Oracle'
+Tags: [oracle]
+Classes:
+ com.oracle.db.muranoPdb.OraclePDB: OraclePDB.murano
+Require:
+    io.murano.databases:
