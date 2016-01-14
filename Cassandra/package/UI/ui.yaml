@@ -1,0 +1,134 @@
+#  Licensed under the Apache License, Version 2.0 (the "License"); you may
+#  not use this file except in compliance with the License. You may obtain
+#  a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#  License for the specific language governing permissions and limitations
+#  under the License.
+
+Version: 2
+
+Templates:
+  seedNode:
+    ?:
+      type: io.murano.apps.apache.CassandraNode
+    instance:
+      ?:
+        type: io.murano.resources.LinuxMuranoInstance
+      name: generateHostname($.appConfiguration.unitNamingPattern, $index)
+      flavor: $.instanceConfiguration.flavor
+      image: $.instanceConfiguration.osImage
+      assignFloatingIp: $.appConfiguration.assignFloatingIP
+      keyname: $.instanceConfiguration.keyPair
+      availabilityZone: $.instanceConfiguration.availabilityZone
+
+  regularNode:
+    ?:
+      type: io.murano.apps.apache.CassandraNode
+    instance:
+      ?:
+        type: io.murano.resources.LinuxMuranoInstance
+      name: generateHostname($.appConfiguration.unitNamingPattern, $index + $.appConfiguration.countOfSeedNodes)
+      flavor: $.instanceConfiguration.flavor
+      image: $.instanceConfiguration.osImage
+      assignFloatingIp: $.appConfiguration.assignFloatingIP
+      keyname: $.instanceConfiguration.keyPair
+      availabilityZone: $.instanceConfiguration.availabilityZone
+
+Application:
+  ?:
+    type: io.murano.apps.apache.CassandraCluster
+  name: $.appConfiguration.name
+  seedNodes: repeat($seedNode, $.appConfiguration.countOfSeedNodes)
+  regularNodes: repeat($regularNode, $.appConfiguration.countOfRegularNodes)
+
+Forms:
+  - appConfiguration:
+      fields:
+        - name: license
+          type: string
+          description: Apache License, Version 2.0
+          hidden: true
+          required: false
+        - name: name
+          type: string
+          label: Cluster Name
+          initial: CassandraCluster
+          description: >-
+            Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
+            underline are allowed
+        - name: countOfSeedNodes
+          type: integer
+          label: Count of seed nodes
+          initial: 1
+          minValue: 0
+          required: true
+          description: >-
+            Select the number of seed nodes. Seed nodes are used to bootstrap
+            other nodes(which is the process of a new node joining an existing
+            cluster) and setup the communication
+        - name: countOfRegularNodes
+          type: integer
+          label: Count of regular nodes
+          initial: 1
+          required: true
+          minValue: 0
+          description: >-
+            Select the number of Cassandra nodes (except seed nodes)
+        - name: assignFloatingIP
+          type: boolean
+          initial: true
+          label: Assign floating IP to nodes
+          description: >-
+             Check to assign floating IP to nodes
+          required: false
+        - name: unitNamingPattern
+          type: string
+          initial: cassandra-#
+          helpText: "# expands to machine sequence number"
+          required: false
+          description: >-
+            For your convenience instance hostname can be specified.
+            Enter a name or leave blank for random name generation.
+          regexpValidator: '^[a-zA-z][-_\w#]*$'
+          maxLength: 64
+          errorMessages:
+            invalid: Just letters, numbers, underscores, sharps and hyphens are allowed.
+          label: Cassandra node hostname pattern
+
+  - instanceConfiguration:
+      fields:
+        - name: title
+          type: string
+          required: false
+          hidden: true
+          description: Specify some instance parameters on which application would be created.
+        - name: flavor
+          type: flavor
+          label: Instance flavor
+          description: >-
+            Select one of the existing flavors. Consider that application performance
+            depends on this parameter.
+        - name: osImage
+          type: image
+          imageType: linux
+          label: Instance image
+          description: >-
+            Select a valid image for the application. Image should already be prepared and
+            registered in glance.
+        - name: keyPair
+          type: keypair
+          label: Key Pair
+          description: >-
+            Select the Key Pair to control access to instances. You can login to
+            instances using this KeyPair after the deployment.
+          required: false
+        - name: availabilityZone
+          type: azone
+          label: Availability zone
+          description: Select an availability zone where the application would be installed.
+          required: false
