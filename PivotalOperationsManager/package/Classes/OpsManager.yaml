@@ -63,10 +63,8 @@ Methods:
           - $._environment.reporter.report($this, 'Preparing data for configuring Ops Manager.')
           - $resources: new(sys:Resources)
           - $configFile: $resources.string('installation.yml')
+          - $mergeScript: $resources.string('merge_settings.py')
           - $initScript: $resources.string('init.sh')
-          - $guid: format('guid-{0}', randomName())
-          - $azoneId: format('azone-{0}', randomName())
-          - $directorId: format('director-{0}', randomName())
 
           - $configReplacements:
               "%GUID%": str('guid-' + randomName())
@@ -110,6 +108,7 @@ Methods:
               "%USER%": $.username
               "%PASS%": $.password
               "%INSTALL_CONFIG_BASE64%": base64encode($configFile.replace($configReplacements))
+              "%MERGE_SETTINGS_BASE64%": base64encode($mergeScript)
 
           - $data: $initScript.replace($scriptReplacements)
           - $.instance.setInitData($data)
