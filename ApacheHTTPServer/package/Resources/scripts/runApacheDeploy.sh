@@ -11,13 +11,15 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
-sudo apt-get update
-sudo apt-get -y install apache2
+sudo apt-get update && sudo apt-get -y install apache2
 
 if [[ $1 == "True" ]];
-then
+  then
     sudo apt-get -y install php5
 fi
 
-sudo iptables -I INPUT 1 -p tcp -m tcp --dport 443 -j ACCEPT -m comment --comment "by murano, Apache server access on HTTPS port 443"
-sudo iptables -I INPUT 1 -p tcp -m tcp --dport 80 -j ACCEPT -m comment --comment "by murano, Apache server access on HTTP port 80"
+
+for i in 443 80
+  do
+  echo "  sudo iptables -I INPUT 1 -p tcp -m tcp --dport $i -j ACCEPT -m comment --comment "by murano, Apache server access on HTTPS port $i" "
+  done
