@@ -6,10 +6,10 @@ applications on top of it.
 
 Contents of each folder need to be zipped and uploaded to Murano Catalog.
 
-You will also need to build proper Ubuntu image for Kubernetes.
+You will also need to build a proper Ubuntu-based image for Kubernetes.
 This can be done using diskimage-builder (https://github.com/openstack/diskimage-builder)
 and DIB elements (https://github.com/stackforge/murano/tree/master/contrib/elements/kubernetes).
-The image must has name ubuntu14.04-x64-kubernetes.qcow2
+The image must be nameed *ubuntu14.04-x64-kubernetes.qcow2*
 
 
 Kubernetes is an open-source container manager by Google. It is responsible to
@@ -26,7 +26,7 @@ which creates and maintain fixed number of pod clones. In Murano replica
 count is a property of KubernetesPod.
 
 Currently Murano suports setups with only single API node and at least one
-worker node. API node cannot be  used as a worker node.
+worker node. API node cannot be used as a worker node.
 
 To establish required network connectivity model for the Kubernetes Murano
 sets up an overlay network between Kubernetes nodes using Flannel networking.
@@ -38,7 +38,7 @@ a third type of nodes: Gateway nodes.
 
 Gateway nodes are connected to both Flannel and OpenStack Neutron networks
 and serves as a gateway between them. Each gateway node runs HAProxy.
-When application deploys all its public endpoint are automatically registered
+When an application deploys all its public endpoints are automatically registered
 on all gateway nodes. Thus if user chose to have more than one gateway
 it will usually get several endpoints for the application. Then those endpoints
 can be registered in physical load balancer or DNS.
@@ -61,9 +61,9 @@ The procedure is:
 #. Configure required services on master node.
 #. Configure worker nodes. They will register themselves in master nodes using
    etcd.
-#. Setup HAProxy on each gateway node. Configure configd to watch etcd to
+#. Setup HAProxy on each gateway node. Configure confd to watch etcd to
    register public ports in HAProxy config file. Each time new Kubernetes
-   service created it regenerates HAProxy config.
+   service is created it regenerates HAProxy config.
 
 
 Internally KubernetesCluster contains separate classes for all node types.
@@ -88,7 +88,7 @@ All pods must have a unique name within single `KubernetesCluster`
 Thus KubernetesCluster is an aggregation of Docker hosts (pods) which also
 handles all inter-pod entities (services, endpoints).
 
-KubernetesPod create Replication Controllers rather than pods. Replication
+KubernetesPod creates Replication Controllers rather than pods. Replication
 Controller with replica count equal to 1 will result in single pod being
 created while it is always possible to increase/decrease replica count after
 deployment. Replica count is specified using `replicas` input property.
