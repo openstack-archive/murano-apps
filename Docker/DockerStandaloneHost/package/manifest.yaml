@@ -24,3 +24,5 @@ Author: 'Mirantis, Inc'
 Tags: [ Docker ]
 Classes:
  io.murano.apps.docker.DockerStandaloneHost: DockerStandaloneHost.yaml
+Require:
+  io.murano.apps.docker.Interfaces:
