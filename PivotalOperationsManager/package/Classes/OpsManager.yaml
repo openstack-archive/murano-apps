@@ -131,7 +131,7 @@ Methods:
         Then:
           - $._environment.defaultNetworks.environment.deploy()
           - $._networkInfo: $._environment.defaultNetworks.environment.describe()
-      - If: $.instance.networks.useFlatNetwork and $.environment.defaultNetworks.flat!=null
+      - If: $.instance.networks.useFlatNetwork and $._environment.defaultNetworks.flat!=null
         Then:
           - $._environment.defaultNetworks.flat.deploy()
           - $._networkInfo: $._environment.defaultNetworks.flat.describe()
