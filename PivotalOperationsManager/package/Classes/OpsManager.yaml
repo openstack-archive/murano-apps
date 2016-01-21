@@ -1,0 +1,179 @@
+#  Licensed under the Apache License, Version 2.0 (the "License"); you may
+#  not use this file except in compliance with the License. You may obtain
+#  a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#  License for the specific language governing permissions and limitations
+#  under the License.
+
+Namespaces:
+  =: io.murano.apps.pivotal
+  std: io.murano
+  res: io.murano.resources
+  sys: io.murano.system
+
+
+Name: PivotalOpsManager
+
+Extends: std:Application
+
+Properties:
+  instance:
+    Contract: $.class(OpsManagerInstance).notNull()
+
+  username:
+    Contract: $.string().notNull()
+
+  password:
+    Contract: $.string().notNull()
+
+  osUser:
+    Contract: $.string().notNull()
+
+  osPass:
+    Contract: $.string().notNull()
+
+  osTenant:
+    Contract: $.string().notNull()
+
+  sshKey:
+    Contract: $.string().notNull()
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+      - $._securityGroupName: ''
+      - $._networkInfo: null
+
+  deploy:
+    Body:
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $._environment.reporter.report($this, 'Configuring security groups.')
+          - $._configureSecurityGroup()
+
+          - $._environment.reporter.report($this, 'Deploying network for Ops Manager.')
+          - $._deployNetwork()
+
+          - $._environment.reporter.report($this, 'Preparing data for configuring Ops Manager.')
+          - $resources: new(sys:Resources)
+          - $configFile: $resources.string('installation.yml')
+          - $mergeScript: $resources.string('merge_settings.py')
+          - $initScript: $resources.string('init.sh')
+
+          - $configReplacements:
+              "%GUID%": str('guid-' + randomName())
+              "%AUTH-URL%": config(keystone_authtoken, auth_uri)
+              "%OSUSER%": $.osUser
+              "%OSPASS%": $.osPass
+              "%OSTENANT%": $.osTenant
+              "%KEY-NAME%": $.instance.keyname
+              "%SSH-PRIVATE-KEY%": $.sshKey
+              "%AZONE-ID%": str('azone-' + randomName())
+              "%AZONE%": $.instance.availabilityZone
+              "%DIRECTOR-ID%": str('director-' + randomName())
+              "%PRODUCT-ID%": str('p-bosh-' + randomName())
+              "%SEC-GROUP-NAME%": $._securityGroupName
+
+          - If: $._networkInfo != null
+            Then:
+              - If: $._networkInfo.provider = 'Neutron'
+                Then:
+                  # NOTE(ddovbii): Add first 10 addresses to excluded IP
+                  # ranges as it specified in docs
+                  - $lastIp: $._networkInfo.gateway.split('.')
+                  - $lastIp[3]: 10
+                  - $lastIp: $lastIp.join('.')
+                  # Create replacements for network settings
+                  - $networkReplacements:
+                      "%NETWORK-GUID%": str('net-' + randomName())
+                      "%NETWORK-NAME%": $._networkInfo.netName
+                      "%OS-NETWORK-ID%": $._networkInfo.netId
+                      "%CIDR%": $._networkInfo.cidr
+                      "%GATEWAY%": $._networkInfo.gateway
+                      "%DNS%": $._networkInfo.dns.first()
+                      "%FIRST_IP%": $._networkInfo.gateway
+                      "%LAST_IP%": $lastIp
+                  # Merge network replacements with common list of replacements
+                  - $configReplacements: $configReplacements.mergeWith($networkReplacements)
+                Else:
+                  - $._environment.reporter.report($this, 'Unable to configure network.')
+
+          - $scriptReplacements:
+              "%USER%": $.username
+              "%PASS%": $.password
+              "%INSTALL_CONFIG_BASE64%": base64encode($configFile.replace($configReplacements))
+              "%MERGE_SETTINGS_BASE64%": base64encode($mergeScript)
+
+          - $data: $initScript.replace($scriptReplacements)
+          - $.instance.setInitData($data)
+          - $._environment.reporter.report($this, 'Creating VM for Ops Manager.')
+          - $.instance.deploy()
+          - $._environment.reporter.report($this, 'Instance created.')
+          - If: $.instance.assignFloatingIp
+            Then:
+              - $host: $.instance.floatingIpAddress
+            Else:
+              - $host: $.instance.ipAddresses[0]
+          - $._environment.reporter.report($this, format('OpsManager is available at https://{0}', $host))
+          - $.setAttr(deployed, true)
+
+  _deployNetwork:
+    Body:
+      # Determine which type of network is used and deploy it.
+      # _networkInfo stores details of deployed network
+      - If: $.instance.networks.useEnvironmentNetwork and $._environment.defaultNetworks.environment!=null
+        Then:
+          - $._environment.defaultNetworks.environment.deploy()
+          - $._networkInfo: $._environment.defaultNetworks.environment.describe()
+      - If: $.instance.networks.useFlatNetwork and $._environment.defaultNetworks.flat!=null
+        Then:
+          - $._environment.defaultNetworks.flat.deploy()
+          - $._networkInfo: $._environment.defaultNetworks.flat.describe()
+      - If: len($.instance.networks.customNetworks) > 0
+        Then:
+          - $.instance.networks.customNetworks.pselect($.deploy())
+          - $._networkInfo: $.instance.networks.customNetworks.first().describe()
+
+  _configureSecurityGroup:
+    Body:
+      - $securityGroupIngress:
+            - ToPort: 80
+              FromPort: 80
+              IpProtocol: tcp
+              External: true
+            - ToPort: 443
+              FromPort: 443
+              IpProtocol: tcp
+              External: true
+            - ToPort: 25555
+              FromPort: 25555
+              IpProtocol: tcp
+              External: true
+            - ToPort: 65535
+              FromPort: 1
+              IpProtocol: tcp
+              External: false
+            - ToPort: 65535
+              FromPort: 1
+              IpProtocol: udp
+              External: false
+      - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+
+      - $securityGroupKey: coalesce(
+            $.instance.securityGroupName,
+            $._environment.securityGroupManager.defaultGroupName
+          )
+      - $._securityGroupName: format('{0}-{1}', $securityGroupKey, randomName())
+      - $template:
+          resources:
+            $securityGroupKey:
+              properties:
+                name: $._securityGroupName
+      - $._environment.stack.updateTemplate($template)
+      - $._environment.stack.push()
