@@ -69,3 +69,7 @@ Methods:
 
         - $.env: $this.load($.appJson)
         - $.env.deploy()
+
+        # Check, that variable has a correct value
+        - $isDeployed: $.env.applications[0].getAttr(deployed, false, 'io.murano.apps.apache.Tomcat')
+        - $.assertEqual(true, $isDeployed)
