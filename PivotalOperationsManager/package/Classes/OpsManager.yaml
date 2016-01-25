@@ -87,6 +87,10 @@ Methods:
             Then:
               - If: $._networkInfo.provider = 'Neutron'
                 Then:
+                  - $dns: $._networkInfo.dns
+                  - If: len($dns) = 0
+                    Then:
+                      - $dns: list('8.8.8.8')
                   # NOTE(ddovbii): Add first 10 addresses to excluded IP
                   # ranges as it specified in docs
                   - $lastIp: $._networkInfo.gateway.split('.')
@@ -99,7 +103,7 @@ Methods:
                       "%OS-NETWORK-ID%": $._networkInfo.netId
                       "%CIDR%": $._networkInfo.cidr
                       "%GATEWAY%": $._networkInfo.gateway
-                      "%DNS%": $._networkInfo.dns.first()
+                      "%DNS%": $dns.join(',')
                       "%FIRST_IP%": $._networkInfo.gateway
                       "%LAST_IP%": $lastIp
                   # Merge network replacements with common list of replacements
