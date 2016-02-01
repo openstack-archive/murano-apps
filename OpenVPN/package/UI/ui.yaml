@@ -10,7 +10,7 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
-Version: 2.2
+Version: 2.1
 
 Templates:
   customJoinNet:
@@ -22,6 +22,7 @@ Templates:
 Application:
   ?:
     type: io.murano.apps.Openvpn
+  name: $.appConfiguration.name
   tapDhcpBegin: $.appConfiguration.tapDhcpBegin
   tapDhcpEnd: $.appConfiguration.tapDhcpEnd
   netmask: $.appConfiguration.netmask
@@ -52,6 +53,12 @@ Application:
 Forms:
   - appConfiguration:
       fields:
+        - name: name
+          type: string
+          label: Application Name
+          initial: 'OpenVPN'
+          description: >-
+            Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and underline are allowed
         - name: tapDhcpBegin
           type: string
           label: Tap DHCP Begin
