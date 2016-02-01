@@ -94,9 +94,9 @@ Forms:
         - name: openstackIP
           type: string
           required: true
-          label: OpenStack IP
+          label: HAProxy Public IP
           description: >-
-            Provide OpenStack Endpoint IP
+            Provide public IP of HAProxy 
         - name: tenantName
           type: string
           required: true
