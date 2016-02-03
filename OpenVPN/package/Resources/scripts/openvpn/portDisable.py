@@ -20,13 +20,6 @@ tenant = config.get('INSTANCE', 'tenant')
 username = config.get('INSTANCE', 'username')
 password = config.get('INSTANCE', 'password')
 
-#instanceName =  "servertest"
-#instanceIP = "10.40.0.23"
-#OPENSTACK_IP = "192.168.0.2"
-#tenant = "admin"
-#username = "admin"
-#password = "admin"
-
 token_id = ""
 instance_info = None
 
