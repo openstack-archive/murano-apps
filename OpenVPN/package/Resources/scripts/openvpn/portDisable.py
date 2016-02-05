@@ -24,6 +24,7 @@ token_id = ""
 instance_info = None
 
 # Default port numbers of OpenStack services 
+# Supports HTTPS method
 public_endPoint = "5000"
 neutron_service = "9696"
 nova_endPoint = "8774"
