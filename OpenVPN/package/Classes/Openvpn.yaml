@@ -1,0 +1,158 @@
+#  Licensed under the Apache License, Version 2.0 (the "License"); you may
+#  not use this file except in compliance with the License. You may obtain
+#  a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#  License for the specific language governing permissions and limitations
+#  under the License.
+
+Namespaces:
+  =: io.murano.apps.OpenVPN
+  std: io.murano
+  res: io.murano.resources
+  sys: io.murano.system
+
+
+Name: OpenVpn
+
+Extends: std:Application
+
+Properties:
+  name:
+    Contract: $.string().notNull()
+  tapDhcpBegin:
+    Contract: $.string().notNull()
+  tapDhcpEnd:
+    Contract: $.string().notNull()
+  netmask:
+    Contract: $.string().notNull()
+  isGCE:
+    Contract: $.bool()
+    Default: false
+  gceUserName:
+    Contract: $.string()
+  gcePassword:
+    Contract: $.string()
+  gceNodesIp:
+    Contract: $.string()
+  publicServerPort:
+    Contract: $.string().notNull()
+  publicServerIp:
+    Contract: $.string().notNull()
+  openstackIP:
+    Contract: $.string()
+  tenantName:
+    Contract: $.string()
+  userName:
+    Contract: $.string()
+  userPassword:
+    Contract: $.string()  
+  instance:
+    Contract: $.class(res:Instance).notNull()
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+  deploy:
+    Body:
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $.createInstance()
+          - $.configureServer()
+          - If: $.isGCE
+            Then:
+              - $.configureClients()
+            Else:
+              - $._environment.reporter.report($this, 'No client(s) are configured as a public cloud service provider is not selected.')
+          - $.setupPortDisable()
+          - $.setupReSTServer()
+          - $.setAttr(deployed, true)
+
+  createInstance:
+    Body:
+      - If: not $.getAttr(instanceCreation, false)
+        Then:
+          - $._environment.reporter.report($this, 'Creating instance for Openvpn Server.')
+          - $.instance.deploy()
+          - $._environment.reporter.report($this, 'Instance is created')
+          - $.setAttr(instanceCreation, true)
+
+  configureServer:
+    Body:
+      - If: not $.getAttr(serverConfigured, false)
+        Then:
+          - $resources: new(sys:Resources)
+          - $template: $resources.yaml('DeployOpenvpn.template').bind(dict(
+                tapDhcpBegin => $.tapDhcpBegin,
+                tapDhcpEnd => $.tapDhcpEnd,
+                netmask => $.netmask,
+                gceUserName => $.gceUserName,
+                gcePassword => $.gcePassword,
+                gceNodesIp => $.gceNodesIp,
+                publicServerPort => $.publicServerPort,
+                publicServerIp => $.publicServerIp,
+                instanceName => $.instance.name,
+                envName => $._environment.name,
+                openstackIP => $.openstackIP,
+                tenantName => $.tenantName,
+                userName => $.userName,
+                userPassword => $.userPassword
+              ))
+          - $._environment.reporter.report($this, 'Deploying OpenVPN server.')
+          - $.instance.agent.call($template, $resources)
+          - $._environment.reporter.report($this, 'OpenVPN server is installed.')
+          - If: $.instance.assignFloatingIp
+            Then:
+              - $host: $.instance.floatingIpAddress
+            Else:
+              - $host: $.instance.ipAddresses[0]
+          - $._environment.reporter.report($this, format('OpenVPN is available at {0}', $host))
+          - $.setAttr(serverConfigured, true)
+
+  configureClients:
+    Body:
+      - If: not $.getAttr(clientConfigured, false)
+        Then:
+          - If: $.gceUserName != '' and $.gcePassword != ''  and $.gceNodesIp != ''
+            Then:
+              - $resources: new(sys:Resources)
+              - $._environment.reporter.report($this, 'Configuring client(s)')
+              - $template: $resources.yaml('DeployClients.template')
+              - $.instance.agent.call($template, $resources)
+              - $._environment.reporter.report($this, 'Client(s) are configured.')
+            Else:
+              - $._environment.reporter.report($this, 'Not configuring clients. Wrong inputs.')
+          - $.setAttr(clientConfigured, true)  
+  
+  setupPortDisable:
+    Body:
+      - If: not $.getAttr(portDisabled, false)
+        Then:
+          - $resources: new(sys:Resources)
+          - $template: $resources.yaml('SetupPortDisable.template')
+          - $._environment.reporter.report($this, 'Removing security group and disabling port security')
+          - $.instance.agent.call($template, $resources)
+          - $._environment.reporter.report($this, 'Security group removed and security port disabled')
+          - $.setAttr(portDisabled, true)  
+
+  setupReSTServer:
+    Body:
+      - If: not $.getAttr(restServer, false)
+        Then:
+          - $resources: new(sys:Resources)
+          - $template: $resources.yaml('SetupReSTServer.template')
+          - $._environment.reporter.report($this, 'Creating ReST Service.')
+          - $.instance.agent.call($template, $resources)
+          - If: $.instance.assignFloatingIp
+            Then:
+              - $host: $.instance.floatingIpAddress
+            Else:
+              - $host: $.instance.ipAddresses[0]
+          - $._environment.reporter.report($this, format('ReST Server available at  http://{0}:5000', $host))
+          - $.setAttr(restServer, true)  
