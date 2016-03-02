@@ -124,10 +124,6 @@ KubernetesCluster provides the following actions:
 * `scaleNodesDown`: decrease the number of worker nodes by 1.
 * `scaleGatewaysUp`: increase the number of gateway nodes by 1.
 * `scaleGatewaysDown`: decrease the number of gateway nodes by 1.
-* `exportConfig`: returns an archive file containing shell script and data
-  files. Use the script to manually recreate Kubernetes entities (pods,
-  replication controllers and services) on another Kubernetes installation.
-  This is an experimental feature.
 
 KubernetesPod has the following actions:
 
@@ -214,12 +210,6 @@ deploying both Kubernetes and it's nodes.
 `scaleGatewaysUp()`
     Decrease the number of gateways by one (`$.gatewayCount` up to 1)
     and call `.deploy()`.
-    Can be used as an Action.
-
-`exportConfig()`
-    Return current configuration as an `application.tar.gz` file.
-    For each Pod and Service configured `/opt/bin/kubectl create -f` is called,
-    storing the results in a shell script.
     Can be used as an Action.
 
 KubernetesNode
