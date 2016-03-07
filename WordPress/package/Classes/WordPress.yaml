@@ -36,7 +36,7 @@ Properties:
     Contract: $.class(ZabbixAgent)
 
 Methods:
-  initialize:
+  .init:
     Body:
       - $._environment: $.find(std:Environment).require()
 

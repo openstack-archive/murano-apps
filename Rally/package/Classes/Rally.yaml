@@ -34,7 +34,7 @@ Properties:
     Default: master
 
 Methods:
-  initialize:
+  .init:
     Body:
       - $._environment: $.find(std:Environment).require()
 

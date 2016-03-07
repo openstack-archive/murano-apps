@@ -23,7 +23,7 @@ Properties:
     Contract: $.class(ActiveDirectory)
 
 Methods:
-  initialize:
+  .init:
     Body:
       - $._environment: $.find(std:Environment).require()
 

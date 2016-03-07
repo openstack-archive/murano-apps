@@ -33,7 +33,7 @@ Properties:
     Usage: Out
 
 Methods:
-  initialize:
+  .init:
     Body:
       - $._environment: $.find(std:Environment).require()
 
@@ -59,7 +59,7 @@ Methods:
           - $.onInstallationFinish()
 
 
-  destroy:
+  .destroy:
     Body:
       - If: $.getAttr(container, null) != null
         Then:

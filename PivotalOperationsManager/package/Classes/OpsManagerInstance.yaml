@@ -19,7 +19,7 @@ Name: OpsManagerInstance
 Extends: LinuxInstance
 
 Methods:
-  initialize:
+  .init:
     Body:
       - $.customUserData: null
 

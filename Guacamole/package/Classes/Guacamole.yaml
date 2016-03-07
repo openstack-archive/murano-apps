@@ -29,7 +29,7 @@ Properties:
     Contract: $.class(srv:Tomcat).notNull()
 
 Methods:
-  initialize:
+  .init:
     Body:
       - $._environment: $.find(std:Environment).require()
 

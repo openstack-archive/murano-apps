@@ -26,7 +26,7 @@ Properties:
     Contract: $.class(res:Instance).notNull()
 
 Methods:
-  initialize:
+  .init:
     Body:
       - $._environment: $.find(std:Environment).require()
       - $.resources: new(sys:Resources)

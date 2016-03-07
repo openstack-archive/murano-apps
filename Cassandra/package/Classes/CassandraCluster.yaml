@@ -32,7 +32,7 @@ Properties:
     Contract: [$.class(CassandraNode).notNull()]
 
 Methods:
-  initialize:
+  .init:
     Body:
       - $._environment: $.find(std:Environment).require()
 
