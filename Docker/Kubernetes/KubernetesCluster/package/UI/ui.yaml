@@ -36,6 +36,7 @@ Templates:
       image: 'ubuntu14.04-x64-kubernetes'
       assignFloatingIp: $.appConfiguration.assignFloatingIP
       keyname: $.instanceConfiguration.keyPair
+      availabilityZone: $.instanceConfiguration.availabilityZone
     exposeCAdvisor: $.appConfiguration.exposeCAdvisor
 
 
@@ -50,6 +51,7 @@ Templates:
       image: 'ubuntu14.04-x64-kubernetes'
       assignFloatingIp: $.appConfiguration.assignGatewayFloatingIP
       keyname: $.instanceConfiguration.keyPair
+      availabilityZone: $.instanceConfiguration.availabilityZone
 
 Application:
   ?:
