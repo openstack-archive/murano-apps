@@ -49,6 +49,7 @@ Methods:
       - $.redisMaster.deploy()
       - $.redisSlave: new(
           DockerRedisSlave,
+          $,
           name => 'RedisSlave',
           host => $this.redisSlaveHost,
           publish => false,
