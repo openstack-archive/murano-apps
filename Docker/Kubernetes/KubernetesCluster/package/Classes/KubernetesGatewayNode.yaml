@@ -31,7 +31,7 @@ Methods:
       - If: not $.getAttr(instanceDeployed, false)
         Then:
           - $._environment.reporter.report($this, 'Creating Gateway node for Kubernetes services')
-          - $.super($.deployInstance())
+          - super($, $.deployInstance())
           - $.setAttr(instanceDeployed, true)
 
   setupEtcd:

@@ -34,7 +34,7 @@ Methods:
   .init:
     Body:
       - $._environment: $.find(std:Environment).require()
-      - $._scope: switch($.publish, $ => public, not $ => internal)
+      - $._scope: switch($.publish => public, true => internal)
 
 
   getContainer:

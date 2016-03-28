@@ -39,4 +39,4 @@ Methods:
         Contract: 
           $.string().notNull(): $.string().notNull()
     Body:
-      - Return: join(';', $labelsMap.select(list($, $labelsMap.get($))).select(join('=', $)))
+      - Return: $labelsMap.select(list($, $labelsMap.get($)).join('=')).join(';')

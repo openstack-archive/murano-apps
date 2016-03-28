@@ -252,7 +252,7 @@ Methods:
               - $securityGroupIngress:
                   - ToPort: $port
                     FromPort: $port
-                    IpProtocol: toLower($applicationPort.protocol)
+                    IpProtocol: $applicationPort.protocol.toLower()
                     External: $applicationPort.scope = public
               - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
 
