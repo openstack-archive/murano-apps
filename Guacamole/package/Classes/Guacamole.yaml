@@ -15,6 +15,7 @@ Namespaces:
   std: io.murano
   sys: io.murano.system
   srv: io.murano.apps.apache
+  conf: io.murano.configuration
 
 Name: Guacamole
 
@@ -42,16 +43,16 @@ Methods:
           - $.server.deploy()
           # Deploy Guacamole
           - $._environment.reporter.report($this, 'Deploying Guacamole')
-          - $resources: new(sys:Resources)
-          - $template: $resources.yaml('DeployGuacamole.template').bind(dict(
-                username => $.username,
-                password => $.password
-             ))
-          - $.server.instance.agent.call($template, $resources)
+          - $replacements:
+              "%USERNAME%": $.username
+              "%PASSWORD%": $.password
+          - $file: sys:Resources.string('deployGuacamole.sh').replace($replacements)
+          - conf:Linux.runCommand($.server.instance.agent, $file)
+
           - If: $.server.instance.assignFloatingIp
             Then:
               - $address: $.server.instance.floatingIpAddress
             Else:
-              - $address: $.server.instance.ipAddresses[0]
-          - $._environment.reporter.report($this, 'Guacamole application is available at http://{1}:{2}/guacamole'.format($address, 8080))
+              - $address: $.server.instance.ipAddresses.first()
+          - $._environment.reporter.report($this, 'Guacamole application is available at http://{0}:{1}/guacamole'.format($address, 8080))
           - $.setAttr(deployed, true)

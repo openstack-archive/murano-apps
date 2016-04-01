@@ -15,8 +15,6 @@
 guac_version=0.9.7
 # Tomcat version
 tcat_version=7
-username="$1"
-password="$2"
 
 sudo apt-get update
 # Install Packages
@@ -45,7 +43,7 @@ EOF1
 # Create user-mapping.xml configuration file
 sudo cat <<EOF2 > /etc/guacamole/user-mapping.xml
 <user-mapping>
-    <authorize username="${username}" password="$(echo -n ${password} | md5sum | awk '{print $1}')" encoding="md5">
+    <authorize username="%USERNAME%" password="$(echo -n %PASSWORD% | md5sum | awk '{print $1}')" encoding="md5">
         <connection name="localhost-ssh">
             <protocol>ssh</protocol>
             <param name="hostname">127.0.0.1</param>
@@ -65,7 +63,7 @@ sudo cat <<EOF2 > /etc/guacamole/user-mapping.xml
 </user-mapping>
 EOF2
 # Create a new user
-sudo useradd -d /etc/guacamole -p $(openssl passwd -1 ${password}) ${username}
+sudo useradd -d /etc/guacamole -p $(openssl passwd -1 %PASSWORD%) %USERNAME%
 # Make guacamole configuration directory readable and writable by the group and others
 sudo chmod -R go+rw /etc/guacamole
 sudo mkdir /usr/share/tomcat${tcat_version}/.guacamole
