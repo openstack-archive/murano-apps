@@ -16,6 +16,7 @@ Namespaces:
   sys: io.murano.system
   db: io.murano.databases
   srv: io.murano.apps.apache
+  conf: io.murano.configuration
 
 Name: WordPress
 
@@ -59,11 +60,9 @@ Methods:
               - Throw: DependencyMissingError
                 Message: $msg
 
-          - $resources: new(sys:Resources)
-
           # Deploy Wordpress
-          - $template: $resources.yaml('DeployWordPress.template')
-          - $.server.instance.agent.call($template, $resources)
+          - $file: sys:Resources.string('deployWordPress.sh')
+          - conf:Linux.runCommand($.server.instance.agent, $file)
 
           # Configure access to MySql
           - $._environment.reporter.report($this, 'Ensuring Database is deployed.')
@@ -71,18 +70,19 @@ Methods:
           - $.database.createUser($.dbUser, $.dbPassword)
           - $.database.assignUser($.dbUser, $.dbName)
           - $._environment.reporter.report($this, 'Configure access to MySql.')
-          - $template: $resources.yaml('ConfigureAccessToMySql.template').bind(dict(
-                database => $.dbName,
-                username => $.dbUser,
-                password => $.dbPassword,
-                host => $.database.instance.ipAddresses[0]
-              ))
-          - $.server.instance.agent.call($template, $resources)
+          - $replacements:
+              "%DATABASE%": $.dbName
+              "%USERNAME%": $.dbUser
+              "%HOST%": $.database.instance.ipAddresses.first()
+              "%PASSWORD%": $.dbPassword
+
+          - $file: sys:Resources.string('configureAccessToMySql.sh').replace($replacements)
+          - conf:Linux.runCommand($.server.instance.agent, $file)
 
           - If: $.monitoring != null
             Then:
               - $.monitoring.setUpAgent($.server.instance)
-          
+
           - $._environment.reporter.report($this, 'Application is installed')
           - If: $.server.instance.assignFloatingIp
             Then:
