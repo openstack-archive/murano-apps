@@ -15,6 +15,7 @@ Namespaces:
   std: io.murano
   res: io.murano.resources
   sys: io.murano.system
+  conf: io.murano.configuration
 
 
 Name: MongoDB
@@ -53,49 +54,49 @@ Methods:
               External: true
           - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
           - $.instance.deploy()
-          - $resources: new(sys:Resources)
 
           # Deploy MongoDB
-          - $template: $resources.yaml('DeployMongoDB.template')
           - $._environment.reporter.report($this, 'Deploying MongoDB.')
-          - $.instance.agent.call($template, $resources)
+          - conf:Linux.runCommand($.instance.agent, "sudo apt-get update && sudo apt-get -y install mongodb")
 
           # Configure MongoDB
-          - $template: $resources.yaml('ConfigureMongoDB.template')
           - $._environment.reporter.report($this, 'Configuring MongoDB.')
-          - $.instance.agent.call($template, $resources)
+          - $file: sys:Resources.string('configureMongoDB.sh')
+          - conf:Linux.runCommand($.instance.agent, $file)
 
           # Add firewall rules
-          - $template: $resources.yaml('AddFirewallRules.template')
           - $._environment.reporter.report($this, 'Adding firewall rules for MongoDB.')
-          - $.instance.agent.call($template, $resources)
+          - $file: sys:Resources.string('addFirewallRules.sh')
+          - conf:Linux.runCommand($.instance.agent, $file)
 
           # Create database on MongoDB
           - If: $.database != '' and $.database != null
             Then:
-              - $template: $resources.yaml('CreateMongoDBDatabase.template').bind(dict(
-                    database => $.database
-                  ))
               - $._environment.reporter.report($this, 'Creating database on MongoDB.')
-              - $.instance.agent.call($template, $resources)
+              - $replacement:
+                  "%DATABASE%": $.database
+              - $file: sys:Resources.string('createMongoDBDatabase.sh').replace($replacement)
+              - conf:Linux.runCommand($.instance.agent, $file)
 
               # Create user for database
               - If: $.username != '' and $.username != null
                 Then:
-                  - $template: $resources.yaml('CreateUserForMongoDBDatabase.template').bind(dict(
-                        database => $.database,
-                        username => $.username,
-                        password => $.password
-                      ))
                   - $._environment.reporter.report($this, 'Creating user for database on MongoDB.')
-                  - $.instance.agent.call($template, $resources)
+                  - $replacements:
+                      "%DATABASE%": $.database
+                      "%USERNAME%": $.username
+                      "%PASSWORD%": $.password
+                  - $file: sys:Resources.string('createUserForMongoDBDatabase.sh').replace($replacements)
+                  - conf:Linux.runCommand($.instance.agent, $file)
+
+          - conf:Linux.runCommand($.instance.agent, 'sudo rm -rf /tmp/murano')
 
           # Report MongoDB information
           - If: $.instance.assignFloatingIp
             Then:
               - $host: $.instance.floatingIpAddress
             Else:
-              - $host: $.instance.ipAddresses[0]
+              - $host: $.instance.ipAddresses.first()
           - $._environment.reporter.report($this, format('MongoDB is available at {0}:{1}.', $host, 27017))
           - $._environment.reporter.report($this, format('MongoDB web admin endpoint is available at http://{0}:{1}.', $host, 28017))
           - $.setAttr(deployed, true)

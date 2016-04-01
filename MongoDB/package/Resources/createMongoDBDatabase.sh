@@ -1,3 +1,4 @@
+#!/bin/bash
 #  Licensed under the Apache License, Version 2.0 (the "License"); you may
 #  not use this file except in compliance with the License. You may obtain
 #  a copy of the License at
@@ -10,22 +11,10 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
-FormatVersion: 2.0.0
-Version: 1.0.0
-Name: Configure MongoDB
-
-Parameters:
-  appName: $appName
-
-Body: |
-  return configureMongoDB(args.appName).stdout
-
-Scripts:
-  configureMongoDB:
-    Type: Application
-    Version: 1.0.0
-    EntryPoint: configureMongoDB.sh
-    Files: []
-    Options:
-      captureStdout: true
-      captureStderr: true
+# If there is no collection created in the MongoDB database,
+# the MongoDB database will be not really created,
+# so the default collection named system.users needs to be created.
+sudo mongo <<EOF
+    use %DATABASE%
+    db.createCollection("system.users")
+EOF
