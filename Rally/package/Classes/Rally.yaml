@@ -15,7 +15,7 @@ Namespaces:
   std: io.murano
   res: io.murano.resources
   sys: io.murano.system
-
+  conf: io.murano.configuration
 
 Name: Rally
 
@@ -47,12 +47,11 @@ Methods:
           - $._environment.reporter.report($this, 'Creating VM for Rally...')
           - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
           - $.instance.deploy()
-          - $resources: new(sys:Resources)
           - $._environment.reporter.report($this, 'Instance has been created. Installing Rally...')
           # Install Rally
-          - $template: $resources.yaml('InstallRally.template').bind(dict(
-                repository => $.repository,
-                version => $.version
-              ))
-          - $.instance.agent.call($template, $resources)
+          - $replacements:
+              "%REPO%": $.repository
+              "%VER%": $.version
+          - $file: sys:Resources.string('installRally.sh').replace($replacements)
+          - conf:Linux.runCommand($.instance.agent, $file)
           - $._environment.reporter.report($this, 'Rally has been installed.')
