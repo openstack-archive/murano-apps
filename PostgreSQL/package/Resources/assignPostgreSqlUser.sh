@@ -1,3 +1,4 @@
+#!/bin/bash
 #  Licensed under the Apache License, Version 2.0 (the "License"); you may
 #  not use this file except in compliance with the License. You may obtain
 #  a copy of the License at
@@ -10,23 +11,6 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
-FormatVersion: 2.0.0
-Version: 1.0.0
-Name: Assign user to PostgreSql database
-
-Parameters:
-  database: $database  
-  username: $username
-  
-Body: |
-  return assignUser('{0} {1}'.format(args.database, args.username)).stdout
-
-Scripts:
-  assignUser:
-    Type: Application
-    Version: 1.0.0
-    EntryPoint: assignPostgreSqlUser.sh
-    Files: []
-    Options:
-      captureStdout: true
-      captureStderr: true
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE \"%DATABASE%\" to \"%USER%\""
+tee --append /etc/postgresql/*/main/pg_hba.conf <<< "host %DATABASE% %USER% all md5"
+sudo /etc/init.d/postgresql restart
