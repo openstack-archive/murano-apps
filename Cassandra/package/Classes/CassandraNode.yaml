@@ -15,7 +15,7 @@ Namespaces:
   std: io.murano
   res: io.murano.resources
   sys: io.murano.system
-
+  conf: io.murano.configuration
 
 Name: CassandraNode
 
@@ -29,7 +29,6 @@ Methods:
   .init:
     Body:
       - $._environment: $.find(std:Environment).require()
-      - $.resources: new(sys:Resources)
 
   updateConfiguration:
     Arguments:
@@ -41,14 +40,16 @@ Methods:
     Body:
       # Listen address is internal (so it gets resolved by node itself correctly)
       - $listenAddress: $.instance.ipAddresses[0]
-      - $template: $.resources.yaml('UpdateCassandraYaml.template').bind(dict(
-            clusterName => $clusterName,
-            seedNodes => $seedNodes,
-            listenAddress => $listenAddress
-          ))
+
+      - $replacements:
+          "%LISTEN_ADDRESS%": $listenAddress
+          "%CLUSTER_NAME%": $clusterName
+          "%SEED_NODES%": $seedNodes
+      - $file: sys:Resources.string('updateCassandraYaml.sh').replace($replacements)
+      - conf:Linux.runCommand($.instance.agent, $file)
+
       - $msg: format('Updating Cassandra configuration at node "{0}"', $listenAddress)
       - $._environment.reporter.report($this, $msg)
-      - $.instance.agent.call($template, $.resources)
 
 
   configureSecurityGroups:
@@ -97,8 +98,8 @@ Methods:
         Then:
           - $address: $.instance.ipAddresses[0]
           - $._environment.reporter.report($this, 'Deploying Cassandra node "{0}"'.format($address))
-          - $template: $.resources.yaml('DeployCassandra.template')
-          - $.instance.agent.call($template, $.resources)
+          - $file: sys:Resources.string('deployCassandra.sh')
+          - conf:Linux.runCommand($.instance.agent, $file)
           - $.setAttr(deployed, true)
 
   getInternalIp:
@@ -113,7 +114,5 @@ Methods:
     Body:
       - $msg: format('Restarting Cassandra node "{0}"', $.instance.name)
       - $._environment.reporter.report($this, $msg)
-      - $template: $.resources.yaml('RestartCassandra.template').bind(dict(
-            delay => $delay
-          ))
-      - $.instance.agent.call($template, $.resources)
+      - $command: format('sleep {0}; sudo service cassandra restart', $delay)
+      - conf:Linux.runCommand($.instance.agent, $command)
