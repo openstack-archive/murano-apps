@@ -10,7 +10,7 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
-Version: 2.2
+Version: 2.3
 
 Templates:
   customJoinNet:
@@ -130,9 +130,10 @@ Forms:
           description: >-
             Enter a name of your current OpenStack user
         - name: osPassword
-          #TODO(ddovbii): We need to hide pass here
-          type: string
+          type: password
+          regexpValidator: '.*'
           label: OpenStack password
+          confirmInput: false
           description: >-
             Enter a password of your current OpenStack user
         - name: sshKey
