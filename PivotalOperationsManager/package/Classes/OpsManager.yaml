@@ -25,6 +25,9 @@ Properties:
   instance:
     Contract: $.class(OpsManagerInstance).notNull()
 
+  auth_url:
+    Contract: $.string().notNull()
+
   username:
     Contract: $.string().notNull()
 
@@ -68,7 +71,7 @@ Methods:
 
           - $configReplacements:
               "%GUID%": str('guid-' + randomName())
-              "%AUTH-URL%": config(keystone_authtoken, auth_uri)
+              "%AUTH-URL%": $.auth_url.trim()
               "%OSUSER%": $.osUser
               "%OSPASS%": $.osPass
               "%OSTENANT%": $.osTenant
