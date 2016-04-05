@@ -24,6 +24,7 @@ Application:
     type: io.murano.apps.pivotal.OpsManager
   username: $.opsManagerConfiguration.username
   password: $.opsManagerConfiguration.password
+  auth_url: $.opsManagerConfiguration.auth_url
   osUser: $.opsManagerConfiguration.osUsername
   osPass: $.opsManagerConfiguration.osPassword
   osTenant: $.opsManagerConfiguration.osTenant
@@ -119,6 +120,11 @@ Forms:
           label: OpsManager User Password
           description: >-
             Enter a password for first user of Operations Manager
+        - name: auth_url
+          type: string
+          label: Openstack Identity url
+          description: >-
+            Provide the Service Endpoint for the Identity service
         - name: osTenant
           type: string
           label: OpenStack tenant
