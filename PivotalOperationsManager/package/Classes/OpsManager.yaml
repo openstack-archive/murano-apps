@@ -17,7 +17,7 @@ Namespaces:
   sys: io.murano.system
 
 
-Name: PivotalOpsManager
+Name: OpsManager
 
 Extends: std:Application
 
