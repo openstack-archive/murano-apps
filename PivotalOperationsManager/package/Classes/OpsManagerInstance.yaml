@@ -11,12 +11,13 @@
 #  under the License.
 
 Namespaces:
-  =: io.murano.resources
+  =: io.murano.apps.pivotal
   std: io.murano
+  res: io.murano.resources
 
 Name: OpsManagerInstance
 
-Extends: LinuxInstance
+Extends: res:LinuxInstance
 
 Methods:
   initialize:
@@ -43,7 +44,7 @@ Methods:
               wc_notify:
                 get_attr: ['wait_handle', 'curl_cli']
 
-      # It used to check if cloud-init finished the work on VM
+      # It is used to check if cloud-init finished the work on VM
       - $template:
            resources:
              wait_condition:
