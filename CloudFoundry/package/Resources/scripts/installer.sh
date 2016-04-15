@@ -91,7 +91,7 @@ function package_uninstall(){
     if [ $? -eq 1 ]; then
         log "\"$PKG\" not installed"
     else
-        log "Unnstalling \"$PKG\" ..."
+        log "Uninstalling \"$PKG\" ..."
         $PACKAGER $UNINSTALLER_OPTS $PKG > /dev/null 2>&1
         if [ $? -ne 0 ]; then
             log "\"$PKG\" uninstallation fails, exiting!"

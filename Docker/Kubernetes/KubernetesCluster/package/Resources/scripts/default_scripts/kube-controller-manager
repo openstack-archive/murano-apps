@@ -7,4 +7,4 @@
  KUBE_CONTROLLER_MANAGER_OPTS="--master=127.0.0.1:8080 \
    --logtostderr=false --log_dir=/var/log/kubernetes"
 
- # Add more envionrment settings used by kube-controller-manager here
+ # Add more environment settings used by kube-controller-manager here
