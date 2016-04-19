@@ -47,7 +47,7 @@ Forms:
           required: false
           hidden: true
           descriptionTitle: Database Configuration
-          description: Specify the properties of the database which will be created at MySql Server
+          description: Specify the properties of the database which will be created at the PostgreSQL Server
         - name: database
           type: string
           required: false
