@@ -329,3 +329,21 @@ Methods:
           - $.kubernetesCluster.scaleRc(rcName => $._getReplicationControllerId(), newSize => $.replicas)
         Else:
           - $._environment.reporter.report($this, 'Cannot scale Pod up')
+
+
+  recreatePod:
+    Usage: Action
+    Body:
+      - $._environment.reporter.report($this, 'Recreating Pod {0}'.format($.name))
+      - $.kubernetesCluster.deletePods(dict(id => $._getPodName()))
+      - If: $.replicas = 0
+        Then:
+          - $._loadCurrentPodDefinition()
+          - $.kubernetesCluster.createPod(definition => $._podDefinition, isNew => true)
+      - $._environment.reporter.report($this, 'Pod {0} recreated'.format($.name))
+
+
+  restartContainers:
+    Usage: Action
+    Body:
+      - $.kubernetesCluster.restartContainers(podName => $._getPodName())
