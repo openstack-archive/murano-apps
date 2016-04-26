@@ -10,4 +10,4 @@ KUBE_APISERVER_OPTS="--address=0.0.0.0 \
   --logtostderr=false \
   --portal_net=11.1.0.0/16  --log_dir=/var/log/kubernetes"
 
-# Add more envionrment settings used by kube-apiserver here
+# Add more environment settings used by kube-apiserver here
