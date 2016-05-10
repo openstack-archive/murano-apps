@@ -1,3 +1,15 @@
+#  Licensed under the Apache License, Version 2.0 (the "License"); you may
+#  not use this file except in compliance with the License. You may obtain
+#  a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#  License for the specific language governing permissions and limitations
+#  under the License.
+
 Namespaces:
   =: io.murano.apps.linux
   std: io.murano
@@ -13,20 +25,20 @@ Properties:
     Contract: $.class(res:Instance).notNull()
 
 Methods:
-  initialize:
+  .init:
     Body:
-      - $.environment: $.find(std:Environment).require()
+      - $._environment: $.find(std:Environment).require()
 
   deploy:
     Body:
-      - $.environment.reporter.report($this, 'Creating VM')
+      - $._environment.reporter.report($this, 'Creating VM')
       - $securityGroupIngress:
         - FromPort: 1
           ToPort: 65535
           IpProtocol: tcp
           External: true
-      - $.environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+      - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
       - $.instance.deploy()
       - $msg: 'HDP Sandbox is installed and running at http://'
       - $ep: $.instance.floatingIpAddress + ':8888'
-      - $.environment.reporter.report($this, $msg + $ep)
+      - $._environment.reporter.report($this, $msg + $ep)

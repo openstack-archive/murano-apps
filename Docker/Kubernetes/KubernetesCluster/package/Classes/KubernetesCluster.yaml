@@ -71,7 +71,7 @@ Properties:
     Usage: Out
 
 Methods:
-  initialize:
+  .init:
     Body:
       - $._environment: $.find(std:Environment).require()
 

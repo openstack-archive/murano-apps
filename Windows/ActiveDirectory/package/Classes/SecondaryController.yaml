@@ -20,7 +20,7 @@ Name: SecondaryController
 Extends: Controller
 
 Methods:
-  initialize:
+  .init:
     Body:
       - $._domain: $.find(ActiveDirectory).require()
       - $._environment: $.find(std:Environment).require()

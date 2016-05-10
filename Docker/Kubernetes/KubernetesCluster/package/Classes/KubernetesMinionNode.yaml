@@ -27,7 +27,7 @@ Properties:
 
 
 Methods:
-  initialize:
+  .init:
     Body:
       - $._environment: $.find(std:Environment).require()
       - $._cluster: $.find(KubernetesCluster).require()
