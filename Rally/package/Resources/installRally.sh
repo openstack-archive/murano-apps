@@ -15,8 +15,8 @@ set -e
 
 sudo apt-get update
 
-git clone $1 rally
+git clone %REPO% rally
 cd rally
-git checkout $2 2>&1
+git checkout %VER% 2>&1
 
 sudo ./install_rally.sh --yes
