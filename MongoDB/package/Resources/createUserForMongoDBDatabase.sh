@@ -11,5 +11,7 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
-sudo apt-get update
-sudo apt-get install -y mongodb
+sudo mongo <<EOF
+    use %DATABASE%
+    db.addUser("%USERNAME%","%PASSWORD%")
+EOF
