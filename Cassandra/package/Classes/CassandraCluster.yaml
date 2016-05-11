@@ -48,7 +48,7 @@ Methods:
               - $.regularNodes.pselect($.spawnInstance())
 
           # Collect internal IPs of seed nodes
-          - $seedNodesAsString: join(',', $.seedNodes.select($.getInternalIp()))
+          - $seedNodesAsString: $.seedNodes.select($.getInternalIp()).join(',')
 
           # Deploy Cassandra with default conf
           - Parallel:
