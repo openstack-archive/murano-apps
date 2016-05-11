@@ -1,3 +1,4 @@
+#!/bin/bash
 #  Licensed under the Apache License, Version 2.0 (the "License"); you may
 #  not use this file except in compliance with the License. You may obtain
 #  a copy of the License at
@@ -10,22 +11,10 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
-FormatVersion: 2.0.0
-Version: 1.0.0
-Name: Deploy Apache
+sudo apt-get update
+sudo apt-get -y install apache2
 
-Parameters:
-  enablePHP: $enablePHP
-
-Body: |
-  return apacheDeploy('{0}'.format(args.enablePHP)).stdout
-
-Scripts:
-  apacheDeploy:
-    Type: Application
-    Version: 1.0.0
-    EntryPoint: runApacheDeploy.sh
-    Files: []
-    Options:
-      captureStdout: true
-      captureStderr: true
+for i in 443 80
+  do
+    sudo iptables -I INPUT 1 -p tcp -m tcp --dport $i -j ACCEPT -m comment --comment "by murano, Apache server access on HTTPS port $i"
+  done

@@ -15,6 +15,7 @@ Namespaces:
   std: io.murano
   res: io.murano.resources
   sys: io.murano.system
+  conf: io.murano.configuration
 
 
 Name: ApacheHttpServer
@@ -51,15 +52,23 @@ Methods:
               External: true
           - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
           - $.instance.deploy()
-          - $resources: new(sys:Resources)
-          - $template: $resources.yaml('DeployApache.template').bind(dict(enablePHP => $.enablePHP))
-          - $._environment.reporter.report($this, 'Instance is created. Deploying Apache')
-          - $.instance.agent.call($template, $resources)
+
+          - $._environment.reporter.report($this, 'Instance is created. Deploying Apache.')
+
+          - $file: sys:Resources.string('deployApache.sh')
+          - conf:Linux.runCommand($.instance.agent, $file)
+
+          - If: $.enablePHP
+            Then:
+              - $._environment.reporter.report($this, 'Installing PHP.')
+              - conf:Linux.runCommand($.instance.agent, "sudo apt-get -y install php5")
+
           - $._environment.reporter.report($this, 'Apache is installed.')
           - If: $.instance.assignFloatingIp
             Then:
               - $host: $.instance.floatingIpAddress
             Else:
-              - $host: $.instance.ipAddresses[0]
+              - $host: $.instance.ipAddresses.first()
+
           - $._environment.reporter.report($this, format('Apache is available at http://{0}', $host))
           - $.setAttr(deployed, true)
