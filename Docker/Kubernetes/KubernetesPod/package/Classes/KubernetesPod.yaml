@@ -76,14 +76,14 @@ Methods:
 
   _getPodName:
     Body:
-      - Return: toLower($.name)
+      - Return: $.name.toLower()
 
   _getPodLabels:
     Arguments:
       - podName:
           Contract: $.string().notNull()
     Body:
-      Return: $.labels2Map(toLower($.labels)).mergeWith(dict(id => $podName))
+      Return: $.labels2Map($.labels.toLower()).mergeWith(dict(id => $podName))
 
   hostContainer:
     Arguments:
@@ -105,7 +105,7 @@ Methods:
       - $._deleteContainer($container.name)
 
       - $containerDef:
-          name: toLower($container.name)
+          name: $container.name.toLower()
           image: $container.image
           args: $container.commands
           ports: $container.ports.select($this._getPortDefinition($))
@@ -185,7 +185,7 @@ Methods:
           Contract: $.string().notNull()
     Body:
       - $lenBefore: len($._podDefinition.spec.containers) + len($._podDefinition.spec.volumes)
-      - $containerName: toLower($name)
+      - $containerName: $name.toLower()
       - $newContainers: $._podDefinition.spec.containers.where($.name != $containerName)
       - $volumeNameMap: $.getAttr(volumeNameMap, dict())
       - $newVolumeNameMap: {}

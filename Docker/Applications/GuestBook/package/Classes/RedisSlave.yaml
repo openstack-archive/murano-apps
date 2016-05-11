@@ -42,4 +42,4 @@ Methods:
             REDIS_MASTER_SERVICE_PORT: $redisMasterLink.port
           ports:
             - port: 6379
-              scope: switch($.publish, $ => public, not $ => internal)
+              scope: switch($.publish => public, true => internal)

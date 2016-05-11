@@ -114,7 +114,7 @@ Methods:
                   - $rule:
                       - ToPort: $hostPort
                         FromPort: $hostPort
-                        IpProtocol: toLower($applicationPort.protocol)
+                        IpProtocol: $applicationPort.protocol.toLower()
                         External: true
                   - $._environment.securityGroupManager.addGroupIngress($rule)
               - $record:
@@ -222,10 +222,10 @@ Methods:
           - Return: $applicationPorts.get($key)
 
       - $port: str($applicationPort.port)
-      - If: $port in $portMap
+      - If: $port in $portMap.keys()
         Then:
           - $port: '1025'
-      - While: $port in $portMap
+      - While: $port in $portMap.keys()
         Do:
           - $port: str(int($port) + 1)
 

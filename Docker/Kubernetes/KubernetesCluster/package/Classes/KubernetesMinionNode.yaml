@@ -38,7 +38,7 @@ Methods:
       - If: not $.getAttr(instanceDeployed, false)
         Then:
           - $._environment.reporter.report($this, 'Creating Kubernetes Node {0}'.format($.instance.name))
-          - $.super($.deployInstance())
+          - super($, $.deployInstance())
           - $.setAttr(instanceDeployed, true)
 
 

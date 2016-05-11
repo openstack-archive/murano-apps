@@ -31,7 +31,7 @@ Methods:
   .init:
     Body:
       - $._environment: $.find(std:Environment).require()
-      - $._scope: switch($.publish, $ => public, not $ => internal)
+      - $._scope: switch($.publish => public, true => internal)
 
 
   getContainer:
@@ -56,6 +56,6 @@ Methods:
           - $endpoints: $.applicationEndpoints.where($.scope = $this._scope).
               select(format('{0}:{1}', $.address, $.port))
 
-          - $._environment.reporter.report($this, 'MongoDB {0} is available at {1}'.format($.name, join(', ', $endpoints)))
+          - $._environment.reporter.report($this, 'MongoDB {0} is available at {1}'.format($.name, $endpoints.join(', ')))
         Else:
           - $._environment.reporter.report($this, 'MongoDB {0} has deployed but is not accessible from outside'.format($.name))
