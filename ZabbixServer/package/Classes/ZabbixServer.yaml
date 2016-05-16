@@ -15,7 +15,7 @@ Namespaces:
   std: io.murano
   res: io.murano.resources
   sys: io.murano.system
-
+  conf: io.murano.configuration
 
 Name: ZabbixServer
 
@@ -56,14 +56,15 @@ Methods:
                 External: true
           - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
           - $.instance.deploy()
-          - $resources: new(sys:Resources)
-          - $template: $resources.yaml('DeployZabbixServer.template').bind(dict(
-                database => $.database,
-                username => $.username,
-                password => $.password
-              ))
+
           - $._environment.reporter.report($this, 'Instance is created. Deploying Zabbix Server')
-          - $.instance.agent.call($template, $resources)
+          - $replacements:
+              "%DATABASE%": $.database
+              "%USERNAME%": $.username
+              "%PASSWORD%": $.password
+          - $file: sys:Resources.string('deployZabbixServer.sh').replace($replacements)
+          - conf:Linux.runCommand($.instance.agent, $file)
+
           - If: $.instance.assignFloatingIp
             Then:
               - $address: $.instance.floatingIpAddress + '/zabbix'
