@@ -15,6 +15,7 @@ Namespaces:
   std: io.murano
   res: io.murano.resources
   sys: io.murano.system
+  conf: io.murano.configuration
 
 Name: MySql
 
@@ -48,11 +49,10 @@ Methods:
                 External: true
           - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
           - $.instance.deploy()
-          - $resources: new(sys:Resources)
           # Deploy MySql
           - $._environment.reporter.report($this, 'Instance is created. Deploying MySql')
-          - $template: $resources.yaml('DeployMySql.template')
-          - $.instance.agent.call($template, $resources)
+          - $file: sys:Resources.string('deployMySql.sh')
+          - conf:Linux.runCommand($.instance.agent, $file)
           - $._environment.reporter.report($this, 'MySql application is installed.')
           - $.setAttr(deployed, true)
           - $._environment.reporter.report($this, 'Creating database and user.')
@@ -71,7 +71,7 @@ Methods:
             Then:
               - $host: $.instance.floatingIpAddress
             Else:
-              - $host: $.instance.ipAddresses[0]
+              - $host: $.instance.ipAddresses.first()
           - $._environment.reporter.report($this, format('MySQL is available at {0}', $host))
 
   createDatabase:
@@ -81,12 +81,13 @@ Methods:
     Body:
       - $.deploy()
       - $._environment.reporter.report($this, format('Creating {0} database.', $database))
+
       # Creating Database on MySQL
-      - $resources: new(sys:Resources)
-      - $template: $resources.yaml('CreateMySqlDatabase.template').bind(dict(
-            database => $database
-          ))
-      - $.instance.agent.call($template, $resources)
+      - $replacement:
+          "%DATABASE%": $database
+      - $file: sys:Resources.string('createMySqlDatabase.sh').replace($replacement)
+      - conf:Linux.runCommand($.instance.agent, $file)
+
       - $._environment.reporter.report($this, format('Database {0} created.', $database))
 
   createUser:
@@ -98,13 +99,14 @@ Methods:
     Body:
       - $.deploy()
       - $._environment.reporter.report($this, format('Creating {0} user.', $username))
+
       # Creating user on MySQL
-      - $resources: new(sys:Resources)
-      - $template: $resources.yaml('CreateMySqlUser.template').bind(dict(
-            username => $username,
-            password => $password
-          ))
-      - $.instance.agent.call($template, $resources)
+      - $replacements:
+          "%USER_NAME%": $username
+          "%PASSWORD%": $password
+      - $file: sys:Resources.string('createMySqlUser.sh').replace($replacements)
+      - conf:Linux.runCommand($.instance.agent, $file)
+
       - $._environment.reporter.report($this, format('User {0} created', $username))
 
   assignUser:
@@ -116,13 +118,14 @@ Methods:
     Body:
       - $.deploy()
       - $._environment.reporter.report($this, format('Assigning user {0} to database {1}.', $username, $database))
+
       # Assigning user to MySQL database
-      - $resources: new(sys:Resources)
-      - $template: $resources.yaml('AssignUserMySql.template').bind(dict(
-            username => $username,
-            database => $database
-          ))
-      - $.instance.agent.call($template, $resources)
+      - $replacements:
+          "%USER_NAME%": $username
+          "%DB_NAME%": $database
+      - $file: sys:Resources.string('assignMySqlUser.sh').replace($replacements)
+      - conf:Linux.runCommand($.instance.agent, $file)
+
       - $._environment.reporter.report($this, format('User {0} assigned to database {1}.', $username, $database))
 
   getConnectionString:
@@ -136,5 +139,5 @@ Methods:
         Then:
           - $host: $.instance.floatingIpAddress
         Else:
-          - $host: $.instance.ipAddresses[0]
+          - $host: $.instance.ipAddresses.first()
       - Return: format('mysql://{0}@{1}:{2}', $username, $password, $host)

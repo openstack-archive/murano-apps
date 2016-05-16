@@ -1,3 +1,4 @@
+#!/bin/bash
 #  Licensed under the Apache License, Version 2.0 (the "License"); you may
 #  not use this file except in compliance with the License. You may obtain
 #  a copy of the License at
@@ -10,23 +11,4 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
-FormatVersion: 2.0.0
-Version: 1.0.0
-Name: Create MySql user
-
-Parameters:
-  username: $username
-  password: $password
-
-Body: |
-  return createUser('{0} {1}'.format(args.username, args.password)).stdout
-
-Scripts:
-  createUser:
-    Type: Application
-    Version: 1.0.0
-    EntryPoint: createMySqlUser.sh
-    Files: []
-    Options:
-      captureStdout: true
-      captureStderr: true
+mysql --user=root --password=root -e "CREATE DATABASE \`%DATABASE%\`"

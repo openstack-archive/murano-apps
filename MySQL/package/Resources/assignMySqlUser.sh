@@ -1,3 +1,4 @@
+#!/bin/bash
 #  Licensed under the Apache License, Version 2.0 (the "License"); you may
 #  not use this file except in compliance with the License. You may obtain
 #  a copy of the License at
@@ -10,22 +11,6 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
-FormatVersion: 2.0.0
-Version: 1.0.0
-Name: Deploy MySql
-
-Parameters:
-  appName: $appName
-
-Body: |
-  return deploy(args.appName).stdout
-
-Scripts:
-  deploy:
-    Type: Application
-    Version: 1.0.0
-    EntryPoint: deployMySql.sh
-    Files: []
-    Options:
-      captureStdout: true
-      captureStderr: true
+mysql --user=root --password=root -e "GRANT ALL PRIVILEGES ON %DB_NAME%.* TO '%USER_NAME%'@'localhost' WITH GRANT OPTION"
+mysql --user=root --password=root -e "GRANT ALL PRIVILEGES ON %DB_NAME%.* TO '%USER_NAME%'@'%' WITH GRANT OPTION"
+mysql --user=root --password=root -e "FLUSH PRIVILEGES"

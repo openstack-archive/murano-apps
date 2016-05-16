@@ -1,3 +1,4 @@
+#!/bin/bash
 #  Licensed under the Apache License, Version 2.0 (the "License"); you may
 #  not use this file except in compliance with the License. You may obtain
 #  a copy of the License at
@@ -9,24 +10,15 @@
 #  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #  License for the specific language governing permissions and limitations
 #  under the License.
+set -e
 
-FormatVersion: 2.0.0
-Version: 1.0.0
-Name: Assign user to MySql database
+sudo apt-get update
 
-Parameters:
-  database: $database  
-  username: $username
-  
-Body: |
-  return assignUser('{0} {1}'.format(args.database, args.username)).stdout
+sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password password root'
+sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password root'
 
-Scripts:
-  assignUser:
-    Type: Application
-    Version: 1.0.0
-    EntryPoint: assignMySqlUser.sh
-    Files: []
-    Options:
-      captureStdout: true
-      captureStderr: true
+sudo apt-get -y -q install mysql-server
+sed -e "s/^bind-address*/#bind-address/" -i /etc/mysql/my.cnf
+service mysql restart
+
+sudo iptables -I INPUT 1 -p tcp -m tcp --dport 3306 -j ACCEPT -m comment --comment "by murano, MySQL"
