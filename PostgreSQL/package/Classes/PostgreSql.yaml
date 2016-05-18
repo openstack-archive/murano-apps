@@ -15,6 +15,7 @@ Namespaces:
   std: io.murano
   res: io.murano.resources
   sys: io.murano.system
+  conf: io.murano.configuration
 
 Name: PostgreSql
 
@@ -49,11 +50,10 @@ Methods:
                 External: true
           - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
           - $.instance.deploy()
-          - $resources: new(sys:Resources)
           # Deploy PostgreSql
           - $._environment.reporter.report($this, 'Instance is created. Deploying PostgreSql')
-          - $template: $resources.yaml('DeployPostgreSql.template')
-          - $.instance.agent.call($template, $resources)
+          - $file: sys:Resources.string('deployPostgreSql.sh')
+          - conf:Linux.runCommand($.instance.agent, $file)
           - $._environment.reporter.report($this, 'PostgreSql application is installed.')
           - $.setAttr(deployed, true)
           - $._environment.reporter.report($this, 'Creating database and user.')
@@ -83,11 +83,10 @@ Methods:
       - $.deploy()
       - $._environment.reporter.report($this, format('Creating {0} database.', $database))
       # Creating Database on PostgreSQL
-      - $resources: new(sys:Resources)
-      - $template: $resources.yaml('CreatePostgreSqlDatabase.template').bind(dict(
-            database => $database
-          ))
-      - $.instance.agent.call($template, $resources)
+      - $replacement:
+          "%DATABASE%": $database
+      - $file: sys:Resources.string('createPostgreSqlDatabase.sh').replace($replacement)
+      - conf:Linux.runCommand($.instance.agent, $file)
       - $._environment.reporter.report($this, 'Database is created')
 
   createUser:
@@ -100,12 +99,11 @@ Methods:
       - $.deploy()
       - $._environment.reporter.report($this, format('Creating {0} user.', $username))
       # Creating Database on PostgreSQL
-      - $resources: new(sys:Resources)
-      - $template: $resources.yaml('CreatePostgreSqlUser.template').bind(dict(
-            username => $username,
-            password => $password
-          ))
-      - $.instance.agent.call($template, $resources)
+      - $replacements:
+          "%USER%": $username
+          "%PASSWORD%": $password
+      - $file: sys:Resources.string('createPostgreSqlUser.sh').replace($replacements)
+      - conf:Linux.runCommand($.instance.agent, $file)
       - $._environment.reporter.report($this, format('User {0} created', $username))
 
   assignUser:
@@ -117,13 +115,13 @@ Methods:
     Body:
       - $.deploy()
       - $._environment.reporter.report($this, format('Assigning user {0} to database {1}.', $username, $database))
-      # Assigning user to PostgresQL database
-      - $resources: new(sys:Resources)
-      - $template: $resources.yaml('AssignUserPostgreSql.template').bind(dict(
-            username => $username,
-            database => $database
-          ))
-      - $.instance.agent.call($template, $resources)
+      # Assigning user to PostgreSQL database
+      - $replacements:
+          "%USER%": $username
+          "%DATABASE%": $database
+      - $file: sys:Resources.string('assignPostgreSqlUser.sh').replace($replacements)
+      - conf:Linux.runCommand($.instance.agent, $file)
+
       - $._environment.reporter.report($this, format('User {0} assigned to database {1}.', $username, $database))
 
   getConnectionString:
@@ -137,5 +135,5 @@ Methods:
         Then:
           - $host: $.instance.floatingIpAddress
         Else:
-          - $host: $.instance.ipAddresses[0]
+          - $host: $.instance.ipAddresses.first()
       - Return: format('psql://{0}@{1}:{2}', $username, $password, $host)
