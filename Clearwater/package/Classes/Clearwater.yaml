@@ -1,0 +1,110 @@
+#  Licensed under the Apache License, Version 2.0 (the "License"); you may
+#  not use this file except in compliance with the License. You may obtain
+#  a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#  License for the specific language governing permissions and limitations
+#  under the License.
+
+Namespaces:
+  =: com.mirantis.clearwater
+  std: io.murano
+  dns: com.mirantis.network.dns
+  cwBase: com.mirantis.clearwater.components.base
+  components: com.mirantis.clearwater.components
+
+
+Name: Clearwater
+
+Extends: std:Application
+
+Properties:
+  keypair:
+    Contract: $.string()
+  osImageName:
+    Contract: $.string().notNull()
+  flavorName:
+    Contract: $.string().notNull()
+  dnsApp:
+    Contract: $.class(dns:Bind).notNull()
+  ellis:
+    Contract: $.class(components:Ellis)
+    Usage: Out
+  components:
+    Contract:
+      - $.class(cwBase:ClearwaterComponentBase).notNull()
+    Usage: Out
+  etcdClusterIp:
+    Contract: $.string().notNull()
+    Default: ""
+    Usage: Out
+
+
+Methods:
+  .init:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+      - $.ellis: new(components:Ellis, $this)
+      - $.components:
+        - new(components:Bono, $this)
+        - new(components:Sprout, $this)
+        - new(components:Homer, $this)
+        - new(components:Ralf, $this)
+        - new(components:Homestead, $this)
+
+  getSecurityGroupRules:
+    Body:
+      - $rules:
+          - FromPort: 22
+            ToPort: 22
+            IpProtocol: tcp
+            External: true
+          # SNMP
+          - FromPort: 161
+            ToPort: 161
+            IpProtocol: udp
+            External: true
+          # etcd
+          - FromPort: 2380
+            ToPort: 2380
+            IpProtocol: tcp
+            External: false
+          - FromPort: 4000
+            ToPort: 4000
+            IpProtocol: tcp
+            External: false
+      - Return: $rules
+
+  setEtcdClusterIp:
+    Arguments:
+      - ip:
+          Contract: $.string().notNull()
+    Body:
+      - $.etcdClusterIp: $ip
+
+  deploy:
+    Body:
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $._report('Start Clearwater deploy')
+          - $._environment.securityGroupManager.addGroupIngress($.getSecurityGroupRules())
+          - $.dnsApp.deploy()
+          - $.ellis.deploy()
+          - $.components.pselect($.deploy())
+          - $._report('Clearwater deployed')
+          - $._report(format('Use Ellis at {0} for create account and manage identities',
+                              $.ellis.instance.floatingIpAddress))
+          - $._report(format('Outbound edge proxy IP is {0}',
+                              $.components.where($ is components:Bono).first().instance.floatingIpAddress))
+          - $.setAttr(deployed, true)
+
+  _report:
+    Arguments:
+      - message:
+          Contract: $.string().notNull()
+    Body:
+      -  $._environment.reporter.report($this, $message)

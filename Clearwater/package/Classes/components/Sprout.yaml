@@ -1,0 +1,53 @@
+#  Licensed under the Apache License, Version 2.0 (the "License"); you may
+#  not use this file except in compliance with the License. You may obtain
+#  a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#  License for the specific language governing permissions and limitations
+#  under the License.
+
+Namespaces:
+  =: com.mirantis.clearwater.components
+  base: com.mirantis.clearwater.components.base
+
+Name: Sprout
+
+Extends: base:ClearwaterComponentBase
+
+Methods:
+  _createSecurityGroupRules:
+    Body:
+      - $rules:
+        # Internal SIP
+        - IpProtocol: tcp
+          FromPort: 5052
+          ToPort: 5052
+          External: false
+        - IpProtocol: tcp
+          FromPort: 5054
+          ToPort: 5054
+          External: false
+        # Chronos
+        - IpProtocol: tcp
+          FromPort: 7253
+          ToPort: 7253
+          External: false
+        # Chronos timer pops
+        - IpProtocol: tcp
+          FromPort: 9888
+          ToPort: 9888
+          External: false
+        # Memcached
+        - IpProtocol: tcp
+          FromPort: 11211
+          ToPort: 11211
+          External: false
+      - Return: $rules
+
+  getDeployScriptName:
+    Body:
+      - Return: "deploySprout.sh"
