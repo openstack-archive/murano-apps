@@ -14,7 +14,7 @@ Version: 2
 Templates:
   masterNode:
     ?:
-      type: io.murano.apps.docker.kubernetes.KubernetesMasterNode
+      type: com.mirantis.docker.kubernetes.KubernetesMasterNode
     instance:
       ?:
         type: io.murano.resources.LinuxMuranoInstance
@@ -27,7 +27,7 @@ Templates:
 
   minionNode:
     ?:
-      type: io.murano.apps.docker.kubernetes.KubernetesMinionNode
+      type: com.mirantis.docker.kubernetes.KubernetesMinionNode
     instance:
       ?:
         type: io.murano.resources.LinuxMuranoInstance
@@ -42,7 +42,7 @@ Templates:
 
   gatewayNode:
     ?:
-      type: io.murano.apps.docker.kubernetes.KubernetesGatewayNode
+      type: com.mirantis.docker.kubernetes.KubernetesGatewayNode
     instance:
       ?:
         type: io.murano.resources.LinuxMuranoInstance
@@ -55,7 +55,7 @@ Templates:
 
 Application:
   ?:
-    type: io.murano.apps.docker.kubernetes.KubernetesCluster
+    type: com.mirantis.docker.kubernetes.KubernetesCluster
   name: $.appConfiguration.name
   masterNode: $masterNode
   minionNodes: repeat($minionNode, $.appConfiguration.maxMinionCount)
