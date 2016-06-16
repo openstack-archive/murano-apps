@@ -12,15 +12,15 @@
 
 Format: 1.0
 Type: Application
-FullName: io.murano.apps.docker.DockerInfluxDB
+FullName: com.example.docker.DockerInfluxDB
 Name: Docker InfluxDB
 Description: |
  InfluxDB is a time series, events, and metrics database. It’s written in Go and has no external dependencies. That means once you install it there’s nothing else to manage (like Redis, HBase, or whatever). 
 Author: 'Mirantis, Inc'
 Tags: [docker, application, InfluxDB]
 Classes:
- io.murano.apps.docker.DockerInfluxDB: DockerInfluxDB.yaml
+ com.example.docker.DockerInfluxDB: DockerInfluxDB.yaml
 Require:
-  io.murano.apps.docker.DockerStandaloneHost:
-  io.murano.apps.docker.kubernetes.KubernetesPod:
-  io.murano.apps.docker.Interfaces:
+  com.example.docker.DockerStandaloneHost:
+  com.mirantis.docker.kubernetes.KubernetesPod:
+  com.mirantis.docker.Interfaces:

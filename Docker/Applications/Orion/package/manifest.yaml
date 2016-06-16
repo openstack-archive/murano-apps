@@ -12,15 +12,15 @@
 
 Format: 1.0
 Type: Application
-FullName: io.murano.apps.docker.DockerOrion
+FullName: com.example.docker.DockerOrion
 Name: Orion Docker
 Description: |
   The FIWARE Orion Context Broker is an implementation of the Publish/Subscribe Context Broker GE, providing the NGSI9 and NGSI10 interfaces.
 Author: 'TID'
 Tags: [docker, application, Orion, FIWARE]
 Classes:
- io.murano.apps.docker.DockerOrion: DockerOrion.yaml
+ com.example.docker.DockerOrion: DockerOrion.yaml
 Require:
-  io.murano.apps.docker.DockerStandaloneHost:
-  io.murano.apps.docker.kubernetes.KubernetesPod:
-  io.murano.apps.docker.Interfaces:
+  com.example.docker.DockerStandaloneHost:
+  com.mirantis.docker.kubernetes.KubernetesPod:
+  com.mirantis.docker.Interfaces:
