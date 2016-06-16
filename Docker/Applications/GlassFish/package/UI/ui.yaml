@@ -14,7 +14,7 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.apps.docker.DockerGlassFish
+    type: com.example.docker.DockerGlassFish
   name: $.appConfiguration.name
   host: $.appConfiguration.host
   publish: $.appConfiguration.publish
@@ -43,8 +43,8 @@ Forms:
           description: Password for admin user in GlassFish
         - name: host
           type:
-            - io.murano.apps.docker.kubernetes.KubernetesPod
-            - io.murano.apps.docker.DockerStandaloneHost
+            - com.mirantis.docker.kubernetes.KubernetesPod
+            - com.example.docker.DockerStandaloneHost
           label: Container Host
           description: >-
             Select an instance of Docker contaniner hosting provider to run the app

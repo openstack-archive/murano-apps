@@ -14,7 +14,7 @@ Version: 2
 Templates:
   guestBookHost:
     ?:
-      type: io.murano.apps.docker.kubernetes.KubernetesPod
+      type: com.mirantis.docker.kubernetes.KubernetesPod
     name: frontend
     labels: 'name=frontend,app=frontend,uses=redis-slave-or-redis-master'
     kubernetesCluster: $.appConfiguration.kubernetesCluster
@@ -22,7 +22,7 @@ Templates:
 
   redisSlaveHost:
     ?:
-      type: io.murano.apps.docker.kubernetes.KubernetesPod
+      type: com.mirantis.docker.kubernetes.KubernetesPod
     name: 'redis-slave'
     labels: 'name=redis-slave,app=redis,uses=redis-master'
     kubernetesCluster: $.appConfiguration.kubernetesCluster
@@ -30,11 +30,11 @@ Templates:
 
   redisMaster:
     ?:
-      type: io.murano.apps.docker.DockerRedis
+      type: com.example.docker.DockerRedis
     name: RedisMaster
     host:
       ?:
-        type: io.murano.apps.docker.kubernetes.KubernetesPod
+        type: com.mirantis.docker.kubernetes.KubernetesPod
       name: 'redis-master'
       labels: 'name=redis-master,app=redis'
       kubernetesCluster: $.appConfiguration.kubernetesCluster
@@ -44,7 +44,7 @@ Templates:
 
 Application:
   ?:
-    type: io.murano.apps.docker.DockerGuestBook
+    type: com.example.docker.DockerGuestBook
   name: $.appConfiguration.name
   host: $guestBookHost
   redisMaster: $redisMaster
@@ -69,7 +69,7 @@ Forms:
             Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
             underline are allowed
         - name: kubernetesCluster
-          type: io.murano.apps.docker.kubernetes.KubernetesCluster
+          type: com.mirantis.docker.kubernetes.KubernetesCluster
           label: Kubernetes cluster
           required: true
           description: >-

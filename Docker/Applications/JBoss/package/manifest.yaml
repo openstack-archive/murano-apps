@@ -12,15 +12,15 @@
 
 Format: 1.0
 Type: Application
-FullName: io.murano.apps.docker.DockerJBoss
+FullName: com.example.docker.DockerJBoss
 Name: Docker JBoss
 Description: |
  JBoss applications server is a J2EE platform for developing and deploying enterprise Java applications, Web applications and services, and portals.
 Author: 'Mirantis, Inc'
 Tags: [docker, application, JBoss]
 Classes:
- io.murano.apps.docker.DockerJBoss: DockerJBoss.yaml
+ com.example.docker.DockerJBoss: DockerJBoss.yaml
 Require:
-  io.murano.apps.docker.DockerStandaloneHost:
-  io.murano.apps.docker.kubernetes.KubernetesPod:
-  io.murano.apps.docker.Interfaces:
+  com.example.docker.DockerStandaloneHost:
+  com.mirantis.docker.kubernetes.KubernetesPod:
+  com.mirantis.docker.Interfaces:

@@ -11,12 +11,13 @@
 #  under the License.
 
 Namespaces:
-  =: io.murano.apps.docker
+  =: com.example.docker
   std: io.murano
+  interfaces: com.mirantis.docker
 
 Name: DockerGuestBook
 
-Extends: DockerApplication
+Extends: interfaces:DockerApplication
 
 Properties:
   name:
@@ -30,7 +31,7 @@ Properties:
     Contract: $.class(DockerRedis).notNull()
 
   redisSlaveHost:
-    Contract: $.class(DockerContainerHost).notNull()
+    Contract: $.class(interfaces:DockerContainerHost).notNull()
 
   redisSlave:
     Contract: $.class(DockerRedisSlave)

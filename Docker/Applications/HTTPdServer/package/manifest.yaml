@@ -12,15 +12,15 @@
 
 Format: 1.0
 Type: Application
-FullName: io.murano.apps.docker.DockerHTTPd
+FullName: com.example.docker.DockerHTTPd
 Name: Docker HTTPd
 Description: | 
  The Apache HTTP Server, colloquially called Apache, is a Web server application notable for playing a key role in the initial growth of the World Wide Web.
 Author: 'Mirantis, Inc'
 Tags: [docker, application, httpd]
 Classes:
- io.murano.apps.docker.DockerHTTPd: DockerHTTPd.yaml
+ com.example.docker.DockerHTTPd: DockerHTTPd.yaml
 Require:
-  io.murano.apps.docker.DockerStandaloneHost:
-  io.murano.apps.docker.kubernetes.KubernetesPod:
-  io.murano.apps.docker.Interfaces:
+  com.example.docker.DockerStandaloneHost:
+  com.mirantis.docker.kubernetes.KubernetesPod:
+  com.mirantis.docker.Interfaces:
