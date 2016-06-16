@@ -14,7 +14,7 @@ Version: 2.2
 
 Application:
   ?:
-    type: io.murano.apps.WordPress
+    type: com.example.WordPress
   database: $.appConfiguration.database
   server: $.appConfiguration.server
   monitoring: $.appConfiguration.zabbix
@@ -32,17 +32,17 @@ Forms:
           hidden: true
           required: false
         - name: database
-          type: io.murano.databases.MySql
+          type: com.example.databases.MySql
           label: Database Server
           description: >-
             Select a database server to host the application`s database
         - name: server
-          type: io.murano.apps.apache.ApacheHttpServer
+          type: com.example.apache.ApacheHttpServer
           label: HTTP Server
           description: >-
             Select an instance of Apache HTTP Server to run the app
         - name: zabbix
-          type: io.murano.apps.ZabbixAgent
+          type: com.example.ZabbixAgent
           label: Monitoring
           required: false
           description: >-

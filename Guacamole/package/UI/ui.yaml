@@ -14,7 +14,7 @@ Version: 2.2
 
 Application:
   ?:
-    type: io.murano.apps.Guacamole
+    type: com.example.Guacamole
   username: $.appConfiguration.username
   password: $.appConfiguration.password
   server: $.appConfiguration.server
@@ -42,7 +42,7 @@ Forms:
             Please, provide a strong password that is going to be used to access Guacamole and ssh into the server instance to
             modify the Guacamole configuration
         - name: server
-          type: io.murano.apps.apache.Tomcat
+          type: com.example.apache.Tomcat
           label: Application Server
           description: >-
             Select an instance of Application Server to run the app

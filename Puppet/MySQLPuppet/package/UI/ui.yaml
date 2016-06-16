@@ -21,7 +21,7 @@ Templates:
 
 Application:
   ?:
-    type: io.murano.conflang.puppet.MySQLPuppet
+    type: com.example.conflang.puppet.MySQLPuppet
   port: $.appConfiguration.port
   instance:
     ?:

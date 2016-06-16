@@ -11,7 +11,7 @@
 #  under the License.
 
 Namespaces:
-  =: io.murano.apps.activeDirectory
+  =: com.example.activeDirectory
   std: io.murano
 
 Name: DomainHost

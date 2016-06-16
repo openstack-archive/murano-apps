@@ -12,13 +12,13 @@
 
 Format: 1.0
 Type: Application
-FullName: io.murano.apps.Guacamole
+FullName: com.example.Guacamole
 Name: Guacamole
 Description: |
  Guacamole is an HTML5 web application that provides access to desktop environments using remote desktop protocols (such as VNC or RDP).
 Author: 'Mirantis, Inc'
 Tags: [HTML5, VNC, RDP, Desktop]
 Classes:
- io.murano.apps.Guacamole: Guacamole.yaml
+ com.example.Guacamole: Guacamole.yaml
 Require:
- io.murano.apps.apache.Tomcat:
+ com.example.apache.Tomcat:
