@@ -12,7 +12,7 @@
 
 Format: 1.0
 Type: Application
-FullName: io.murano.apps.docker.DockerMariaDB
+FullName: com.example.docker.DockerMariaDB
 Name: Docker MariaDB
 Description: |
  MariaDB strives to be the logical choice for database professionals looking for a robust, scalable, and reliable
@@ -22,8 +22,8 @@ Description: |
 Author: 'Mirantis, Inc'
 Tags: [docker, application, MariaDB]
 Classes:
- io.murano.apps.docker.DockerMariaDB: DockerMariaDB.yaml
+ com.example.docker.DockerMariaDB: DockerMariaDB.yaml
 Require:
-  io.murano.apps.docker.DockerStandaloneHost:
-  io.murano.apps.docker.kubernetes.KubernetesPod:
-  io.murano.apps.docker.Interfaces:
+  com.example.docker.DockerStandaloneHost:
+  com.mirantis.docker.kubernetes.KubernetesPod:
+  com.mirantis.docker.Interfaces:
