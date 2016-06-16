@@ -523,3 +523,12 @@ Methods:
             newSize => $newSize
           ))
       - $.masterNode.instance.agent.call($template, $resources)
+
+
+  restartContainers:
+    Arguments:
+      - podName:
+          Contract: $.string().notNull()
+
+    Body:
+      - $.minionNodes.take($.nodeCount).pselect($.restartContainers(podName => $podName))
