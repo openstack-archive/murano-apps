@@ -12,15 +12,15 @@
 
 Format: 1.3
 Type: Application
-FullName: io.murano.apps.docker.DockerMySQL
+FullName: com.example.docker.DockerMySQL
 Name: Docker MySQL
 Description: |
   MySQL Docker Application. Adds MySQL docker container with MySQL listening on port 3306.
 Author: 'Mirantis, Inc'
 Tags: [docker, application]
 Classes:
- io.murano.apps.docker.DockerMySQL: DockerMySQL.yaml
+ com.example.docker.DockerMySQL: DockerMySQL.yaml
 Require:
-  io.murano.apps.docker.DockerStandaloneHost:
-  io.murano.apps.docker.kubernetes.KubernetesPod:
-  io.murano.apps.docker.Interfaces:
+  com.example.docker.DockerStandaloneHost:
+  com.mirantis.docker.kubernetes.KubernetesPod:
+  com.mirantis.docker.Interfaces:

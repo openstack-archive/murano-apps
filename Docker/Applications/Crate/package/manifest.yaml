@@ -12,16 +12,16 @@
 
 Format: 1.3
 Type: Application
-FullName: io.murano.apps.docker.DockerCrate
+FullName: com.example.docker.DockerCrate
 Name: Docker Crate
 Description: |
  Crate is an Elastic SQL Data Store. Distributed by design, Crate makes centralized database servers obsolete. Realtime non-blocking SQL engine with full blown search. Highly available, massively scalable yet simple to use.
 Author: 'Mirantis, Inc'
 Tags: [docker, application, crate]
 Classes:
- io.murano.apps.docker.DockerCrate: DockerCrate.yaml
+ com.example.docker.DockerCrate: DockerCrate.yaml
 Require:
-  io.murano.apps.docker.DockerStandaloneHost:
-  io.murano.apps.docker.kubernetes.KubernetesPod:
-  io.murano.apps.docker.Interfaces:
+  com.example.docker.DockerStandaloneHost:
+  com.mirantis.docker.kubernetes.KubernetesPod:
+  com.mirantis.docker.Interfaces:
 

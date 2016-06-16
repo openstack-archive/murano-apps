@@ -12,15 +12,15 @@
 
 Format: 1.3
 Type: Application
-FullName: io.murano.apps.docker.DockerJenkins
+FullName: com.example.apps.docker.DockerJenkins
 Name: Docker Jenkins
 Description: |
  Jenkins is an award-winning application that monitors executions of repeated jobs, such as building a software project or jobs run by cron.
 Author: 'Mirantis, Inc'
 Tags: [docker, application, Jenkins]
 Classes:
- io.murano.apps.docker.DockerJenkins: DockerJenkins.yaml
+ com.example.docker.DockerJenkins: DockerJenkins.yaml
 Require:
-  io.murano.apps.docker.DockerStandaloneHost:
-  io.murano.apps.docker.kubernetes.KubernetesPod:
-  io.murano.apps.docker.Interfaces:
+  com.example.docker.DockerStandaloneHost:
+  com.mirantis.docker.kubernetes.KubernetesPod:
+  com.mirantis.docker.Interfaces:

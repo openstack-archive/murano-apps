@@ -11,12 +11,13 @@
 #  under the License.
 
 Namespaces:
-  =: io.murano.apps.docker
+  =: com.example.docker
   std: io.murano
+  interfaces: com.mirantis.docker
 
 Name: DockerMongoDB
 
-Extends: DockerApplication
+Extends: interfaces:DockerApplication
 
 Properties:
   name:
