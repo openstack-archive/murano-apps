@@ -15,4 +15,4 @@ cp init_conf/etcd.conf /etc/init/
 chmod +x initd_scripts/*
 cp initd_scripts/etcd /etc/init.d/
 service etcd start
-sleep 5
+sleep 10
