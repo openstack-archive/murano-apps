@@ -14,7 +14,7 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.apps.ZabbixServer
+    type: com.example.ZabbixServer
   name: $.appConfiguration.name
   database: $.dbConfiguration.database
   username: $.dbConfiguration.username

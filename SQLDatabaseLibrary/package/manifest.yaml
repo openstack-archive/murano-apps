@@ -12,11 +12,11 @@
 
 Format: 1.0
 Type: Library
-FullName: io.murano.databases
+FullName: com.example.databases
 Name: SQL Library
 Description: |
  This is the interface defining API for different SQL - RDBMS databases
 Author: 'Mirantis, Inc'
 Tags: [SQL, RDBMS]
 Classes:
- io.murano.databases.SqlDatabase: SqlDatabase.yaml
+ com.example.databases.SqlDatabase: SqlDatabase.yaml

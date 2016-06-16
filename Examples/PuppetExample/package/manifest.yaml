@@ -12,11 +12,11 @@
 
 Format: 1.0
 Type: Application
-FullName: io.murano.conflang.test.PuppetExample
+FullName: com.example.conflang.test.PuppetExample
 Name: PuppetExample
 Description: |
   Puppet Test.
 Author: 'TID'
 Tags: [Test, Puppet]
 Classes:
- io.murano.conflang.test.PuppetExample: PuppetExample.yaml
+ com.example.conflang.test.PuppetExample: PuppetExample.yaml

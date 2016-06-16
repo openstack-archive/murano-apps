@@ -14,7 +14,7 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.apps.pivotal.OpsManager
+    type: com.example.pivotal.OpsManager
   name: $.appConfiguration.name
   username: $.opsManagerConfiguration.username
   password: $.opsManagerConfiguration.password
@@ -24,7 +24,7 @@ Application:
   sshKey: $.opsManagerConfiguration.sshKey
   instance:
     ?:
-      type: io.murano.apps.pivotal.OpsManagerInstance
+      type: com.example.pivotal.OpsManagerInstance
     name: generateHostname($.instanceConfiguration.unitNamingPattern, 1)
     flavor: $.instanceConfiguration.flavor
     image: 'Ops Manager'
