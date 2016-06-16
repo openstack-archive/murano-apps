@@ -35,7 +35,7 @@ Version: 2.2
 
 Application:
   ?:
-    type:  io.murano.apps.SugarCRM
+    type: com.example.SugarCRM
   server: $.appConfiguration.server
   database: $.appConfiguration.database
   dbName: $.dbConfiguration.database
@@ -55,12 +55,12 @@ Forms:
           hidden: true
           required: false
         - name: server
-          type: io.murano.apps.apache.ApacheHttpServer
+          type: com.example.apache.ApacheHttpServer
           label: HTTP Server
           description: >-
             Select an instance of Apache HTTP Server to run the app
         - name: database
-          type: io.murano.databases.MySql
+          type: com.example.databases.MySql
           label: Database Server
           description: >-
             Select a database server to host the application`s database

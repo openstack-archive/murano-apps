@@ -3,11 +3,11 @@ Version: 2.1
 Templates:
   primaryController:
     ?:
-      type: io.murano.apps.activeDirectory.PrimaryController
+      type: com.example.activeDirectory.PrimaryController
     recoveryPassword: $.appConfiguration.recoveryPassword
     host:
       ?:
-        type: io.murano.apps.activeDirectory.Host
+        type: com.example.activeDirectory.Host
       adminPassword: $.appConfiguration.adminPassword
       name: generateHostname($.appConfiguration.unitNamingPattern, 1)
       flavor: $.instanceConfiguration.flavor
@@ -22,11 +22,11 @@ Templates:
 
   secondaryController:
     ?:
-      type: io.murano.apps.activeDirectory.SecondaryController
+      type: com.example.activeDirectory.SecondaryController
     recoveryPassword: $.appConfiguration.recoveryPassword
     host:
       ?:
-        type: io.murano.apps.activeDirectory.Host
+        type: com.example.activeDirectory.Host
       adminPassword: $.appConfiguration.adminPassword
       name: generateHostname($.appConfiguration.unitNamingPattern, $index + 1)
       flavor: $.instanceConfiguration.flavor
@@ -45,7 +45,7 @@ Templates:
 
 Application:
   ?:
-    type: io.murano.apps.activeDirectory.ActiveDirectory
+    type: com.example.activeDirectory.ActiveDirectory
   adminPassword: $.appConfiguration.adminPassword
   name: $.appConfiguration.name
   primaryController: $primaryController

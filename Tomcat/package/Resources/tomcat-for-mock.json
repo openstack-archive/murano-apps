@@ -33,7 +33,7 @@
                 "_26411a1861294160833743e45d0eaad9": {
                     "name": "Apache Tomcat"
                 },
-                "type": "io.murano.apps.apache.Tomcat",
+                "type": "com.example.apache.Tomcat",
                 "id": "312534e2-f1aa-4ed3-811c-7f5c10530484"
             }
         }
