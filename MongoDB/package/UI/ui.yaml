@@ -21,7 +21,7 @@ Templates:
 
 Application:
   ?:
-    type: io.murano.databases.MongoDB
+    type: com.example.databases.MongoDB
   database: $.initDatabaseConfiguration.database
   username: $.initDatabaseConfiguration.username
   password: $.initDatabaseConfiguration.password

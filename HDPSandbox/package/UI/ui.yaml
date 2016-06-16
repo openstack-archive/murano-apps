@@ -21,7 +21,7 @@ Templates:
 
 Application:
   ?:
-    type: io.murano.apps.HDPSandbox
+    type: com.example.HDPSandbox
   instance:
     ?:
       type: io.murano.resources.LinuxMuranoInstance

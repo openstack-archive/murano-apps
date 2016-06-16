@@ -21,7 +21,7 @@ Templates:
 
 Application:
   ?:
-    type: io.murano.databases.PostgreSql
+    type: com.example.databases.PostgreSql
   database: $.initDatabaseConfiguration.database
   username: $.initDatabaseConfiguration.username
   password: $.initDatabaseConfiguration.password

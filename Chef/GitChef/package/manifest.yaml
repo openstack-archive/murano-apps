@@ -12,11 +12,11 @@
 
 Format: 1.3
 Type: Application
-FullName: io.murano.conflang.chef.GitChef
+FullName: com.example.conflang.chef.GitChef
 Name: GitChef
 Description: |
   Git Chef.
 Author: 'TID'
 Tags: [Test, Chef]
 Classes:
- io.murano.conflang.chef.GitChef: GitChef.yaml
+ com.example.conflang.chef.GitChef: GitChef.yaml

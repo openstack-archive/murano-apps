@@ -33,7 +33,7 @@
 
 Format: 1.3
 Type: Application
-FullName: io.murano.apps.SugarCRM
+FullName: com.example.SugarCRM
 Name: Sugar CRM
 Description: |
  A completely transformed, individualized CRM user experience that is immersive,
@@ -42,7 +42,7 @@ Description: |
 Author: 'Mirantis, Inc'
 Tags: [CRM]
 Classes:
-  io.murano.apps.SugarCRM: SugarCRM.yaml
+  com.example.SugarCRM: SugarCRM.yaml
 Require:
-  io.murano.apps.apache.ApacheHttpServer:
-  io.murano.databases.MySql:
+  com.example.apache.ApacheHttpServer:
+  com.example.databases.MySql:

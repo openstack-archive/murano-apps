@@ -15,7 +15,7 @@ Version: 2
 Templates:
   seedNode:
     ?:
-      type: io.murano.apps.apache.CassandraNode
+      type: com.example.apache.CassandraNode
     instance:
       ?:
         type: io.murano.resources.LinuxMuranoInstance
@@ -28,7 +28,7 @@ Templates:
 
   regularNode:
     ?:
-      type: io.murano.apps.apache.CassandraNode
+      type: com.example.apache.CassandraNode
     instance:
       ?:
         type: io.murano.resources.LinuxMuranoInstance
@@ -41,7 +41,7 @@ Templates:
 
 Application:
   ?:
-    type: io.murano.apps.apache.CassandraCluster
+    type: com.example.apache.CassandraCluster
   name: $.appConfiguration.name
   seedNodes: repeat($seedNode, $.appConfiguration.countOfSeedNodes)
   regularNodes: repeat($regularNode, $.appConfiguration.countOfRegularNodes)

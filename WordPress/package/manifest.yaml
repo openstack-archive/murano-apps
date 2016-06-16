@@ -12,15 +12,15 @@
 
 Format: 1.3
 Type: Application
-FullName: io.murano.apps.WordPress
+FullName: com.example.WordPress
 Name: WordPress
 Description: |
  WordPress is a free and open source blogging tool and a content management system (CMS) based on PHP and MySQL.
 Author: 'Mirantis, Inc'
 Tags: [CMS, PHP, Web]
 Classes:
- io.murano.apps.WordPress: WordPress.yaml
+ com.example.WordPress: WordPress.yaml
 Require:
- io.murano.databases.MySql:
- io.murano.apps.apache.ApacheHttpServer:
- io.murano.apps.ZabbixAgent:
+ com.example.databases.MySql:
+ com.example.apache.ApacheHttpServer:
+ com.example.ZabbixAgent:

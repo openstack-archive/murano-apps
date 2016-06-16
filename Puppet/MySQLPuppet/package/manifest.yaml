@@ -12,11 +12,11 @@
 
 Format: 1.3
 Type: Application
-FullName: io.murano.conflang.puppet.MySQLPuppet
+FullName: com.example.conflang.puppet.MySQLPuppet
 Name: MySQLPuppet
 Description: |
   Puppet Test.
 Author: 'TID'
 Tags: [Test, Puppet]
 Classes:
- io.murano.conflang.puppet.MySQLPuppet: MySQLPuppet.yaml
+ com.example.conflang.puppet.MySQLPuppet: MySQLPuppet.yaml

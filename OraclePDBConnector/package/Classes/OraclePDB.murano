@@ -17,7 +17,7 @@ Namespaces:
   std: io.murano
   sys: io.murano.system
 Name: OraclePDB
-Extends: 'io.murano.databases.SqlDatabase'
+Extends: 'com.example.databases.SqlDatabase'
 Properties:
   name:
       Contract: $.string().notNull()
