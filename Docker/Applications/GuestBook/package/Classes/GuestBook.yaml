@@ -55,7 +55,7 @@ Methods:
           publish => false,
           redisMaster => $this.redisMaster)
       - $.redisSlave.deploy()
-      - $.super($.deploy())
+      - super($, $.deploy())
 
 
   getContainer:
