@@ -14,7 +14,7 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.apps.docker.kubernetes.KubernetesPod
+    type: com.mirantis.docker.kubernetes.KubernetesPod
   name: $.appConfiguration.name
   labels: $.appConfiguration.labels
   kubernetesCluster: $.appConfiguration.kubernetesCluster
@@ -53,7 +53,7 @@ Forms:
             Valid label values must be shorter than 64 characters, accepted characters are ([-A-Za-z0-9_.])
             but the first character must be ([A-Za-z0-9]).
         - name: kubernetesCluster
-          type: io.murano.apps.docker.kubernetes.KubernetesCluster
+          type: com.mirantis.docker.kubernetes.KubernetesCluster
           label: Kubernetes cluster
           description: >-
             Kubernetes service

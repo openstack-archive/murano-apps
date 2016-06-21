@@ -171,7 +171,7 @@ deploying both Kubernetes and it's nodes.
 `createService(applicationName, applicationPorts, podId)`
     * `applicationName` a string holding application's name.
     * `applicationPorts` list of instances of
-      `io.murano.apps.docker.ApplicationPort` class.
+      `com.mirantis.docker.ApplicationPort` class.
     * `podId` a string holding a name of the pod.
 
     Check each port in applicationPorts and creates or updates it if the port

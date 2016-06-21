@@ -11,8 +11,8 @@
 #  under the License.
 
 Namespaces:
-  =: io.murano.apps.docker.kubernetes
-  docker: io.murano.apps.docker
+  =: com.mirantis.docker.kubernetes
+  docker: com.mirantis.docker
   std: io.murano
   sys: io.murano.system
 

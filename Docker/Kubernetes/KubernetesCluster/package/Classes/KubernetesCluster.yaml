@@ -11,11 +11,11 @@
 #  under the License.
 
 Namespaces:
-  =: io.murano.apps.docker.kubernetes
+  =: com.mirantis.docker.kubernetes
   std: io.murano
   res: io.murano.resources
   sys: io.murano.system
-  docker: io.murano.apps.docker
+  docker: com.mirantis.docker
 
 
 Name: KubernetesCluster
