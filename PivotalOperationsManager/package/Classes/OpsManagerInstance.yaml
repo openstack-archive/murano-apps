@@ -11,7 +11,7 @@
 #  under the License.
 
 Namespaces:
-  =: io.murano.apps.pivotal
+  =: com.example.pivotal
   std: io.murano
   res: io.murano.resources
 

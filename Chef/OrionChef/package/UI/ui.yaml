@@ -21,7 +21,7 @@ Templates:
 
 Application:
   ?:
-    type: io.murano.conflang.fiware.OrionChef
+    type: com.example.conflang.fiware.OrionChef
   port: $.appConfiguration.port
   instance:
     ?:

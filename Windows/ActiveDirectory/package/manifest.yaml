@@ -14,7 +14,7 @@ Format: 1.3
 
 Type: Application
 
-FullName: io.murano.apps.activeDirectory.ActiveDirectory
+FullName: com.example.activeDirectory.ActiveDirectory
 
 Name: Active Directory
 
@@ -27,9 +27,9 @@ Author: 'Mirantis, Inc.'
 Tags: [Windows, Domain, Microsoft]
 
 Classes:
-  io.murano.apps.activeDirectory.Host: Host.yaml
-  io.murano.apps.activeDirectory.DomainHost: DomainHost.yaml
-  io.murano.apps.activeDirectory.ActiveDirectory: ActiveDirectory.yaml
-  io.murano.apps.activeDirectory.Controller: Controller.yaml
-  io.murano.apps.activeDirectory.PrimaryController: PrimaryController.yaml
-  io.murano.apps.activeDirectory.SecondaryController: SecondaryController.yaml
+  com.example.activeDirectory.Host: Host.yaml
+  com.example.activeDirectory.DomainHost: DomainHost.yaml
+  com.example.activeDirectory.ActiveDirectory: ActiveDirectory.yaml
+  com.example.activeDirectory.Controller: Controller.yaml
+  com.example.activeDirectory.PrimaryController: PrimaryController.yaml
+  com.example.activeDirectory.SecondaryController: SecondaryController.yaml

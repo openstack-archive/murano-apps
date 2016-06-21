@@ -32,9 +32,9 @@
 # "Powered by SugarCRM".
 
 Namespaces:
-  =: io.murano.apps
-  srv: io.murano.apps.apache
-  db: io.murano.databases
+  =: com.example
+  srv: com.example.apache
+  db: com.example.databases
   std: io.murano
   res: io.murano.resources
   sys: io.murano.system

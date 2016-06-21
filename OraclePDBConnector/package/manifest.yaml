@@ -25,4 +25,4 @@ Tags: [oracle]
 Classes:
  com.oracle.db.muranoPdb.OraclePDB: OraclePDB.murano
 Require:
-    io.murano.databases:
+    com.example.databases:

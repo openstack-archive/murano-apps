@@ -12,7 +12,7 @@
 
 Format: 1.3
 Type: Application
-FullName: io.murano.apps.HDPSandbox
+FullName: com.example.HDPSandbox
 Name: 'Hortonworks Data Platform 2.2 Sandbox'
 Description: |
  Hortonworks Data Platform (HDP) Sandbox is a portable Hadoop distribution which allows to get access to a huge number of HDP components in a virtual environment.
@@ -21,4 +21,4 @@ Description: |
 Author: Mirantis Inc
 Tags: [Hadoop, BigData]
 Classes:
- io.murano.apps.HDPSandbox: HDPSandbox.yaml
+ com.example.HDPSandbox: HDPSandbox.yaml

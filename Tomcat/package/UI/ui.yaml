@@ -21,7 +21,7 @@ Templates:
 
 Application:
   ?:
-    type: io.murano.apps.apache.Tomcat
+    type: com.example.apache.Tomcat
   instance:
     ?:
       type: io.murano.resources.LinuxMuranoInstance

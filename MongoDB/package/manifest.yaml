@@ -12,7 +12,7 @@
 
 Format: 1.3
 Type: Application
-FullName: io.murano.databases.MongoDB
+FullName: com.example.databases.MongoDB
 Name: MongoDB
 Description: |
  MongoDB is a cross-platform document-oriented database.
@@ -22,4 +22,4 @@ Description: |
 Author: 'Huawei, Inc'
 Tags: [MongoDB]
 Classes:
- io.murano.databases.MongoDB: MongoDB.yaml
+ com.example.databases.MongoDB: MongoDB.yaml
