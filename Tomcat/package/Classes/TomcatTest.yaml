@@ -44,12 +44,14 @@ Methods:
         - $.env: $this.load($.appJson)
 
         # Set up mock for the push method of *io.murano.system.HeatStack* class
+        # by providing YAQL expression representing the predefined heat output
         - inject(sys:HeatStack, push, $.heatOutput)
 
-        # Set up mock for the concrete object with mock method name
+        # Set up mock for the output method of env's stack in the same way
         - inject($.env.stack, output, $.heatOutput)
 
-        # Set up mock with YAQL function
+        # Set up mock for the call method of murano agent class
+        # by providing the name of the method from the test class
         - inject('io.murano.system.Agent', call, $this, agentMock)
 
         # Mocks will be called instead of original function during the deployment
