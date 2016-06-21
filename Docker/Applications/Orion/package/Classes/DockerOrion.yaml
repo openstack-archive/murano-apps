@@ -39,7 +39,7 @@ Methods:
   deploy:
     Body:
       - $.mongodb.deploy()
-      - $.super($.deploy())
+      - super($, $.deploy())
 
   getContainer:
     Body:

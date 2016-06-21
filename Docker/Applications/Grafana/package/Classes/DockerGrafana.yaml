@@ -50,7 +50,7 @@ Methods:
   deploy:
     Body:
       - $.influxDB.deploy()
-      - $.super($.deploy())
+      - super($, $.deploy())
 
 
   getContainer:

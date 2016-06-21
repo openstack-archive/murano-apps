@@ -273,7 +273,7 @@ Methods:
       - applicationName:
           Contract: $.string().notNull()
     Body:
-      - Return: format('{0}-{1}', $applicationName, $.id())
+      - Return: format('{0}-{1}', $applicationName, id($))
 
 
   _removeApplicationEndpoints:
@@ -305,4 +305,4 @@ Methods:
 
   getInternalScopeId:
     Body:
-      Return: $.id()
+      Return: id($)

@@ -305,7 +305,7 @@ Methods:
 
   getInternalScopeId:
     Body:
-      Return: $.kubernetesCluster.id()
+      Return: id($.kubernetesCluster)
 
   scalePodDown:
     Usage: Action
