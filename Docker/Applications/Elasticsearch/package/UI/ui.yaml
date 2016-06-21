@@ -14,7 +14,7 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.apps.docker.DockerElasticsearch
+    type: com.example.docker.DockerElasticsearch
   name: $.appConfiguration.name
   username: $.appConfiguration.username
   password: $.appConfiguration.password
@@ -50,8 +50,8 @@ Forms:
             User password that will be configured for Elasticsearch access
         - name: host
           type:
-            - io.murano.apps.docker.kubernetes.KubernetesPod
-            - io.murano.apps.docker.DockerStandaloneHost
+            - com.mirantis.docker.kubernetes.KubernetesPod
+            - com.example.docker.DockerStandaloneHost
           label: Container Host
           description: >-
             Select an instance of Docker container hosting provider to run the app

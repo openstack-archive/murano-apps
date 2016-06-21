@@ -14,7 +14,7 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.apps.docker.DockerOrion
+    type: com.example.docker.DockerOrion
   name: $.appConfiguration.name
   host: $.appConfiguration.host
   publish: $.appConfiguration.publish
@@ -37,8 +37,8 @@ Forms:
             underline are allowed
         - name: host
           type:
-            - io.murano.apps.docker.kubernetes.KubernetesPod
-            - io.murano.apps.docker.DockerStandaloneHost
+            - com.mirantis.docker.kubernetes.KubernetesPod
+            - com.example.docker.DockerStandaloneHost
           label: Container Host
           description: >-
             Select an instance of Docker contaniner hosting provider to run the app
@@ -53,7 +53,7 @@ Forms:
   - mongoConfig:
       fields:
         - name: mongoDB
-          type: io.murano.apps.docker.DockerMongoDB
+          type: com.example.docker.DockerMongoDB
           label: MongoDB instance
           required: true
           description: >-
