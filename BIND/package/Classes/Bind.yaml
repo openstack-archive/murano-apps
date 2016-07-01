@@ -1,0 +1,103 @@
+#  Licensed under the Apache License, Version 2.0 (the "License"); you may
+#  not use this file except in compliance with the License. You may obtain
+#  a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#  License for the specific language governing permissions and limitations
+#  under the License.
+
+Namespaces:
+  =: com.mirantis.network.dns
+  std: io.murano
+  res: io.murano.resources
+  sys: io.murano.system
+  conf: io.murano.configuration
+
+Name: Bind
+
+Extends: std:Application
+
+Properties:
+  instance:
+    Contract: $.class(res:LinuxMuranoInstance)
+
+  zoneName:
+    Contract: $.string().notNull()
+
+  dnsSecKey:
+    Contract: $.string().notNull()
+    Usage: InOut
+
+  privateIp:
+    Contract: $.string()
+    Usage: Out
+
+
+Methods:
+  .init:
+    Body:
+      - $.environment: $.find(std:Environment).require()
+      - $.dnsSecKey: base64encode($.dnsSecKey)
+
+  _createReplacements:
+    Body:
+      - Return:
+          "%PUBLIC_IP%": $.instance.floatingIpAddress
+          "%PRIVATE_IP%": $.privateIp
+          "%ZONE%": $.zoneName
+          "%DNSSEC_KEY%": $.dnsSecKey
+          "%PRIVATE_NETWORK_CIDR%": $.environment.defaultNetworks.environment.describe().cidr
+
+  _getIp4ForNetwork:
+    #Works only for IPv4 network with 255.255.255.0 netmask
+    Arguments:
+      - network:
+          Contract: $.class(res:NeutronNetwork).notNull()
+    Body:
+      - $gateIp: $network.describe().gateway
+      - $netAddr: $gateIp.split('.').take(3)
+      - Return: $.instance.ipAddresses.where(list($.split('.').take(3)) = $netAddr).first(null)
+
+  _getPrivateIp:
+    Body:
+      - Return: $._getIp4ForNetwork($.environment.defaultNetworks.environment)
+
+  _addSecurityGroupRules:
+    Body:
+      - $rules:
+        # DNS
+        - FromPort: 53
+          ToPort: 53
+          IpProtocol: tcp
+          External: true
+        - FromPort: 53
+          ToPort: 53
+          IpProtocol: udp
+          External: true
+      - $.environment.securityGroupManager.addGroupIngress($rules)
+
+  deploy:
+    Body:
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $._report('DNS server deploy started')
+          - $._addSecurityGroupRules()
+          - $.instance.deploy()
+          - $._report('Run install script')
+          - $.privateIp: $._getPrivateIp()
+          - $replacements: $._createReplacements()
+          - $file: sys:Resources.string('deployBind.sh').replace($replacements)
+          - conf:Linux.runCommand($.instance.agent, $file)
+          - $._report('BIND configured')
+          - $.setAttr(deployed, true)
+
+  _report:
+    Arguments:
+      - message:
+          Contract: $.string().notNull()
+    Body:
+      -  $.environment.reporter.report($this, $message)
