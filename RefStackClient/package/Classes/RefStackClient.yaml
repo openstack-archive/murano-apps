@@ -1,0 +1,50 @@
+#  Licensed under the Apache License, Version 2.0 (the "License"); you may
+#  not use this file except in compliance with the License. You may obtain
+#  a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#  License for the specific language governing permissions and limitations
+#  under the License.
+
+Namespaces:
+  =: org.openstack
+  std: io.murano
+  res: io.murano.resources
+  sys: io.murano.system
+  conf: io.murano.configuration
+
+Name: RefStackClient
+
+Extends: std:Application
+
+Properties:
+  instance:
+    Contract: $.class(res:LinuxMuranoInstance).notNull()
+
+  repository:
+    Contract: $.string().notNull()
+    Default: https://github.com/openstack/refstack-client
+
+Methods:
+  deploy:
+    Body:
+      - $environment: $.find(std:Environment).require()
+      # If app is already in Environment - do nothing
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $environment.reporter.report($this, 'Booting service instance...')
+          # Service VM will be accesible by ssh by default
+          - $.instance.deploy()
+          - $environment.reporter.report($this, format('Running instance has an IP - {0}', $.instance.floatingIpAddress))
+          - $environment.reporter.report($this, 'Setup environment and installing refStack-client...')
+          # Run install script
+          - $replacements:
+              "%REPO%": $.repository
+          - $file: sys:Resources.string('installRefStackClient.sh').replace($replacements)
+          - conf:Linux.runCommand($.instance.agent, $file, 'Install RefTack client')
+          - $environment.reporter.report($this, format('Setup completed. To get access - "ssh stacker@{0}" ', $.instance.floatingIpAddress))
+          - $.setAttr(deployed, true)

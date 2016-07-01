@@ -1,0 +1,49 @@
+{
+  "Attributes": [],
+  "Objects": {
+    "defaultNetworks": {
+      "environment": {
+        "name": "ref2-network",
+        "?": {
+          "type": "io.murano.resources.NeutronNetwork",
+          "id": "d02ffcdc309d4ce3bce5f71379376a2e"
+        }
+      },
+      "flat": null
+    },
+    "name": "ref2",
+    "?": {
+      "type": "io.murano.Environment",
+      "id": "603f54a586f7444a8d3e24c1c94c2fc0"
+    },
+    "applications": [
+      {
+        "instance": {
+          "availabilityZone": "nova",
+          "name": "qricriqazg24v1",
+          "image": "aede92e2-b995-4161-a9a6-f5d595972e1d",
+          "assignFloatingIp": true,
+          "keyname": "mine",
+          "flavor": "m1.small",
+          "networks": {
+            "useFlatNetwork": false,
+            "useEnvironmentNetwork": true,
+            "customNetworks": []
+          },
+          "?": {
+            "type": "io.murano.resources.LinuxMuranoInstance",
+            "id": "a283bc5a-51f4-43f2-b7cb-85e9a679d967"
+          }
+        },
+        "?": {
+          "_26411a1861294160833743e45d0eaad9": {
+            "name": "RefStackClient"
+          },
+          "type": "org.openstack.RefStackClient",
+          "name": "RefStackClient",
+          "id": "d7354e5e-7d40-4c87-826a-a1ca458f987e"
+        }
+      }
+    ]
+  }
+}

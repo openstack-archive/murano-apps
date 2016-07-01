@@ -1,0 +1,51 @@
+Namespaces:
+  =: org.openstack.test
+  sys: io.murano.system
+
+Extends: io.murano.test.TestFixture
+
+Name: RefStackClientTest
+
+Methods:
+    .init:
+        Body:
+            - $.appJson: new(sys:Resources).json('env-fixture.json')
+            - $.log: logger('RefStackClientTest')
+            - $.instanceDeployCount: 0
+            - $.agentCallCount: 0
+
+    # Define mock for agent.call method
+    agentCallMock:
+      Arguments:
+        - template:
+            Contract: $
+        - resources:
+            Contract: $
+        - timeout:
+            Contract: $
+            Default: null
+      Body:
+        - $.log.info(format('Method "agent.call" called with template - "{0}"', $template.Name))
+        - $.assertEqual('Install RefTack client', $template.Name)
+        - $.agentCallCount: $.agentCallCount + 1
+
+
+    # Mock method, that returns predefined heat stack output
+    instanceDeployMock:
+      Body:
+        - $.log.info('Method instance.deploy() called')
+        - $.instanceDeployCount: $.instanceDeployCount + 1
+
+    testDeploy:
+      Body:
+        - $.log.info('Load environment from fixture')
+        - $.env: $this.load($.appJson)
+        - $.log.info('Setup mocks for Instance.deploy')
+        - inject('io.murano.resources.LinuxMuranoInstance', deploy, $this, instanceDeployMock)
+        - $.log.info('Setup mock for Murano agent')
+        - inject('io.murano.system.Agent', call, $this, agentCallMock)
+        - $.log.info('Test env.deploy()')
+        - $.env.deploy()
+        - $.log.info('Do assertations')
+        - $.log.info(format('Agent should be called 1 time. Actuall call count - {0}', $.agentCallCount))
+        - $.assertEqual(1, $.agentCallCount)
