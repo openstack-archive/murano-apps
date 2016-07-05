@@ -4,24 +4,49 @@
 # $2 - IP
 # $3 - MASTER_IP
 
-mkdir /var/log/kubernetes
 mkdir -p /var/run/murano-kubernetes
 
-sed -i.bkp "s/%%MASTER_IP%%/$3/g" default_scripts/kube-proxy
-sed -i.bkp "s/%%MASTER_IP%%/$3/g" default_scripts/kubelet
-sed -i.bkp "s/%%IP%%/$2/g" default_scripts/kubelet
+if [[ $(which systemctl) ]]; then
 
-cp init_conf/kubelet.conf /etc/init/
-cp init_conf/kube-proxy.conf /etc/init/
+  sed -i.bak "s/%%MASTER_IP%%/$3/g" environ/kube-config
+  sed -i.bak "s/%%MASTER_IP%%/$3/g" environ/kubelet
+  sed -i.bak "s/%%IP%%/$2/g" environ/kubelet
 
-chmod +x initd_scripts/*
-cp initd_scripts/kubelet /etc/init.d/
-cp initd_scripts/kube-proxy /etc/init.d/
+  mkdir -p /etc/kubernetes/
 
-cp -f default_scripts/kube-proxy /etc/default
-cp -f default_scripts/kubelet /etc/default/
+  cp -f environ/kubelet /etc/kubernetes/
+  cp -f environ/kube-config /etc/kubernetes/config
 
-service kubelet start
-service kube-proxy start
+  cp -f systemd/kube-proxy.service /etc/systemd/system/
+  cp -f systemd/kubelet.service /etc/systemd/system/
+
+  systemctl daemon-reload
+
+  systemctl enable kubelet
+  systemctl enable kube-proxy
+
+  systemctl start kubelet
+  systemctl start kube-proxy
+
+else
+  mkdir /var/log/kubernetes
+
+  sed -i.bak "s/%%MASTER_IP%%/$3/g" default_scripts/kube-proxy
+  sed -i.bak "s/%%MASTER_IP%%/$3/g" default_scripts/kubelet
+  sed -i.bak "s/%%IP%%/$2/g" default_scripts/kubelet
+
+  cp init_conf/kubelet.conf /etc/init/
+  cp init_conf/kube-proxy.conf /etc/init/
+
+  chmod +x initd_scripts/*
+  cp initd_scripts/kubelet /etc/init.d/
+  cp initd_scripts/kube-proxy /etc/init.d/
+
+  cp -f default_scripts/kube-proxy /etc/default
+  cp -f default_scripts/kubelet /etc/default/
+
+  service kubelet start
+  service kube-proxy start
+fi
 
 sleep 1

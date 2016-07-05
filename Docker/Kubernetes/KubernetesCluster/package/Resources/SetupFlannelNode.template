@@ -28,7 +28,8 @@ Scripts:
       - init_conf/flanneld.conf
       - initd_scripts/flanneld
       - default_scripts/flanneld
-
+      - systemd/flanneld.service
+      - systemd/docker.service
     Options:
       captureStdout: true
       captureStderr: true

@@ -44,6 +44,10 @@ Scripts:
       - init_conf/kube-proxy.conf
       - initd_scripts/kubelet
       - initd_scripts/kube-proxy
+      - environ/kubelet
+      - environ/kube-config
+      - systemd/kube-proxy.service
+      - systemd/kubelet.service
 
     Options:
       captureStdout: true
