@@ -4,7 +4,7 @@ install-packages curl wget linux-libc-dev git gcc libc6-dev bridge-utils haproxy
 SVC_ROOT=/opt/bin
 
 ETCD_LATEST_VERSION="v2.2.5"
-KUBE_LATEST_VERSION="v1.2.4"
+KUBE_LATEST_VERSION="v1.3.0"
 FLANNEL_LATEST_VERSION="v0.5.5"
 
 ETCD_LATEST_URL="https://github.com/coreos/etcd/releases/download/${ETCD_LATEST_VERSION}/etcd-${ETCD_LATEST_VERSION}-linux-amd64.tar.gz"
