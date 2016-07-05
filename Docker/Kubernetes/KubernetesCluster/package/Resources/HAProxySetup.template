@@ -30,6 +30,7 @@ Scripts:
       - init_conf/confd.conf
       - haproxy.tmpl
       - haproxy.toml
+      - systemd/confd.service
 
     Options:
       captureStdout: true

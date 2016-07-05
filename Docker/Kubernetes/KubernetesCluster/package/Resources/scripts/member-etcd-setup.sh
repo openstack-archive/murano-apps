@@ -6,13 +6,13 @@
 
 mkdir /var/lib/etcd
 
-if [[ $(systemctl) ]]; then
+if [[ $(which systemctl) ]]; then
   systemctl stop etcd
 
-  sed -i.bkp "s/%%NAME%%/$1/g" environ/etcd
-  sed -i.bkp "s/%%IP%%/$2/g" environ/etcd
-  sed -i.bkp "s/%%STATE%%/existing/g" environ/etcd
-  sed -i.bkp "s#%%CLUSTER_CONFIG%%#$3#g" environ/etcd
+  sed -i.bak "s/%%NAME%%/$1/g" environ/etcd
+  sed -i.bak "s/%%IP%%/$2/g" environ/etcd
+  sed -i.bak "s/%%STATE%%/existing/g" environ/etcd
+  sed -i.bak "s#%%CLUSTER_CONFIG%%#$3#g" environ/etcd
 
   cp -f environ/etcd /etc/default/
   cp -f systemd/etcd.service /etc/systemd/system/
@@ -24,9 +24,9 @@ if [[ $(systemctl) ]]; then
 else
   service etcd stop
 
-  sed -i.bkp "s/%%NAME%%/$1/g" default_scripts/etcd-member
-  sed -i.bkp "s/%%IP%%/$2/g" default_scripts/etcd-member
-  sed -i.bkp "s#%%CLUSTER_CONFIG%%#$3#g" default_scripts/etcd-member
+  sed -i.bak "s/%%NAME%%/$1/g" default_scripts/etcd-member
+  sed -i.bak "s/%%IP%%/$2/g" default_scripts/etcd-member
+  sed -i.bak "s#%%CLUSTER_CONFIG%%#$3#g" default_scripts/etcd-member
 
   cp -f default_scripts/etcd-member /etc/default/etcd
   cp init_conf/etcd.conf /etc/init/
