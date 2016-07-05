@@ -9,10 +9,18 @@ cp -f haproxy.tmpl /etc/confd/templates/
 
 cp -f default_scripts/haproxy /etc/default/
 
-sed -i.bkp "s/%%MASTER_NODE%%/$1/g" init_conf/confd.conf
-cp -f init_conf/confd.conf /etc/init/
-
-service confd start
-service haproxy start
+if [[ $(which systemctl) ]]; then
+  sed -i.bak "s/%%MASTER_NODE%%/$1/g" systemd/confd.service
+  cp -f systemd/confd.service /etc/systemd/system/
+  systemctl enable confd
+  systemctl start confd
+  systemctl enable haproxy
+  systemctl start haproxy
+else
+  sed -i.bak "s/%%MASTER_NODE%%/$1/g" init_conf/confd.conf
+  cp -f init_conf/confd.conf /etc/init/
+  service confd start
+  service haproxy start
+fi
 
 sleep 1
