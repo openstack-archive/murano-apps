@@ -33,6 +33,16 @@ On Centos, Fedora:
 Image building
 --------------
 
+To build Debian-based image
+
+.. sourcecode:: bash
+
+   sudo ELEMENTS_PATH=${murano_agent_root}/contrib/elements:${murano_apps_root}/Docker/Kubernetes/KubernetesCluster/elements \
+       DIB_RELEASE=jessie DIB_CLOUD_INIT_DATASOURCES="Ec2, ConfigDrive, OpenStack" disk-image-create vm debian murano-agent-debian \
+       docker kubernetes -o debian8-x64-kubernetes
+
+To build Ubuntu-based image
+
 .. sourcecode:: bash
 
     sudo ELEMENTS_PATH=${murano_agent_root}/contrib/elements:${murano_apps_root}/Docker/Kubernetes/KubernetesCluster/elements disk-image-create \
