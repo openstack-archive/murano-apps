@@ -21,6 +21,6 @@ Tags: [Docker, MongoDB]
 Classes:
  com.example.docker.DockerMongoDB: DockerMongoDB.yaml
 Require:
-  com.example.docker.DockerStandaloneHost:
+  com.mirantis.docker.DockerStandaloneHost:
   com.mirantis.docker.kubernetes.KubernetesPod:
   com.mirantis.docker.Interfaces:
