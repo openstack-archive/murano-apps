@@ -21,6 +21,6 @@ Tags: [docker, application, httpd]
 Classes:
  com.example.docker.DockerHTTPd: DockerHTTPd.yaml
 Require:
-  com.example.docker.DockerStandaloneHost:
+  com.mirantis.docker.DockerStandaloneHost:
   com.mirantis.docker.kubernetes.KubernetesPod:
   com.mirantis.docker.Interfaces:

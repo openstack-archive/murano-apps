@@ -21,6 +21,6 @@ Tags: [docker, application, JBoss]
 Classes:
  com.example.docker.DockerJBoss: DockerJBoss.yaml
 Require:
-  com.example.docker.DockerStandaloneHost:
+  com.mirantis.docker.DockerStandaloneHost:
   com.mirantis.docker.kubernetes.KubernetesPod:
   com.mirantis.docker.Interfaces:

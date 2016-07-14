@@ -44,7 +44,7 @@ Forms:
         - name: host
           type:
             - com.mirantis.docker.kubernetes.KubernetesPod
-            - com.example.docker.DockerStandaloneHost
+            - com.mirantis.docker.DockerStandaloneHost
           label: Container Host
           description: >-
             Select an instance of Docker contaniner hosting provider to run the app
