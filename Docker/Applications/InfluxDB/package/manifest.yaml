@@ -21,6 +21,6 @@ Tags: [docker, application, InfluxDB]
 Classes:
  com.example.docker.DockerInfluxDB: DockerInfluxDB.yaml
 Require:
-  com.example.docker.DockerStandaloneHost:
+  com.mirantis.docker.DockerStandaloneHost:
   com.mirantis.docker.kubernetes.KubernetesPod:
   com.mirantis.docker.Interfaces:
