@@ -21,6 +21,6 @@ Tags: [docker, application]
 Classes:
  com.example.docker.DockerMySQL: DockerMySQL.yaml
 Require:
-  com.example.docker.DockerStandaloneHost:
+  com.mirantis.docker.DockerStandaloneHost:
   com.mirantis.docker.kubernetes.KubernetesPod:
   com.mirantis.docker.Interfaces:
