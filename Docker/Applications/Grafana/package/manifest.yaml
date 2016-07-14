@@ -21,7 +21,7 @@ Tags: [docker, application, Grafana]
 Classes:
  com.example.docker.DockerGrafana: DockerGrafana.yaml
 Require:
-  com.example.docker.DockerStandaloneHost:
+  com.mirantis.docker.DockerStandaloneHost:
   com.mirantis.docker.kubernetes.KubernetesPod:
   com.example.docker.DockerInfluxDB:
   com.mirantis.docker.Interfaces:
