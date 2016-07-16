@@ -39,16 +39,8 @@ Methods:
         Then:
           - $._environment.reporter.report($this, 'Creating VM for Tomcat ')
           - $securityGroupIngress:
-              - ToPort: 80
-                FromPort: 80
-                IpProtocol: tcp
-                External: true
               - ToPort: 8080
                 FromPort: 8080
-                IpProtocol: tcp
-                External: true
-              - ToPort: 443
-                FromPort: 443
                 IpProtocol: tcp
                 External: true
           - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
@@ -58,5 +50,10 @@ Methods:
           - $template: $resources.yaml('DeployTomcat.template')
           - $._environment.reporter.report($this, 'Instance is created. Deploying Tomcat')
           - $.instance.agent.call($template, $resources)
-          - $._environment.reporter.report($this, 'Tomcat is installed')
+          - If: $.instance.assignFloatingIp
+            Then:
+              - $address: $.instance.floatingIpAddress
+            Else:
+              - $address: $.instance.ipAddresses[0]
+          - $._environment.reporter.report($this, 'Tomcat is available at http://{0}:8080'.format($address))
           - $.setAttr(deployed, true)
