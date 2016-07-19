@@ -11,7 +11,7 @@
 #  under the License.
 
 Namespaces:
-  =: io.murano.apps.apache
+  =: com.example.apache
   std: io.murano
   res: io.murano.resources
   sys: io.murano.system

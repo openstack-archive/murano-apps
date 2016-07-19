@@ -12,11 +12,11 @@
 
 Format: 1.0
 Type: Application
-FullName: io.murano.apps.paas.CloudFoundry
+FullName: com.example.paas.CloudFoundry
 Name: Cloud Foundry
 Description: |
  Cloud Foundry is an opensource PaaS solution. PaaS makes platform much easier to deploy, run and scale applications. Some PaaS offerings have limited language and framework support, do not deliver key application services, or restrict deployment to a single cloud. Cloud Foundry is the industry’s Open PaaS and provides a choice of clouds, frameworks and application services. As an open source project, there is a broad community both contributing and supporting Cloud Foundry.
 Author: 'Mirantis, Inc'
 Tags: ['PAAS']
 Classes:
- io.murano.apps.paas.CloudFoundry: CloudFoundry.yaml
+ com.example.paas.CloudFoundry: CloudFoundry.yaml

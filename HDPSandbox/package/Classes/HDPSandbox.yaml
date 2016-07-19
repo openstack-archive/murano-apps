@@ -1,5 +1,5 @@
 Namespaces:
-  =: io.murano.apps.linux
+  =: com.example
   std: io.murano
   res: io.murano.resources
 

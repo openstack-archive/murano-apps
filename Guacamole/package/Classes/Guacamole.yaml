@@ -11,10 +11,10 @@
 #  under the License.
 
 Namespaces:
-  =: io.murano.apps
+  =: com.example
   std: io.murano
   sys: io.murano.system
-  srv: io.murano.apps.apache
+  srv: com.example.apache
 
 Name: Guacamole
 

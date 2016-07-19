@@ -12,7 +12,7 @@
 
 Format: 1.0
 Type: Application
-FullName: io.murano.apps.apache.Cassandra
+FullName: com.example.apache.Cassandra
 Name: Apache Cassandra
 Description: |
  Cassandra is a highly scalable, eventually consistent, distributed,
@@ -20,5 +20,5 @@ Description: |
 Author: 'Mirantis, Inc'
 Tags: [NoSQL, Database, CQL, Apache, Java]
 Classes:
- io.murano.apps.apache.CassandraNode: CassandraNode.yaml
- io.murano.apps.apache.CassandraCluster: CassandraCluster.yaml
+ com.example.apache.CassandraNode: CassandraNode.yaml
+ com.example.apache.CassandraCluster: CassandraCluster.yaml
