@@ -12,7 +12,7 @@
 
 Format: 1.0
 Type: Library
-FullName: io.murano.apps.docker.Interfaces
+FullName: com.mirantis.docker.Interfaces
 Name: Docker Interface Library
 Description: |
  The library provides all necessary interface for Docker
@@ -21,11 +21,11 @@ Author: 'Mirantis, Inc'
 Tags: [Docker, Kubernetes]
 
 Classes:
- io.murano.apps.docker.DockerApplication: DockerApplication.yaml
- io.murano.apps.docker.DockerContainer: DockerContainer.yaml
- io.murano.apps.docker.DockerContainerHost: DockerContainerHost.yaml
- io.murano.apps.docker.DockerHelpers: DockerHelpers.yaml
- io.murano.apps.docker.DockerHostVolume: DockerHostVolume.yaml
- io.murano.apps.docker.DockerTempVolume: DockerTempVolume.yaml
- io.murano.apps.docker.DockerVolume: DockerVolume.yaml
- io.murano.apps.docker.ApplicationPort: ApplicationPort.yaml
+ com.mirantis.docker.DockerApplication: DockerApplication.yaml
+ com.mirantis.docker.DockerContainer: DockerContainer.yaml
+ com.mirantis.docker.DockerContainerHost: DockerContainerHost.yaml
+ com.mirantis.docker.DockerHelpers: DockerHelpers.yaml
+ com.mirantis.docker.DockerHostVolume: DockerHostVolume.yaml
+ com.mirantis.docker.DockerTempVolume: DockerTempVolume.yaml
+ com.mirantis.docker.DockerVolume: DockerVolume.yaml
+ com.mirantis.docker.ApplicationPort: ApplicationPort.yaml

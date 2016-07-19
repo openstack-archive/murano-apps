@@ -11,7 +11,7 @@
 #  under the License.
 
 Namespaces:
-  =: io.murano.apps.docker
+  =: com.mirantis.docker
 
 Name: DockerContainer
 
