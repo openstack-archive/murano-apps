@@ -14,7 +14,7 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.databases.MySql
+    type: com.example.databases.MySql
   name: $.appConfiguration.name
   database: $.initDatabaseConfiguration.database
   username: $.initDatabaseConfiguration.username

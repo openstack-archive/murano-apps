@@ -14,7 +14,7 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.apps.apache.Tomcat
+    type: com.example.apache.Tomcat
   name: $.appConfiguration.name
   instance:
     ?:

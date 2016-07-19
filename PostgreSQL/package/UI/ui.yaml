@@ -14,7 +14,7 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.databases.PostgreSql
+    type: com.example.databases.PostgreSql
   name: $.appConfiguration.name
   database: $.initDatabaseConfiguration.database
   username: $.initDatabaseConfiguration.username

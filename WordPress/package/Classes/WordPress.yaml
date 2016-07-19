@@ -11,11 +11,11 @@
 #  under the License.
 
 Namespaces:
-  =: io.murano.apps
+  =: com.example
   std: io.murano
   sys: io.murano.system
-  db: io.murano.databases
-  srv: io.murano.apps.apache
+  db: com.example.databases
+  srv: com.example.apache
 
 Name: WordPress
 

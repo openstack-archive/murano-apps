@@ -14,7 +14,7 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.apps.paas.CloudFoundry
+    type: com.example.paas.CloudFoundry
   name: $.appConfiguration.name
   instance:
     ?:

@@ -14,7 +14,7 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.apps.apache.ApacheHttpServer
+    type: com.example.apache.ApacheHttpServer
   name: $.appConfiguration.name
   enablePHP: $.appConfiguration.enablePHP
   instance:
