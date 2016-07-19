@@ -66,3 +66,11 @@ chmod +x /usr/local/bin/confd
 mkdir -p /etc/confd/{conf.d,templates}
 
 popd
+
+if [[ $(lsb_release -c -s) == 'jessie' ]]; then
+ #Enable cgroup memory if Debian 8 is used. Required by k8s since 1.2
+ echo 'GRUB_CMDLINE_LINUX="cgroup_enable=memory swapaccount=1"' >> /etc/default/grub
+
+ #Do not start haproxy on vm boot
+ systemctl disable haproxy
+fi
