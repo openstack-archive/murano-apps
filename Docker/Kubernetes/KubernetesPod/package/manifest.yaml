@@ -12,7 +12,7 @@
 
 Format: 1.0
 Type: Application
-FullName: io.murano.apps.docker.kubernetes.KubernetesPod
+FullName: com.mirantis.docker.kubernetes.KubernetesPod
 Name: Kubernetes Pod
 Description: |
  Kubernes Pod - A collection of containers which will be scheduled onto the same node,
@@ -20,7 +20,7 @@ Description: |
 Author: 'Mirantis, Inc'
 Tags: [docker, kubernetes, pod]
 Classes:
- io.murano.apps.docker.kubernetes.KubernetesPod: KubernetesPod.yaml
+ com.mirantis.docker.kubernetes.KubernetesPod: KubernetesPod.yaml
 Require:
-  io.murano.apps.docker.Interfaces:
-  io.murano.apps.docker.kubernetes.KubernetesCluster:
+  com.mirantis.docker.Interfaces:
+  com.mirantis.docker.kubernetes.KubernetesCluster:

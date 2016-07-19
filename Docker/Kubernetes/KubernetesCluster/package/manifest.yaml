@@ -12,7 +12,7 @@
 
 Format: 1.0
 Type: Application
-FullName: io.murano.apps.docker.kubernetes.KubernetesCluster
+FullName: com.mirantis.docker.kubernetes.KubernetesCluster
 Name: Kubernetes Cluster
 Description: |
  Kubernetes is an open source system for managing containerized applications across multiple hosts,
@@ -20,10 +20,10 @@ Description: |
 Author: 'Mirantis, Inc'
 Tags: [Docker, Kubernetes]
 Classes:
- io.murano.apps.docker.kubernetes.KubernetesCluster: KubernetesCluster.yaml
- io.murano.apps.docker.kubernetes.KubernetesMasterNode: KubernetesMasterNode.yaml
- io.murano.apps.docker.kubernetes.KubernetesMinionNode: KubernetesMinionNode.yaml
- io.murano.apps.docker.kubernetes.KubernetesGatewayNode: KubernetesGatewayNode.yaml
- io.murano.apps.docker.kubernetes.KubernetesNode: KubernetesNode.yaml
+ com.mirantis.docker.kubernetes.KubernetesCluster: KubernetesCluster.yaml
+ com.mirantis.docker.kubernetes.KubernetesMasterNode: KubernetesMasterNode.yaml
+ com.mirantis.docker.kubernetes.KubernetesMinionNode: KubernetesMinionNode.yaml
+ com.mirantis.docker.kubernetes.KubernetesGatewayNode: KubernetesGatewayNode.yaml
+ com.mirantis.docker.kubernetes.KubernetesNode: KubernetesNode.yaml
 Require:
-  io.murano.apps.docker.Interfaces:
+  com.mirantis.docker.Interfaces:
