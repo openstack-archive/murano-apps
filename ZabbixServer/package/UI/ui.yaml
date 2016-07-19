@@ -21,7 +21,7 @@ Templates:
 
 Application:
   ?:
-    type: io.murano.apps.ZabbixServer
+    type: com.example.ZabbixServer
   database: $.dbConfiguration.database
   username: $.dbConfiguration.username
   password: $.dbConfiguration.password
