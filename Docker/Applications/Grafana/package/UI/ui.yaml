@@ -14,7 +14,7 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.apps.docker.DockerGrafana
+    type: com.example.docker.DockerGrafana
   name: $.appConfiguration.name
   host: $.appConfiguration.host
   publish: $.appConfiguration.publish
@@ -42,8 +42,8 @@ Forms:
             underline are allowed
         - name: host
           type:
-            - io.murano.apps.docker.kubernetes.KubernetesPod
-            - io.murano.apps.docker.DockerStandaloneHost
+            - com.mirantis.docker.kubernetes.KubernetesPod
+            - com.example.docker.DockerStandaloneHost
           label: Container Host
           description: >-
             Select an instance of Docker contaniner hosting provider to run the app
@@ -58,7 +58,7 @@ Forms:
   - grafanaConfig:
       fields:
         - name: influxDB
-          type: io.murano.apps.docker.DockerInfluxDB
+          type: com.example.docker.DockerInfluxDB
           label: InfluxDB instance
           required: true
           description: >-

@@ -14,7 +14,7 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.apps.docker.DockerStandaloneHost
+    type: com.example.docker.DockerStandaloneHost
   name: $.appConfiguration.name
   dockerRegistry: $.appConfiguration.dockerRegistry
   instance:

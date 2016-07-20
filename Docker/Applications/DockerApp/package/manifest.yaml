@@ -12,7 +12,7 @@
 
 Format: 1.0
 Type: Application
-FullName: io.murano.apps.docker.DockerApp
+FullName: com.example.docker.DockerApp
 Name: Docker Container
 Description: |
  The application provides ability to create Docker container to deploy one of
@@ -22,8 +22,8 @@ Description: |
 Author: 'Mirantis, Inc'
 Tags: [docker, application]
 Classes:
- io.murano.apps.docker.DockerApp: DockerApp.yaml
+ com.example.docker.DockerApp: DockerApp.yaml
 Require:
-  io.murano.apps.docker.DockerStandaloneHost:
-  io.murano.apps.docker.kubernetes.KubernetesPod:
-  io.murano.apps.docker.Interfaces:
+  com.example.docker.DockerStandaloneHost:
+  com.mirantis.docker.kubernetes.KubernetesPod:
+  com.mirantis.docker.Interfaces:
