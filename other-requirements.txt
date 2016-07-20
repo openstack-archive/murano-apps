@@ -1,0 +1,2 @@
+shellcheck [platform:ubuntu]
+zip [platform:ubuntu]
