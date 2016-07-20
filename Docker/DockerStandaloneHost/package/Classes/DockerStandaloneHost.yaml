@@ -11,16 +11,15 @@
 #  under the License.
 
 Namespaces:
-  =: com.example.docker
+  =: com.mirantis.docker
   res: io.murano.resources
   std: io.murano
   sys: io.murano.system
-  interfaces: com.mirantis.docker
 
 Name: DockerStandaloneHost
 
 Extends: 
-  - interfaces:DockerContainerHost
+  - DockerContainerHost
 
 Properties:  
   name:
