@@ -24,7 +24,7 @@ Application:
       type: io.murano.resources.LinuxMuranoInstance
     name: generateHostname($.instanceConfiguration.unitNamingPattern, 1)
     flavor: $.instanceConfiguration.flavor
-    image: 'ubuntu14.04-x64-docker'
+    image: $.instanceConfiguration.image
     keyname: $.instanceConfiguration.keyPair
     assignFloatingIp: $.appConfiguration.assignFloatingIP
     availabilityZone: $.instanceConfiguration.availabilityZone
@@ -80,6 +80,13 @@ Forms:
           required: false
           hidden: true
           description: Specify some instance parameters on which the application would be created
+        - name: image
+          type: image
+          imageType: linux.docker
+          label: Instance image
+          description: >-
+            Select valid image for the application. Image should already be prepared and
+            registered in glance.
         - name: flavor
           type: flavor
           label: Instance flavor
