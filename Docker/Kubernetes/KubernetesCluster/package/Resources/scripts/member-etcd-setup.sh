@@ -41,7 +41,7 @@ count=30
 
 echo "Registration member $1 in etcd cluster" >> /tmp/etcd.log
 while [ $count -gt 0 ]; do
- /opt/bin/etcdctl cluster-health >> tmp/etcd.log
+ /opt/bin/etcdctl cluster-health >> /tmp/etcd.log
  if [ $? -eq 0 ]; then
    echo "Member $1 started" >> /tmp/etcd.log
    sleep 10
