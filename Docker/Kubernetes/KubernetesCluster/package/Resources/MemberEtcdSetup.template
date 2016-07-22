@@ -30,7 +30,8 @@ Scripts:
       - default_scripts/etcd-member
       - init_conf/etcd.conf
       - initd_scripts/etcd
-
+      - environ/etcd
+      - systemd/etcd.service
 
     Options:
       captureStdout: true

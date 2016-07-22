@@ -36,6 +36,12 @@ Scripts:
       - default_scripts/kube-apiserver
       - default_scripts/kube-scheduler
       - default_scripts/kube-controller-manager
+      - environ/apiserver
+      - environ/kube-config
+      - systemd/kube-apiserver.service
+      - systemd/kube-scheduler.service
+      - systemd/kube-controller-manager.service
+
 
     Options:
       captureStdout: true
