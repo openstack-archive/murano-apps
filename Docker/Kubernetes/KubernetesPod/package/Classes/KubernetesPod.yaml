@@ -115,6 +115,8 @@ Methods:
               mountPath => $
             ))
           env: $container.env.keys().select(dict(name => $, value => $container.env.get($)))
+          securityContext:
+            privileged: $container.privileged
 
       - $newVolumes: $container.volumes.values().select(
           $this._buildVolumeEntry($container.name, $))

@@ -21,6 +21,7 @@ Parameters:
   env: $env
   image: $image
   commands: $commands
+  privileged: $privileged
 
 Body: |
   options = ['-d', '--name ' + args.appName]
@@ -30,6 +31,8 @@ Body: |
     options.append("-v '{0}':'{1}'".format(host_dir, container_dir))
   for key, value in args.env.iteritems():
     options.append("-e '{0}'='{1}'".format(key, value))
+  if args.privileged:
+    options.append("--privileged")
   runDockerCommand('run {0} {1} {2}'.format(' '.join(options), args.image, ' '.join(args.commands)).rstrip())
 
   return runDockerCommand('inspect -f={{.NetworkSettings.IPAddress}} ' + args.appName).stdout
