@@ -90,6 +90,7 @@ It has the following properties:
   into Docker container. Keys are the paths within container and values are
   instances of DockerVolume.
 
+* `privileged`: a flag that forces running container in privileged mode.
 
 ApplicationPort
 ===============
