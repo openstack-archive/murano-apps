@@ -14,9 +14,6 @@ FormatVersion: 2.1.0
 Version: 1.0.0
 Name: Deploy Git Chef
 
-Parameters:
-  port: $port
-
 Body: |
   return executeRecipe(args).stdout
 
