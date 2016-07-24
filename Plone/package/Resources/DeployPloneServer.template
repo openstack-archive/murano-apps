@@ -1,0 +1,28 @@
+#  Plone uses GPL version 2 as its license. As of summer 2009, there are
+#  no active plans to upgrade to GPL version 3.
+#  You may obtain a copy of the License at
+#
+#       http://www.gnu.org
+#
+
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Deploy Plone
+
+Parameters:
+  pathname: $pathname
+  password: $password
+  port: $port
+
+Body: |
+  return ploneDeploy('{0} {1} {2}'.format(args.pathname, args.password, args.port)).stdout
+
+Scripts:
+  ploneDeploy:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: runPloneDeploy.sh
+    Files: []
+    Options:
+      captureStdout: true
+      captureStderr: true
