@@ -114,3 +114,18 @@ Methods:
           - $.setAttr(nodeConfigured, false)
           - $.setAttr(etcdConfigured, false)
           - $.setAttr(instanceDeployed, false)
+
+
+  restartContainers:
+    Arguments:
+      - podName:
+          Contract: $.string().notNull()
+
+    Body:
+      - $._environment.reporter.report($this, 'Restarting {0} containers on {1}'.format($podName, $.instance.name))
+      - $resources: new(sys:Resources)
+      - $template: $resources.yaml('RestartContainers.template').bind(dict(
+                podName => $podName
+              ))
+      - $.instance.agent.call($template, $resources)
+      - $._environment.reporter.report($this, '{0} containers on {1} restarted'.format($podName, $.instance.name))
