@@ -42,6 +42,10 @@ Properties:
       $.string().notNull(): $.class(DockerVolume).notNull()
     Default: {}
 
+  privileged:
+    Contract: $.bool().notNull()
+    Default: false
+
 Methods:
   getRepresentation:
     Body:
@@ -56,3 +60,4 @@ Methods:
           env: env
           ports: $.ports.select($.getRepresentation())
           volumes: $volumeRepresentations
+          privileged: $.privileged
