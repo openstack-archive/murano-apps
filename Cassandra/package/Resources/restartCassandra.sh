@@ -15,5 +15,5 @@
 # Sleep for some time added as a helper
 TIME="$1"
 
-sleep $TIME
+sleep "${TIME}"
 sudo service cassandra restart

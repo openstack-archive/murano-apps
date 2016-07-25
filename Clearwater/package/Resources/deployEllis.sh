@@ -53,10 +53,10 @@ service ellis stop
 /usr/share/clearwater/ellis/env/bin/python /usr/share/clearwater/ellis/src/metaswitch/ellis/tools/create_numbers.py --start 6505550000 --count 1000 --realm %ZONE%
 # Function to give DNS record type and IP address for specified IP address
 ip2rr() {
-if echo $1 | grep -q -e '[^0-9.]' ; then
-echo AAAA $1
+if echo "$1" | grep -q -e '[^0-9.]' ; then
+echo AAAA "$1"
 else
-echo A $1
+echo A "$1"
 fi
 }
 # Update DNS

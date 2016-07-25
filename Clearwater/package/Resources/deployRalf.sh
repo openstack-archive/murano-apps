@@ -38,10 +38,10 @@ DEBIAN_FRONTEND=noninteractive apt-get install ralf --yes --force-yes
 DEBIAN_FRONTEND=noninteractive apt-get install clearwater-management --yes --force-yes
 # Function to give DNS record type and IP address for specified IP address
 ip2rr() {
-  if echo $1 | grep -q -e '[^0-9.]' ; then
-    echo AAAA $1
+  if echo "$1" | grep -q -e '[^0-9.]' ; then
+    echo AAAA "$1"
   else
-    echo A $1
+    echo A "$1"
   fi
 }
 # Update DNS

@@ -11,4 +11,4 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
-python addProbe.py $1 $2 $3 $4
+python addProbe.py "$1" "$2" "$3" "$4"

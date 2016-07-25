@@ -36,5 +36,5 @@
 
 sed -i.bkp "s/'demoData' => 'yes'/'demoData' => 'no'/g" /var/www/html/Sugar/config_si.php
 
-curl http://localhost/Sugar/install.php?goto=SilentInstall&cli=true
+curl -v "http://localhost/Sugar/install.php?goto=SilentInstall&cli=true"
 

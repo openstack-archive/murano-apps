@@ -17,9 +17,12 @@ set -e
 groupadd stacker
 useradd -g stacker -s /bin/bash -d /home/stacker -m stacker
 ( umask 226 && echo "stacker ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/50_dev )
-echo "PS1='${debian_chroot:+($debian_chroot)}\u:\w\$ '" >> /home/stacker/.bashrc
-echo "source /home/stacker/refstack-client/.venv/bin/activate" >> /home/stacker/.bashrc
-echo "alias 'refstack-client'=/home/stacker/refstack-client/refstack-client" >> /home/stacker/.bashrc
+{
+echo "PS1='${debian_chroot:+($debian_chroot)}\u:\w\$ '"
+echo "source /home/stacker/refstack-client/.venv/bin/activate"
+echo "alias 'refstack-client'=/home/stacker/refstack-client/refstack-client"
+} >> /home/stacker/.bashrc
+
 [ -d '/home/debian' ] && cp -r /home/debian/.ssh /home/stacker
 [ -d '/home/ubuntu' ] && cp -r /home/ubuntu/.ssh /home/stacker
 chown -R stacker:stacker /home/stacker/.ssh

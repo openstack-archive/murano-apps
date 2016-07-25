@@ -17,10 +17,10 @@ PMGR=""
 PMGR_LIST_OPTS=""
 
 function include(){
-    curr_dir=$(cd $(dirname "$0") && pwd)
+    curr_dir=$(cd "$(dirname "$0")" && pwd)
     inc_file_path=$curr_dir/$1
     if [ -f "$inc_file_path" ]; then
-        . $inc_file_path
+        . "$inc_file_path"
     else
         exit 1
     fi
@@ -63,7 +63,7 @@ function set_install_options(){
             exit 1
             ;;
     esac
-    PACKAGER=$(which $1)
+    PACKAGER=$(which "$1")
     if [ $? -ne 0 ]; then
         log "Can't find \"$1\", exiting!"
         exit 1
@@ -76,7 +76,7 @@ function package_install(){
         log "\"$PKG\" already installed"
     else
         log "Installing \"$PKG\" ..."
-        $PACKAGER $INSTALLER_OPTS $PKG > /dev/null 2>&1
+        eval "$PACKAGER $INSTALLER_OPTS $PKG" > /dev/null 2>&1
         if [ $? -ne 0 ]; then
             log "\"$PKG\" installation fails, exiting!"
             exit 1
@@ -92,7 +92,7 @@ function package_uninstall(){
         log "\"$PKG\" not installed"
     else
         log "Uninstalling \"$PKG\" ..."
-        $PACKAGER $UNINSTALLER_OPTS $PKG > /dev/null 2>&1
+        eval "$PACKAGER $UNINSTALLER_OPTS $PKG" > /dev/null 2>&1
         if [ $? -ne 0 ]; then
             log "\"$PKG\" uninstallation fails, exiting!"
             exit 1
@@ -102,21 +102,21 @@ function package_uninstall(){
     fi
 }
 function run_install(){
-    for PKG in $@
+    for PKG in "$@"
     do
-        package_install $PKG
+        package_install "$PKG"
     done
 }
 function run_uninstall(){
-    for PKG in $@
+    for PKG in "$@"
     do
-        package_uninstall $PKG
+        package_uninstall "$PKG"
     done
 }
 # Main workflow
 include "common.sh"
 if [ $# -eq 0 ]; then
-    script=$(basename $0)
+    script=$(basename "$0")
     echo -e "Usage:\n\t* install packages -- ./$script -p package_manager -i package0 [packageN]\n\t* remove packages -- ./$script -p package_manager -r package0 [packageN]"
     exit 1
 fi
@@ -132,16 +132,16 @@ while getopts ":p:i:r:" opt ; do
             if [[ "$OPTARG" != sys ]]; then
                 Packager=$OPTARG
             fi
-            set_install_options $Packager
+            set_install_options "$Packager"
             ;;
         i)
             n=$OPTARG
-            run_install $(collect_args $n $@)
+            run_install "$(collect_args "$n" "$@")"
             break;
             ;;
         r)
             n=$OPTARG
-            run_uninstall $(collect_args $n $@)
+            run_uninstall "$(collect_args "$n" "$@")"
             break;
             ;;
         \?)

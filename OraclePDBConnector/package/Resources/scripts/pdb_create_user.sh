@@ -19,11 +19,11 @@
 sql_file="$ORACLE_USER_HOME/pdb_create_user_$$.sql"
 
 # get the address to attach to
-lsnr=$($ORACLE_USER_HOME/get_listener.sh)
+lsnr=$("${ORACLE_USER_HOME}/get_listener.sh")
 err=$?
 if [[ $err -ne 0 ]]
 then
-  echo $lsnr;
+  echo "${lsnr}";
   exit $err
 fi
 
@@ -32,7 +32,7 @@ fi
 # TODO: privileges to be set based on what the ADMIN user is requesting
 # from the client.
 
-cat > $sql_file << EOF
+cat > "${sql_file}" << EOF
 CONNECT $SYSTEM_USER/$SYSTEM_USER_PWD@//$lsnr/$1;
 SET LINESIZE 100;
 SET PAGESIZE 50;
@@ -41,13 +41,13 @@ GRANT ALL PRIVILEGES to $2;
 EXIT
 EOF
 
-chown oracle:oracle $sql_file
+chown oracle:oracle "${sql_file}"
 # Run this perl script so that the user information is
 # updated properly on all the system meta files.
-perl $ORACLE_HOME/rdbms/admin/catcon.pl -n 1 -l $ORACLE_USER_HOME -b pupbld -u $SYSTEM_USER/$SYSTEM_USER_PWD $ORACLE_HOME/sqlplus/admin/pupbld.sql;
+perl "${ORACLE_HOME}/rdbms/admin/catcon.pl" -n 1 -l "${ORACLE_USER_HOME}" -b pupbld -u "${SYSTEM_USER}/${SYSTEM_USER_PWD}" "${ORACLE_HOME}/sqlplus/admin/pupbld.sql";
 
 # Execute the sql
-su - oracle -c " . ~/ora_env.sh && sqlplus /nolog @$sql_file"
+su - oracle -c " . ~/ora_env.sh && sqlplus /nolog @${sql_file}"
 
 # construct the connection string.
 # echo the CONN string
@@ -55,4 +55,4 @@ su - oracle -c " . ~/ora_env.sh && sqlplus /nolog @$sql_file"
 
 # echo "$2/$3@//$lnsr/$1"
 echo "Connection host and port $lsnr"
-rm -f $sql_file
+rm -fv "${sql_file}"

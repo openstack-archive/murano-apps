@@ -63,7 +63,7 @@ sudo cat <<EOF2 > /etc/guacamole/user-mapping.xml
 </user-mapping>
 EOF2
 # Create a new user
-sudo useradd -d /etc/guacamole -p $(openssl passwd -1 %PASSWORD%) %USERNAME%
+sudo useradd -d /etc/guacamole -p "$(openssl passwd -1 %PASSWORD%)" %USERNAME%
 # Make guacamole configuration directory readable and writable by the group and others
 sudo chmod -R go+rw /etc/guacamole
 sudo mkdir /usr/share/tomcat${tcat_version}/.guacamole

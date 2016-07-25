@@ -20,11 +20,11 @@ export LD_LIBRARY_PATH=$ORACLE_HOME/lib
 export PATH=$ORACLE_HOME/perl/bin:$PATH
 export PATH=$ORACLE_HOME/bin:$PATH
 # Find site_perl
-site_perl=( $(/usr/bin/ls -r $ORACLE_HOME/perl/lib/site_perl) )
+site_perl=( $(/usr/bin/ls -r "${ORACLE_HOME}/perl/lib/site_perl") )
 
 if [[ $(/usr/bin/uname -p) == 'sparc' ]]; then
-    export PERL5LIB=$ORACLE_HOME/perl/lib/site_perl/${site_perl[0]}/sun4-solaris-64int:$ORACLE_HOME/perl/lib
+    export PERL5LIB=${ORACLE_HOME}/perl/lib/site_perl/${site_perl[0]}/sun4-solaris-64int:${ORACLE_HOME}/perl/lib
 else
-    export PERL5LIB=$ORACLE_HOME/perl/lib/site_perl/${site_perl[0]}/i86pc-solaris-thread-multi-64:$ORACLE_HOME/perl/lib
+    export PERL5LIB=${ORACLE_HOME}/perl/lib/site_perl/${site_perl[0]}/i86pc-solaris-thread-multi-64:${ORACLE_HOME}/perl/lib
 fi
 export PDBSEED=$ORADATA/pdbseed

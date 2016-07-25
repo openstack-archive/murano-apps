@@ -49,5 +49,5 @@ sed -i.bkp "s/%%DB_HOST%%/$1/g; s/%%DB_NAME%%/$2/g; s/%%ADMIN_NAME%%/$3/g; s/%%A
 
 cp config_si.php /var/www/html/Sugar/
 
-curl http://localhost/Sugar/install.php?goto=SilentInstall&cli=true
+curl -v "http://localhost/Sugar/install.php?goto=SilentInstall&cli=true"
 

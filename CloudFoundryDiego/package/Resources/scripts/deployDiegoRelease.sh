@@ -16,10 +16,10 @@ set -eu
 exec &> /tmp/deploy_diego_release.log
 
 function include(){
-    curr_dir=$(cd $(dirname "$0") && pwd)
+    curr_dir=$(cd "$(dirname "${0}")" && pwd)
     inc_file_path=$curr_dir/$1
     if [ -f "$inc_file_path" ]; then
-        . $inc_file_path
+        . "${inc_file_path}"
     else
         echo -e "$inc_file_path not found!"
         exit 1

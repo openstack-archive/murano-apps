@@ -3,4 +3,4 @@
 # $1 - RC name
 # $2 - new size
 
-/opt/bin/kubectl scale rc $1 --replicas=$2
+/opt/bin/kubectl scale rc "${1}" --replicas="${2}"
