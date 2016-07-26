@@ -51,3 +51,4 @@ Methods:
   getDeployScriptName:
     Body:
       - Return: "deploySprout.sh"
+

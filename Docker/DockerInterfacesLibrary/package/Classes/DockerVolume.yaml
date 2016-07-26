@@ -21,7 +21,7 @@ Properties:
 
 Methods:
   getType:
-  
+
   getParameters:
 
   getRepresentation:
@@ -29,3 +29,4 @@ Methods:
       Return:
         type: $.getType()
         parameters: $.getParameters()
+

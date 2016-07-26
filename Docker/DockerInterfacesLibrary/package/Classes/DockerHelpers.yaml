@@ -18,7 +18,7 @@ Name: DockerHelpers
 Methods:
   labels2Map:
     Arguments:
-      labelsString: 
+      labelsString:
         Contract: $.string().notNull()
     Body:
       - $result: {}
@@ -35,8 +35,8 @@ Methods:
 
   map2labels:
     Arguments:
-      labelsMap: 
-        Contract: 
+      labelsMap:
+        Contract:
           $.string().notNull(): $.string().notNull()
     Body:
       - Return: $labelsMap.select(list($, $labelsMap.get($)).join('=')).join(';')

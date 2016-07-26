@@ -144,7 +144,6 @@ Forms:
           description: >-
              Select to true to assign floating IP automatically to Primary DC
           initial: false
-          required: false
 
         - name: unitNamingPattern
           type: string
@@ -203,3 +202,4 @@ Forms:
           label: Availability zone
           description: Select availability zone where service would be installed.
           required: false
+

@@ -19,7 +19,6 @@ Application:
   host: $.appConfiguration.host
   publish: $.appConfiguration.publish
   password: $.appConfiguration.password
-  
 
 Forms:
   - appConfiguration:

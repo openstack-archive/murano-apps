@@ -21,7 +21,6 @@ Application:
   dbName: $.dbConfiguration.database
   dbUser: $.dbConfiguration.username
   dbPassword: $.dbConfiguration.password
-  
 
 Forms:
   - appConfiguration:
@@ -59,7 +58,7 @@ Forms:
         - name: database
           type: string
           label: Database name
-          initial: wordpress 
+          initial: wordpress
           description: >-
             Please, provide database name that is going to be created
         - name: username

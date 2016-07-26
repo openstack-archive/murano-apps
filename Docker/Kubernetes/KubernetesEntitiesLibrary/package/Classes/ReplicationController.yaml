@@ -38,11 +38,9 @@ Methods:
           - $.deployReplicationController()
           - $.setAttr(deployed, true)
 
-              
   deployReplicationController:
     Body:
       - $resources: new(sys:Resources)
-      
       - $template: $resources.yaml('UpdateReplicationController.template').bind(dict(
             controllerDefinition => $.replicationControllerDefinition,
             isNew => true

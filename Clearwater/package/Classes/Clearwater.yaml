@@ -108,3 +108,4 @@ Methods:
           Contract: $.string().notNull()
     Body:
       -  $._environment.reporter.report($this, $message)
+

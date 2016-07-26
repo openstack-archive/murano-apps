@@ -14,8 +14,10 @@ Format: 1.3
 Type: Application
 FullName: com.example.docker.DockerHTTPd
 Name: Docker HTTPd
-Description: | 
- The Apache HTTP Server, colloquially called Apache, is a Web server application notable for playing a key role in the initial growth of the World Wide Web.
+Description: >-
+ The Apache HTTP Server, colloquially called Apache, is a Web server
+ application notable for playing a key role in the initial growth
+ of the World Wide Web.
 Author: 'Mirantis, Inc'
 Tags: [docker, application, httpd]
 Classes:

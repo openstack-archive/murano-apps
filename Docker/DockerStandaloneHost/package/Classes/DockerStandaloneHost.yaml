@@ -18,10 +18,10 @@ Namespaces:
 
 Name: DockerStandaloneHost
 
-Extends: 
+Extends:
   - DockerContainerHost
 
-Properties:  
+Properties:
   name:
     Contract: $.string().notNull()
 
@@ -59,8 +59,7 @@ Properties:
 Methods:
   .init:
     Body:
-      - $._environment: $.find(std:Environment).require()  
-  
+      - $._environment: $.find(std:Environment).require()
 
   deploy:
     Body:

@@ -86,3 +86,4 @@ Methods:
           - $key: $pair[0].trim()
           - $result[$key]: $pair[1].trim()
       - Return: $result
+

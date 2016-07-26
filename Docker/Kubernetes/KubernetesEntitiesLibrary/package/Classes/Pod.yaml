@@ -38,7 +38,6 @@ Methods:
           - $.deployPod()
           - $.setAttr(deployed, true)
 
-              
   deployPod:
     Body:
       - $resources: new(sys:Resources)

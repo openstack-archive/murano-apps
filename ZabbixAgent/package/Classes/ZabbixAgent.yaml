@@ -47,7 +47,7 @@ Methods:
       - $.server.deploy()
       - $resources: new(sys:Resources)
       - $securityGroupIngress:
-          - ToPort: 10050 
+          - ToPort: 10050
             FromPort: 10050
             IpProtocol: tcp
             External: true

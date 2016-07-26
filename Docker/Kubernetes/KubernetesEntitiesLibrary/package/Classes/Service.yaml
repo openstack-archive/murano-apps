@@ -38,11 +38,9 @@ Methods:
           - $.deployService()
           - $.setAttr(deployed, true)
 
-              
   deployService:
     Body:
       - $resources: new(sys:Resources)
-      
       - $template: $resources.yaml('UpdateService.template').bind(dict(
             serviceDefinition => $.serviceDefinition,
             isNew => true

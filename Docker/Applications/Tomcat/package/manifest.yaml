@@ -14,8 +14,12 @@ Format: 1.3
 Type: Application
 FullName: com.example.docker.DockerTomcat
 Name: Docker Tomcat
-Description: |
- Apache Tomcat (or simply Tomcat) is an open source web server and servlet container developed by the Apache Software Foundation (ASF). Tomcat implements the Java Servlet and the JavaServer Pages (JSP) specifications from Oracle, and provides a “pure Java” HTTP web server environment for Java code to run in. 
+Description: >-
+ Apache Tomcat (or simply Tomcat) is an open source web server and servlet
+ container developed by the Apache Software Foundation (ASF).
+ Tomcat implements the Java Servlet and the JavaServer Pages (JSP)
+ specifications from Oracle, and provides a "pure Java" HTTP web server
+ environment for Java code to run in.
 Author: 'Mirantis, Inc'
 Tags: [docker, application, Tomcat]
 Classes:
@@ -24,3 +28,4 @@ Require:
   com.mirantis.docker.DockerStandaloneHost:
   com.mirantis.docker.kubernetes.KubernetesPod:
   com.mirantis.docker.Interfaces:
+

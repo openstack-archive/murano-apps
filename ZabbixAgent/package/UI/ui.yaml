@@ -18,7 +18,6 @@ Application:
   hostname: $.appConfiguration.hostname
   server: $.appConfiguration.server
   probe: $.appConfiguration.probeMethod
- 
 
 Forms:
   - appConfiguration:
@@ -37,7 +36,6 @@ Forms:
           description: >-
             Unique, case sensitive hostname.
             Required for active checks and must match hostname as configured on the server.
-       
         - name: server
           type: com.example.ZabbixServer
           label: Zabbix Server

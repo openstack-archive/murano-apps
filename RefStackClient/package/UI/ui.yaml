@@ -86,3 +86,4 @@ Forms:
           description: >-
             Specify a string, that will be used in instance hostname.
             Just A-Z, a-z, 0-9, dash and underline are allowed.
+

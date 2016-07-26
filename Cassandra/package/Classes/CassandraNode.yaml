@@ -116,3 +116,4 @@ Methods:
       - $._environment.reporter.report($this, $msg)
       - $command: format('sleep {0}; sudo service cassandra restart', $delay)
       - conf:Linux.runCommand($.instance.agent, $command)
+
