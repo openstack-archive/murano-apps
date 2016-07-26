@@ -1,7 +1,7 @@
 # Kube-Scheduler Upstart and SysVinit configuration file
 
 # Customize kube-apiserver binary location
-# KUBE_SCHEDULER="/opt/bin/kube-apiserver"
+KUBE_SCHEDULER="/opt/bin/hyperkube scheduler"
 
 # Use KUBE_SCHEDULER_OPTS to modify the start/restart options
 KUBE_SCHEDULER_OPTS="--logtostderr=false --log_dir=/var/log/kubernetes \

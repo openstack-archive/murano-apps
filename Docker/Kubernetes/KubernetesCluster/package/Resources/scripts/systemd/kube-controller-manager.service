@@ -4,7 +4,7 @@ Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 
 [Service]
 EnvironmentFile=-/etc/kubernetes/config
-ExecStart=/opt/bin/kube-controller-manager \
+ExecStart=/opt/bin/hyperkube controller-manager \
             $KUBE_LOGTOSTDERR \
             $KUBE_LOG_LEVEL \
             $KUBE_MASTER \

@@ -7,7 +7,7 @@ Requires=docker.service
 [Service]
 EnvironmentFile=-/etc/kubernetes/config
 EnvironmentFile=-/etc/kubernetes/kubelet
-ExecStart=/opt/bin/kubelet \
+ExecStart=/opt/bin/hyperkube kubelet \
             $KUBE_LOGTOSTDERR \
             $KUBE_LOG_LEVEL \
             $KUBELET_API_SERVER \

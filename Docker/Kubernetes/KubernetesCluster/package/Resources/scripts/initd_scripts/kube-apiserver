@@ -19,7 +19,7 @@ export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:/opt/bi
 BASE=$(basename $0)
 
 # modify these in /etc/default/$BASE (/etc/default/kube-apiserver)
-KUBE_APISERVER=/opt/bin/$BASE
+KUBE_APISERVER=/opt/bin/hyperkube apiserver
 # This is the pid file managed by kube-apiserver itself
 KUBE_APISERVER_PIDFILE=/var/run/$BASE.pid
 KUBE_APISERVER_LOGFILE=/var/log/$BASE.log
