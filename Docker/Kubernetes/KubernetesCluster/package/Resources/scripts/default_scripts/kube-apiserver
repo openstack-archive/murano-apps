@@ -8,6 +8,7 @@ KUBE_APISERVER_OPTS="--address=0.0.0.0 \
   --port=8080 \
   --etcd_servers=http://127.0.0.1:4001 \
   --logtostderr=false \
-  --portal_net=11.1.0.0/16  --log_dir=/var/log/kubernetes"
+  --portal_net=11.1.0.0/16  --log_dir=/var/log/kubernetes \
+  --allow_privileged=true"
 
 # Add more envionrment settings used by kube-apiserver here

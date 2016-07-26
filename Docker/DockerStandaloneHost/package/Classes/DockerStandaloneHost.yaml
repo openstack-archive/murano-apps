@@ -135,7 +135,8 @@ Methods:
             env => $container.env,
             portMap => $portBindings,
             volumeMap => $volumeMap,
-            commands => $container.commands
+            commands => $container.commands,
+            privileged => $container.privileged
           ))
       - $._removeApplicationEndpoints($container.name)
       - $privateIp: $.instance.agent.call($template, $resources)
