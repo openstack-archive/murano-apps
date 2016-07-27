@@ -20,3 +20,5 @@ Author: 'Mirantis, Inc'
 Tags: [Monitoring]
 Classes:
  com.example.ZabbixAgent: ZabbixAgent.yaml
+Require:
+  com.example.ZabbixServer:
