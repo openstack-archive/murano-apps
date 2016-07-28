@@ -4,7 +4,7 @@ deploy() {
 set -x
 
 # Configure the APT software source.
-echo 'deb http://repo.cw-ngv.com/stable binary/' > /etc/apt/sources.list.d/clearwater.list
+echo 'deb http://repo.cw-ngv.com/archive/repo101 binary/' > /etc/apt/sources.list.d/clearwater.list
 curl -L http://repo.cw-ngv.com/repo_key | apt-key add -
 apt-get update
 # Configure /etc/clearwater/local_config.

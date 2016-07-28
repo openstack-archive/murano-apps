@@ -17,7 +17,8 @@ Network Functions Virtualization (NFV) environment.
 
 *How to connect Softphone application to Clearwater environment*
 
-* Find `Ellis` IP in environment deployment log, open Ellis's floating IP in new tab
+* Find `Ellis` IP in environment deployment log, open Ellis's floating IP in new tab.
+  Ellis can start with short delay after deployment finish.
 * Create new user via Ellis interface (secret code: secret)
 * Create new profile in Softphone app, use Private Identity account data
 * Use outbound proxy IP from environment deployment log
