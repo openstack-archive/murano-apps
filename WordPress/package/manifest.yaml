@@ -20,3 +20,7 @@ Author: 'Mirantis, Inc'
 Tags: [CMS, PHP, Web]
 Classes:
  com.example.WordPress: WordPress.yaml
+Require:
+ com.example.databases.MySql:
+ com.example.apache.ApacheHttpServer:
+ com.example.ZabbixAgent:
