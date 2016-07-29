@@ -3,7 +3,7 @@
 deploy() {
 set -x
 # Configure the APT software source.
-echo 'deb http://repo.cw-ngv.com/stable binary/' > /etc/apt/sources.list.d/clearwater.list
+echo 'deb http://repo.cw-ngv.com/archive/repo101 binary/' > /etc/apt/sources.list.d/clearwater.list
 curl -L http://repo.cw-ngv.com/repo_key | apt-key add -
 apt-get update
 # Configure /etc/clearwater/local_config.
@@ -47,6 +47,7 @@ sudo /usr/share/clearwater/clearwater-config-manager/scripts/upload_shared_confi
 # Tweak /etc/clearwater/shared_config to use homer's management hostname instead of signaling.
 # This works around https://github.com/Metaswitch/ellis/issues/153.
 sed -e 's/^xdms_hostname=.*$/xdms_hostname=homer-0.%ZONE%:7888/g' -i /etc/clearwater/shared_config
+sed -i 's|# server_names_hash_bucket_size.*|server_names_hash_bucket_size 64;|g' /etc/nginx/nginx.conf
 service clearwater-infrastructure restart
 service ellis stop
 # Allocate a allocate a pool of numbers to assign to users.
