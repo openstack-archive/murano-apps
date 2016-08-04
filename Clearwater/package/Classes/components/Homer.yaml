@@ -19,7 +19,7 @@ Name: Homer
 Extends: base:ClearwaterComponentBase
 
 Methods:
-  _createSecurityGroupRules:
+  getSecurityRules:
     Body:
       - $rules:
         # Ut/HTTP
@@ -42,8 +42,3 @@ Methods:
           External: false
 
       - Return: $rules
-
-  getDeployScriptName:
-    Body:
-      - Return: "deployHomer.sh"
-

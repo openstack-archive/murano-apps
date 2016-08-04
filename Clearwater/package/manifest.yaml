@@ -19,6 +19,7 @@ Description: |
 Author: 'Mirantis, Inc'
 Tags: [vIMS]
 Classes:
+ com.mirantis.clearwater.components.base.ClearwaterReplicaProvider: components/base/ClearwaterComponentBase.yaml
  com.mirantis.clearwater.Clearwater: Clearwater.yaml
  com.mirantis.clearwater.components.base.ClearwaterComponentBase: components/base/ClearwaterComponentBase.yaml
  com.mirantis.clearwater.components.Bono: components/Bono.yaml
@@ -31,3 +32,5 @@ Classes:
 
 Require:
  com.mirantis.network.dns.Bind:
+ io.murano.applications:
+

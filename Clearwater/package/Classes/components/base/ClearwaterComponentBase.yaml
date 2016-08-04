@@ -16,107 +16,115 @@ Namespaces:
   res: io.murano.resources
   sys: io.murano.system
   conf: io.murano.configuration
+  apps: io.murano.applications
   cw: com.mirantis.clearwater
+
+
 
 Name: ClearwaterComponentBase
 
+Extends:
+  - apps:SoftwareComponent
+  - apps:OpenStackSecurityConfigurable
+
 Properties:
-  instance:
-    Contract: $.class(res:LinuxMuranoInstance)
+  clusterSize:
+    Contract: $.int().notNull()
+    Default: 1
+
+  cluster:
+    Contract: $.class(apps:ServerReplicationGroup)
+    Usage: Out
+
+  serverProvider:
+    Contract: $.class(apps:TemplateServerProvider)
     Usage: Out
 
 Methods:
-  .init:
-    Body:
-      - $._environment: $.find(std:Environment).require()
-      - $._componentName: typeinfo($).name.split(".").last()
-      - $.parent: $.find(cw:Clearwater).require()
-
-  getDeployScriptName:
-
-  _createSecurityGroupRules:
-
-  _createInstance:
-    Body:
-      - $instance: new(res:LinuxMuranoInstance, $this,
-          name => format($._componentName),
-          flavor => $.parent.flavorName,
-          image => $.parent.osImageName,
-          keyname => $.parent.keypair,
-          securityGroupName => $._environment.securityGroupManager.defaultGroupName,
-          assignFloatingIp => true)
-      - Return: $instance
-
-  _setUp:
-    Body:
-      - $.privateNetwork: $._environment.defaultNetworks.environment
-      - $.instance: $._createInstance()
-
-
   _createReplacements:
     Arguments:
       - instance:
-          Contract: $.class(res:LinuxMuranoInstance).notNull()
+          Contract: $.class(res:LinuxInstance).notNull()
+      - index:
+          Contract: $.int().notNull()
     Body:
+      - $instancePrivateIp: $instance.joinedNetworks.first().ipList.where($ != $instance.floatingIpAddress).first()
       - Return:
+          "%INDEX%": $index
           "%PUBLIC_IP%": $instance.floatingIpAddress
-          "%PRIVATE_IP%": $.privateIp
-          "%PRIVATE_NETWORK_CIDR%": $.privateNetwork.describe().cidr
-          "%PRIVATE_NETWORK_GATEWAY%": $.privateNetwork.describe().gateway
+          "%PRIVATE_IP%": $instancePrivateIp
+          "%PRIVATE_NETWORK_CIDR%": $instance.joinedNetworks.first().network.describe().cidr
+          "%PRIVATE_NETWORK_GATEWAY%": $instance.joinedNetworks.first().network.describe().gateway
           "%ZONE%": $.parent.dnsApp.zoneName
           "%DNSSEC_KEY%": $.parent.dnsApp.dnsSecKey
-          "%DNS_PRIVATE_IP%": $.parent.dnsApp.privateIp
-          "%ETCD_IP%": $.parent.etcdClusterIp or $.privateIp
+          "%DNS_PRIVATE_IP%": $.parent.dnsApp.instance.joinedNetworks.first().ipList.where($ = $instance.floatingIpAddress).first()
+          "%ETCD_IP%": $.parent.etcdClusterIp or $instancePrivateIp
 
-  _getIp4ForNetwork:
-    #Works only for IPv4 network with 255.255.255.0 netmask
+  getDeployScriptName:
+    Body:
+      - Return: $this.componentName + '/deploy.sh'
+
+  getConfigureScriptName:
+    Body:
+      - Return: $this.componentName + '/configure.sh'
+
+  .init:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+      - $.componentName: typeinfo($).name.split(".").last()
+      - $.parent: $.find(cw:Clearwater).require()
+      - $.serverProvider: $.serverProvider or new(apps:TemplateServerProvider, $this,
+                                                  template => $.parent.instanceTemplate,
+                                                  serverNamePattern => $this.componentName + "-{}")
+      - $.cluster: $.cluster or new(apps:ServerReplicationGroup, $this,
+                                    provider => $this.serverProvider, minItems => 1, numItems => $this.clusterSize)
+
+  onInstallServer:
     Arguments:
-      - network:
-          Contract: $.class(res:NeutronNetwork).notNull()
+      - instance:
+          Contract: $.class(res:LinuxInstance).notNull()
+      - serverGroup:
+          Contract: $.class(apps:ServerReplicationGroup).notNull()
     Body:
-      - $gateIp: $network.describe().gateway
-      - $netAddr: $gateIp.split('.').take(3)
-      - Return: $.instance.ipAddresses.where(list($.split('.').take(3)) = $netAddr).first(null)
+      - $index: $serverGroup.getServers().indexWhere($.name = $instance.name)
+      - $instancePrivateIp: $instance.joinedNetworks.first().ipList.where($ != $instance.floatingIpAddress).first()
+      - If: not $.parent.etcdClusterIp
+        Then:
+          - $this.parent.setEtcdClusterIp($instancePrivateIp)
+      - $replacements: $._createReplacements($instance, $index)
+      - $file: sys:Resources.string($.getDeployScriptName()).replace($replacements)
+      - conf:Linux.runCommand($instance.agent, $file)
 
-  _getPrivateIp:
-    Body:
-      - Return: $._getIp4ForNetwork($.privateNetwork)
 
-  addSecurityGroupRules:
+
+  onConfigureServer:
     Arguments:
-      - rules:
-          Contract:
-            - FromPort: $.int().notNull()
-              ToPort: $.int().notNull()
-              IpProtocol: $.string().notNull()
-              External: $.bool().notNull()
-              Ethertype: $.string().check($ in list(null, 'IPv4', 'IPv6'))
+      - instance:
+          Contract: $.class(res:LinuxInstance).notNull()
+      - serverGroup:
+          Contract: $.class(apps:ServerReplicationGroup).notNull()
     Body:
-      - $._environment.securityGroupManager.addGroupIngress($rules)
+      - $index: $serverGroup.getServers().indexWhere($.name = $instance.name)
+      - $instancePrivateIp: $instance.joinedNetworks.first().ipList.where($ != $instance.floatingIpAddress).first()
+      - $replacements: $._createReplacements($instance, $index)
+      - $file: sys:Resources.string($.getConfigureScriptName()).replace($replacements)
+      - conf:Linux.runCommand($instance.agent, $file)
+
 
 
   deploy:
     Body:
-      - If: not $.getAttr(deployed, false)
-        Then:
-          - $._report(format('{0} deploy started', $._componentName))
-          - $._setUp()
-          - $.addSecurityGroupRules($._createSecurityGroupRules())
-          - $.instance.deploy()
-          - $.privateIp: $._getPrivateIp()
-          - $replacements: $._createReplacements($.instance)
-          - $file: sys:Resources.string($.getDeployScriptName()).replace($replacements)
-          - conf:Linux.runCommand($.instance.agent, $file)
-          - If: not $.parent.etcdClusterIp
-            Then:
-              - $.parent.setEtcdClusterIp($.privateIp)
-          - $._report(format('{0} deploy finished', $._componentName))
+      - $this.deployAt($this.cluster)
 
 
-  _report:
-    Arguments:
-      - message:
-          Contract: $.string().notNull()
+  scaleOut:
     Body:
-      -  $._environment.reporter.report($this, $message)
+      - $.report(format("Scale up {} cluster", $.componentName))
+      - $this.cluster.scale(1)
+      - $this.deploy()
 
+
+  scaleIn:
+    Body:
+      - $this.cluster.scale(-1)
+      - $this.deploy()

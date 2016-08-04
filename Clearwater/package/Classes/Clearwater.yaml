@@ -13,9 +13,12 @@
 Namespaces:
   =: com.mirantis.clearwater
   std: io.murano
+  res: io.murano.resources
+  meta: io.murano.metadata
   dns: com.mirantis.network.dns
   cwBase: com.mirantis.clearwater.components.base
   components: com.mirantis.clearwater.components
+
 
 
 Name: Clearwater
@@ -23,17 +26,10 @@ Name: Clearwater
 Extends: std:Application
 
 Properties:
-  keypair:
-    Contract: $.string()
-  osImageName:
-    Contract: $.string().notNull()
-  flavorName:
-    Contract: $.string().notNull()
   dnsApp:
     Contract: $.class(dns:Bind).notNull()
-  ellis:
-    Contract: $.class(components:Ellis)
-    Usage: Out
+  instanceTemplate:
+    Contract: $.template(res:LinuxInstance)
   components:
     Contract:
       - $.class(cwBase:ClearwaterComponentBase).notNull()
@@ -42,19 +38,33 @@ Properties:
     Contract: $.string().notNull()
     Default: ""
     Usage: Out
+  bonoClusterSize:
+    Contract: $.int().notNull()
+    Default: 1
+  sproutClusterSize:
+    Contract: $.int().notNull()
+    Default: 1
+  homerClusterSize:
+    Contract: $.int().notNull()
+    Default: 1
+  homesteadClusterSize:
+    Contract: $.int().notNull()
+    Default: 1
 
 
 Methods:
   .init:
     Body:
       - $._environment: $.find(std:Environment).require()
-      - $.ellis: new(components:Ellis, $this)
-      - $.components:
-        - new(components:Bono, $this)
-        - new(components:Sprout, $this)
-        - new(components:Homer, $this)
-        - new(components:Ralf, $this)
-        - new(components:Homestead, $this)
+      - If: not $.components
+        Then:
+          - $.components:
+            - new(components:Ellis, $this, 'Ellis')
+            - new(components:Ralf, $this, Ralf, allowedFailures => 'quorum')
+            - new(components:Bono, $this, Bono, allowedFailures => 'quorum', clusterSize => $this.bonoClusterSize)
+            - new(components:Sprout, $this, Sprout, allowedFailures => 'quorum', clusterSize => $this.sproutClusterSize)
+            - new(components:Homer, $this, Homer, allowedFailures => 'quorum', clusterSize => $this.homerClusterSize)
+            - new(components:Homestead, $this, Homestead, allowedFailures => 'quorum', clusterSize => $this.homesteadClusterSize)
 
   getSecurityGroupRules:
     Body:
@@ -88,19 +98,14 @@ Methods:
 
   deploy:
     Body:
-      - If: not $.getAttr(deployed, false)
-        Then:
-          - $._report('Start Clearwater deploy')
-          - $._environment.securityGroupManager.addGroupIngress($.getSecurityGroupRules())
-          - $.dnsApp.deploy()
-          - $.ellis.deploy()
-          - $.components.pselect($.deploy())
-          - $._report('Clearwater deployed')
-          - $._report(format('Use Ellis at {0} for create account and manage identities',
-                              $.ellis.instance.floatingIpAddress))
-          - $._report(format('Outbound edge proxy IP is {0}',
-                              $.components.where($ is components:Bono).first().instance.floatingIpAddress))
-          - $.setAttr(deployed, true)
+      - $this._report('Start Clearwater deploy')
+      - $this._environment.securityGroupManager.addGroupIngress($this.getSecurityGroupRules())
+      - $this.dnsApp.deploy()
+      - $this.components.pselect($.deploy())
+      - $ellisFloatingIp: $this.components.where($ is components:Ellis).cluster.items.first().floatingIpAddress
+      - $this._report(format('Use Ellis at {0} for create account and manage identities', $ellisFloatingIp))
+      - $edgeProxyIp: $this.components.where($ is components:Bono).first().cluster.items.first().floatingIpAddress
+      - $this._report(format('Outbound edge proxy IP is {0}', $edgeProxyIp))
 
   _report:
     Arguments:
@@ -108,4 +113,40 @@ Methods:
           Contract: $.string().notNull()
     Body:
       -  $._environment.reporter.report($this, $message)
+
+  # Lifecycle management
+
+  scaleOutSprout:
+    Meta:
+      - meta:Title:
+          text: "Scale out Sprout"
+
+    Scope: Public
+    Body:
+      - $this.components.where($ is components:Sprout).first().scaleOut()
+
+  scaleOutBono:
+    Meta:
+      - meta:Title:
+          text: "Scale out Bono"
+    Scope: Public
+    Body:
+      - $this.components.where($ is components:Bono).first().scaleOut()
+
+  scaleOutHomestead:
+    Meta:
+      - meta:Title:
+          text: "Scale out Homestead"
+    Scope: Public
+    Body:
+      - $this.components.where($ is components:Homestead).first().scaleOut()
+
+  scaleOutRalf:
+    Meta:
+      - meta:Title:
+          text: "Scale out Ralf"
+    Scope: Public
+    Body:
+      - $this.components.where($ is components:Ralf).first().scaleOut()
+
 

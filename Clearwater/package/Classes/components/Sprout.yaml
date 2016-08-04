@@ -19,7 +19,7 @@ Name: Sprout
 Extends: base:ClearwaterComponentBase
 
 Methods:
-  _createSecurityGroupRules:
+  getSecurityRules:
     Body:
       - $rules:
         # Internal SIP
@@ -47,8 +47,3 @@ Methods:
           ToPort: 11211
           External: false
       - Return: $rules
-
-  getDeployScriptName:
-    Body:
-      - Return: "deploySprout.sh"
-

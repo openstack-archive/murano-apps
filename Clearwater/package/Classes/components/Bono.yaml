@@ -19,7 +19,7 @@ Name: Bono
 Extends: base:ClearwaterComponentBase
 
 Methods:
-  _createSecurityGroupRules:
+  getSecurityRules:
     Body:
       - $rules:
         # STUN/TURN
@@ -56,8 +56,3 @@ Methods:
           ToPort: 65535
           External: true
       - Return: $rules
-
-  getDeployScriptName:
-    Body:
-      - Return: "deployBono.sh"
-
