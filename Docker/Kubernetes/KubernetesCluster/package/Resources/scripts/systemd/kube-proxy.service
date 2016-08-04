@@ -6,7 +6,7 @@ After=network.target
 [Service]
 EnvironmentFile=-/etc/kubernetes/config
 EnvironmentFile=-/etc/kubernetes/proxy
-ExecStart=/opt/bin/kube-proxy \
+ExecStart=/opt/bin/hyperkube proxy \
 	    $KUBE_LOGTOSTDERR \
 	    $KUBE_LOG_LEVEL \
 	    $KUBE_MASTER \

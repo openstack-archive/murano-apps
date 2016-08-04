@@ -1,7 +1,7 @@
 #Kube-Apiserver Upstart and SysVinit configuration file
 
 # Customize kube-apiserver binary location
-# KUBE_APISERVER="/opt/bin/kube-apiserver"
+KUBE_APISERVER="/opt/bin/hyperkube apiserver"
 
 # Use KUBE_APISERVER_OPTS to modify the start/restart options
 KUBE_APISERVER_OPTS="--address=0.0.0.0 \

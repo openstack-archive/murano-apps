@@ -19,7 +19,7 @@ export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:/opt/bi
 BASE=$(basename $0)
 
 # modify these in /etc/default/$BASE (/etc/default/kube-controller-manager)
-KUBE_CONTROLLER_MANAGER=/opt/bin/$BASE
+KUBE_CONTROLLER_MANAGER=/opt/bin/hyperkube controller-manager
 # This is the pid file managed by kube-controller-manager itself
 KUBE_CONTROLLER_MANAGER_PIDFILE=/var/run/$BASE.pid
 KUBE_CONTROLLER_MANAGER_LOGFILE=/var/log/$BASE.log
