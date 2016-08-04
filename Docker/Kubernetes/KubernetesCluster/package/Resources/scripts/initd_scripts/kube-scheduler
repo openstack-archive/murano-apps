@@ -19,7 +19,7 @@ export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:/opt/bi
 BASE=$(basename $0)
 
 # modify these in /etc/default/$BASE (/etc/default/kube-scheduler)
-KUBE_SCHEDULER=/opt/bin/hyperkube scheduler
+KUBE_SCHEDULER="/opt/bin/hyperkube scheduler"
 # This is the pid file managed by kube-scheduler itself
 KUBE_SCHEDULER_PIDFILE=/var/run/$BASE.pid
 KUBE_SCHEDULER_LOGFILE=/var/log/$BASE.log
