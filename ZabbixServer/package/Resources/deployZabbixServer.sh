@@ -37,7 +37,7 @@ sudo sed -e "s/# DBPassword.*$/DBPassword=%PASSWORD%/" -i /etc/zabbix/zabbix_ser
 sudo sed -e "s/^DBUser.*$/DBUser=%USERNAME%/" -i /etc/zabbix/zabbix_server.conf
 
 cd /usr/share/zabbix-server-mysql/
-sudo gunzip *.gz
+sudo gunzip ./*.gz
 
 mysql --user=root --password=root -e "CREATE DATABASE %DATABASE%"
 mysql --user=root --password=root -e "CREATE USER '%USERNAME%'@'localhost' IDENTIFIED BY '%PASSWORD%'"

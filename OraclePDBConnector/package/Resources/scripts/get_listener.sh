@@ -18,10 +18,10 @@
 
 # lsnrctl is the proper way to get the host and port numbers.
 # Get the descriptions but only the tcp and tcps descriptions
-ip_addrs=`lsnrctl status | grep 'DESCRIPTION.*PROTOCOL=tcp' | sed 's|.*HOST=\([^)]*\))(PORT=\([^)]*\).*|\1:\2|g'`
+ip_addrs=$(lsnrctl status | grep 'DESCRIPTION.*PROTOCOL=tcp' | sed 's|.*HOST=\([^)]*\))(PORT=\([^)]*\).*|\1:\2|g')
 for addr in $ip_addrs
 do
-    tnsping $addr >> /dev/null
+    tnsping "$addr" >> /dev/null
     if [  $? -eq 0 ]
     then
         echo "$addr"

@@ -21,7 +21,7 @@ sql_file="$ORACLE_USER_HOME/pdb_create_$$.sql"
 
 # Create pluggable database
 # Open the pluggable database for read-write
-cat > $sql_file << EOF
+cat > "${sql_file}" << EOF
 CONNECT / as sysdba;
 SET LINESIZE 100;
 SET PAGESIZE 50;
@@ -29,8 +29,8 @@ CREATE PLUGGABLE DATABASE $1 ADMIN USER $ADMIN_USER IDENTIFIED BY $ADMIN_PWD rol
 ALTER PLUGGABLE DATABASE $1 OPEN;
 EXIT;
 EOF
-chown oracle:oracle $sql_file
+chown oracle:oracle "${sql_file}"
 # Execute the sql statements
 su - oracle -c ". ~/ora_env.sh && sqlplus /nolog @$sql_file $1"
 # remove the sql_file
-rm -f $sql_file
+rm -fv "${sql_file}"

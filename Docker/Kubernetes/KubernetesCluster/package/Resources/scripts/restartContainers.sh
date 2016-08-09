@@ -4,5 +4,5 @@
 
 CONTAINERS=$(docker ps -q --filter "name=_$1-")
 if (( ${#CONTAINERS} > 0 )); then
-  docker restart $CONTAINERS
+  docker restart "${CONTAINERS}"
 fi

@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 
 # Wait until service starts
 while true; do
     sleep 30
-    if ps ax | grep -v grep | grep ruby > /dev/null
+    if pgrep [r]uby > /dev/null
     then
         break
     fi
@@ -13,7 +13,7 @@ done
 mkdir /tmp/murano
 
 # Register user in ops manager
-echo 'Create the first user:\n' >> /tmp/murano/ops-config.log
+echo -e 'Create the first user:\n' >> /tmp/murano/ops-config.log
 
 curl "https://localhost/api/setup" -d \
 'setup[user_name]=%USER%&setup[password]=%PASS%&setup[password_confirmation]=%PASS%&setup[eula_accepted]=true' \
@@ -36,7 +36,7 @@ curl "https://localhost/api/installation_settings" -X GET \
 -u %USER%:%PASS% --insecure > /tmp/murano/bare-installation.yml
 
 # Merge settings
-echo "Merging installation settings\n" >> /tmp/murano/ops-config.log
+echo -e "Merging installation settings\n" >> /tmp/murano/ops-config.log
 python /tmp/murano/merge_settings.py >> /tmp/murano/ops-config.log
 
 if [ ! -f /tmp/murano/installation.yml ]; then
@@ -44,7 +44,7 @@ if [ ! -f /tmp/murano/installation.yml ]; then
     wc_notify --data-binary '{"status": "FAILURE"}'
 fi
 
-echo "Importing settings to Ops Manager:\n" >> /tmp/murano/ops-config.log
+echo -e "Importing settings to Ops Manager:\n" >> /tmp/murano/ops-config.log
 curl "https://localhost/api/installation_settings" -F \
 'installation[file]=@/tmp/murano/installation.yml' -X POST \
 -u %USER%:%PASS% --insecure >> /tmp/murano/ops-config.log

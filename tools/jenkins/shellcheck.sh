@@ -1,6 +1,10 @@
 #!/bin/bash
 
 WORKSPACE="${WORKSPACE:-${1}}"
+# SC2001: See if you can use ${variable//search/replace} instead.
+#  Occasionally a more complex sed substitution is required, so lets igone
+#  this warning
+skip_list='SC2001'
 
 function help_m() {
     cat <<-EOF
@@ -27,7 +31,7 @@ function run_check() {
 	EOF
     while read -d '' -r script; do
         unset RESULT
-        shellcheck "${script}"
+        shellcheck "${script}" -e "${skip_list}"
         RESULT=$?
         if [ ${RESULT} != 0 ]; then
             ((e_count++))

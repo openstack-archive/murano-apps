@@ -16,10 +16,10 @@ set -eu
 exec &> /tmp/install_bosh.log
 
 function include(){
-    curr_dir=$(cd $(dirname "$0") && pwd)
+    curr_dir=$(cd "$(dirname "${0}")" && pwd)
     inc_file_path=$curr_dir/$1
     if [ -f "$inc_file_path" ]; then
-        . $inc_file_path
+        . "${inc_file_path}"
     else
         echo -e "$inc_file_path not found!"
         exit 1
@@ -50,7 +50,7 @@ auth:
     username: admin
     password: admin
 BOSH_CONFIG
-) > $HOME/.bosh_config
+) > "${HOME}/.bosh_config"
 
 bosh target 127.0.0.1
 

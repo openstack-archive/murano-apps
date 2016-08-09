@@ -16,10 +16,10 @@ set -eu
 exec &> /tmp/upload_releases.log
 
 function include(){
-    curr_dir=$(cd $(dirname "$0") && pwd)
+    curr_dir=$(cd "$(dirname "$0")" && pwd)
     inc_file_path=$curr_dir/$1
     if [ -f "$inc_file_path" ]; then
-        . $inc_file_path
+        . "${inc_file_path}"
     else
         echo -e "$inc_file_path not found!"
         exit 1
@@ -28,10 +28,10 @@ function include(){
 include "common.sh"
 
 cd /tmp
-IMAGE=$(bosh public stemcells | grep bosh-stemcell-.*-warden-boshlite-ubuntu-trusty-go_agent.tgz | head -n1 | awk '{print $2}')
-bosh download public stemcell ${IMAGE}
-bosh upload stemcell ${IMAGE}
-rm -f ${IMAGE}
+IMAGE=$(bosh public stemcells | grep "bosh-stemcell-.*-warden-boshlite-ubuntu-trusty-go_agent.tgz" | head -n1 | awk '{print $2}')
+bosh download public stemcell "${IMAGE}"
+bosh upload stemcell "${IMAGE}"
+rm -f "${IMAGE}"
 
 retry 3 bosh -n upload release /root/workspace/cf-release.tgz
 retry 3 bosh -n upload release /root/workspace/diego-release.tgz

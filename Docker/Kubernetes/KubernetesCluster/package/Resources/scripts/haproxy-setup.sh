@@ -5,7 +5,7 @@
 cp -f haproxy.toml /etc/confd/conf.d/
 cp -f haproxy.tmpl /etc/confd/templates/
 
-/usr/local/bin/confd -onetime -backend etcd -node $1:4001
+/usr/local/bin/confd -onetime -backend etcd -node "$1:4001"
 
 cp -f default_scripts/haproxy /etc/default/
 
