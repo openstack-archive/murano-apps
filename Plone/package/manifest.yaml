@@ -1,0 +1,22 @@
+#  Plone uses GPL version 2 as its license. As of summer 2009, there are
+#  no active plans to upgrade to GPL version 3.
+#  You may obtain a copy of the License at
+#
+#       http://www.gnu.org
+#
+
+Format: 1.3
+Type: Application
+FullName: org.openstack.apps.plone.PloneServer
+Name: Plone CMS
+Description: |
+ The Ultimate Open Source Enterprise CMS.
+ The Plone CMS is one of the most secure
+ website systems available. This installer
+ lets you deploy Plone in standalone mode.
+ Requires Ubuntu 14.04 image with
+ preinstalled murano-agent.
+Author: 'Evgeniy Mashkin'
+Tags: [CMS, WCM]
+Classes:
+ org.openstack.apps.plone.PloneServer: PloneServer.yaml

@@ -1,0 +1,68 @@
+#  Plone uses GPL version 2 as its license. As of summer 2009, there are
+#  no active plans to upgrade to GPL version 3.
+#  You may obtain a copy of the License at
+#
+#       http://www.gnu.org
+#
+
+Namespaces:
+  =: org.openstack.apps.plone
+  std: io.murano
+  res: io.murano.resources
+  sys: io.murano.system
+
+Name: PloneServer
+
+Extends: std:Application
+
+Properties:
+  instance:
+    Contract: $.class(res:Instance).notNull()
+  pathname:
+    Contract: $.string()
+  password:
+    Contract: $.string()
+  port:
+    Contract: $.string()
+
+Methods:
+  .init:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+  deploy:
+    Body:
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $._environment.reporter.report($this, 'Creating VM for Plone Server.')
+          - $securityGroupIngress:
+            - ToPort: 80
+              FromPort: 80
+              IpProtocol: tcp
+              External: true
+            - ToPort: 443
+              FromPort: 443
+              IpProtocol: tcp
+              External: true
+            - ToPort: $.port
+              FromPort: $.port
+              IpProtocol: tcp
+              External: true
+          - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+          - $.instance.deploy()
+          - $resources: new(sys:Resources)
+          - $template: $resources.yaml('DeployPloneServer.template').bind(dict(
+                pathname => $.pathname,
+                password => $.password,
+                port => $.port
+              ))
+          - $._environment.reporter.report($this, 'Instance is created. Deploying Plone')
+          - $.instance.agent.call($template, $resources)
+          - $._environment.reporter.report($this, 'Plone Server is installed.')
+          - If: $.instance.assignFloatingIp
+            Then:
+              - $host: $.instance.floatingIpAddress
+            Else:
+              - $host: $.instance.ipAddresses.first()
+          - $._environment.reporter.report($this, format('Plone Server is available at http://{0}:{1}', $host, $.port))
+          - $.setAttr(deployed, true)
