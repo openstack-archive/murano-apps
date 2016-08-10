@@ -1,7 +1,7 @@
  # Kube-Controller-Manager Upstart and SysVinit configuration file
 
  # Customize kube-controller-manager binary location
- KUBE_CONTROLLER_MANAGER="/opt/bin/hyperkube controller-manager"
+  KUBE_CONTROLLER_MANAGER="/opt/bin/hyperkube"
 
  # Use KUBE_CONTROLLER_MANAGER_OPTS to modify the start/restart options
  KUBE_CONTROLLER_MANAGER_OPTS="--master=127.0.0.1:8080 \

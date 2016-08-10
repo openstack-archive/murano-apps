@@ -19,7 +19,7 @@ export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:/opt/bi
 BASE=$(basename $0)
 
 # modify these in /etc/default/$BASE (/etc/default/kube-proxy)
-KUBE_PROXY=/opt/bin/hyperkube proxy
+KUBE_PROXY="/opt/bin/hyperkube proxy"
 # This is the pid file managed by kube-proxy itself
 KUBE_PROXY_PIDFILE=/var/run/$BASE.pid
 KUBE_PROXY_LOGFILE=/var/log/$BASE.log

@@ -1,7 +1,7 @@
 # Kubelet Upstart and SysVinit configuration file
 
 # Customize kubelet binary location
-KUBELET="/opt/bin/hyperkube kubelet"
+KUBELET="/opt/bin/hyperkube"
 
 # Use KUBELET_OPTS to modify the start/restart options
 KUBELET_OPTS="--address=%%IP%% \
