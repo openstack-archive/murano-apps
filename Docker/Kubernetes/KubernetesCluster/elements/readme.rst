@@ -50,3 +50,8 @@ To build Ubuntu-based image
 
 Where ${murano_agent_root} is a path to murano-agent files
 and ${murano_apps_root} is a path to murano-apps files.
+
+Please be careful that diskimage-builder uses tmpfs if 8 Gb memory or bigger is detected. 
+In case of 8 Gb tmpfs size is not enough to build kubernetes. 
+Use DIB_NO_TMPFS=1 in this case or hack diskimage-builder. 
+ 
