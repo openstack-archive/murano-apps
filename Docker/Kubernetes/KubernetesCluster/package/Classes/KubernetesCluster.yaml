@@ -207,7 +207,6 @@ Methods:
       - $template: $resources.yaml('DeletePods.template').bind(dict(labels => $labels))
       - $.masterNode.instance.agent.call($template, $resources)
 
-
   createService:
     Arguments:
       - applicationName:
@@ -220,7 +219,7 @@ Methods:
     Body:
       - $.serviceEndpoints: $.getAttr(serviceEndpoints, list())
       - $currentEndpoints: $.serviceEndpoints.where($.applicationName = $applicationName and $.podId = $podId and $.scope = internal)
-      - $serviceName: format('svc-{0}', randomName())
+      - $serviceName: format('{0}-{1}', randomName(), $applicationName).substring(0, 24).toLower()
       - $endpointMap: {}
       - For: endpoint
         In: $currentEndpoints
