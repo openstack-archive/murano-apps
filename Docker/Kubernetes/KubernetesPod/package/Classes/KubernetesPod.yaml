@@ -140,7 +140,10 @@ Methods:
       - applicationName:
           Contract: $.string().notNull()
     Body:
-      - Return: $.kubernetesCluster.serviceEndpoints.where($.applicationName = $applicationName)
+      - Return: $.kubernetesCluster.serviceEndpoints.where(
+            $.applicationName = $applicationName
+            and $.podId = $this._getPodName()
+         )
 
 
   _getPortDefinition:
