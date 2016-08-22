@@ -169,9 +169,9 @@ Methods:
       - $type: $volume.getType()
       - Value: $type
         Match:
-          HostDir:
+          HostPath:
             - $spec:
-                hostDir:
+                hostPath:
                   path: $volume.getParameters()
           TempVolume:
             - $spec:
@@ -179,9 +179,10 @@ Methods:
         Default:
           - Throw: UnknownDockerVolumeType
             Message: format('Unknown docker volume type {0}', $type)
-      - Return:
+      - $result:
           name: $._generateVolumeName($name, $volume)
-          source: $spec
+
+      - Return: $result.mergeWith($spec)
 
 
   _deleteContainer:
