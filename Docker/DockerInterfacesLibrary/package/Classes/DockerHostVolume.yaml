@@ -24,7 +24,7 @@ Properties:
 Methods:
   getType:
     Body:
-      Return: HostDir
+      Return: HostPath
 
   getParameters:
     Body:

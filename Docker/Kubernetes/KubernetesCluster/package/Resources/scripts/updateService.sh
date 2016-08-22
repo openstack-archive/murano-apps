@@ -14,5 +14,5 @@ if [ "$1" == "True" ]; then
   /opt/bin/kubectl create -f $fileName >> /tmp/murano-kube.log
 else
   echo "Updating a Service" >> /tmp/murano-kube.log
-  /opt/bin/kubectl update -f $fileName >> /tmp/murano-kube.log
+  /opt/bin/kubectl replace -f "${fileName}" >> /tmp/murano-kube.log
 fi
