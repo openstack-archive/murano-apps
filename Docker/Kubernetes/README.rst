@@ -176,7 +176,7 @@ deploying both Kubernetes and it's nodes.
 
     Check each port in applicationPorts and creates or updates it if the port
     differs from what it was before (or did not exist). Calls
-    `kubectl update` or `kubectl create` on master node.
+    `kubectl replace` or `kubectl create` on master node.
 
 `deleteServices(applicationName, podId)`
     * `applicationName` a string holding application's name,
