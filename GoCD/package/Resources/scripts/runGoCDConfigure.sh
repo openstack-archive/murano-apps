@@ -17,7 +17,7 @@
 if [ "$1" == "server" ]; then
   service go-server restart
 elif [ "$1" == "agent" ]; then
-  sed -i -e "s/\(GO_SERVER=\).*/\1${2}/" /etc/default/go-agent
+  sed -i -e "s/\(GO_SERVER_URL=\).*/\1https:\/\/${2}:8154\/go/" /etc/default/go-agent
   service go-agent restart
 else
   echo "Unknown node role"
