@@ -13,14 +13,58 @@
 
 # $1 = server/agent
 
-echo "deb https://download.go.cd /" | sudo tee /etc/apt/sources.list.d/gocd.list
-curl https://download.go.cd/GOCD-GPG-KEY.asc | sudo apt-key add -
-sudo apt-get update
+function add_repo {
+  OS=$1
+  if [ "$OS" == "rhel" ]; then
+    echo "
+[gocd]
+name     = GoCD YUM Repository
+baseurl  = https://download.go.cd
+enabled  = 1
+gpgcheck = 1
+gpgkey   = https://download.go.cd/GOCD-GPG-KEY.asc
+" | sudo tee /etc/yum.repos.d/gocd.repo
+  elif [ "$OS" == "debian" ]; then
+    echo "deb https://download.go.cd /" | sudo tee /etc/apt/sources.list.d/gocd.list
+    curl https://download.go.cd/GOCD-GPG-KEY.asc | sudo apt-key add -
+    sudo apt-get update
+  fi
+}
+
+function install_gocd_agent {
+  OS=$1
+  if [ "$OS" == "rhel" ]; then
+    sudo mkdir /var/go
+    sudo yum install -y java-1.7.0-openjdk go-agent
+  elif [ "$OS" == "debian" ]; then
+    sudo apt-get install -y go-agent
+  fi
+}
+
+function install_gocd_server {
+  OS=$1
+  if [ "$OS" == "rhel" ]; then
+    sudo mkdir /var/go
+    sudo yum install -y java-1.7.0-openjdk go-server
+  elif [ "$OS" == "debian" ]; then
+    sudo apt-get install -y go-server
+  fi
+}
+
+if [ -f "/etc/redhat-release" ]; then
+  OS="rhel"
+elif [ -f "/etc/lsb-release" ]; then
+  OS="debian"
+else
+  OS="unknown"
+fi
+
+add_repo $OS
 
 if [ "$1" == "server" ]; then
-  sudo apt-get install -y go-server
+  install_gocd_server $OS
 elif [ "$1" == "agent" ]; then
-  sudo apt-get install -y go-agent
+  install_gocd_agent $OS
 else
   echo "Unknown node role"
 fi
