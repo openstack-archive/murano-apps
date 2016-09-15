@@ -13,10 +13,10 @@
 
 import os.path
 import sys
+import zabbixApi
+
 
 sys.path.insert(0, os.getcwd())
-from zabbixApi import ZabbixApi
-
 
 if __name__ == "__main__":
     probeType = sys.argv[1]
@@ -24,6 +24,6 @@ if __name__ == "__main__":
     hostname = sys.argv[3]
     host_ip = sys.argv[4]
 
-    Api = ZabbixApi(hostname, server_ip, 'admin', 'zabbix')
+    Api = zabbixApi.ZabbixApi(hostname, server_ip, 'admin', 'zabbix')
 
     Api.addProbe(probeType, host_ip)
