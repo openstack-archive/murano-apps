@@ -54,11 +54,11 @@ Forms:
             Enter zone name for BIND installation
         - name: dnsSecKey
           type: string
-          label: DNSSEC Key
+          label: DNSSEC Key (Base64-encoded)
           initial: >-
-            HNujJGI+ELhlIVa6a+h1L0/2XQTbU9RaH+/F7pOQmDfKWTGc58h0rHNjnIQtms5SBQsC6lni1Kcwq8s+3W4TmA
+            SE51akpHSStFTGhsSVZhNmEraDFMMC8yWFFUYlU5UmFIKy9GN3BPUW1EZktXVEdjNThoMHJITmpuSVF0bXM1U0JRc0M2bG5pMUtjd3E4cyszVzRUbUEK
           description: >-
-            Enter DNSSEC private key. This key will be used for update DNS records via DNSSEC.
+            Enter DNSSEC private key (Base64-encoded). This key will be used for update DNS records via DNSSEC.
 
 
   - instanceConfiguration:
@@ -104,9 +104,9 @@ Forms:
           type: string
           label: Instance Naming Pattern
           required: false
-          initial: BIND
+          initial: BIND#
           maxLength: 64
-          regexpValidator: '^[a-zA-z][-_\w]*$'
+          regexpValidator: '^[a-zA-z][_\w#-]*$'
           errorMessages:
             invalid: Just letters, numbers, underscores and hyphens are allowed.
           helpText: Just letters, numbers, underscores and hyphens are allowed.

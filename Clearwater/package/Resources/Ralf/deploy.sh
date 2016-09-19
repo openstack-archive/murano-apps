@@ -15,7 +15,7 @@ cat > /etc/clearwater/local_config << EOF
 management_local_ip=%PRIVATE_IP%
 local_ip=%PRIVATE_IP%
 public_ip=%PRIVATE_IP%
-public_hostname=ralf-0.%ZONE%
+public_hostname=ralf-%INDEX%.%ZONE%
 etcd_cluster=$etcd_ip
 EOF
 # Create /etc/chronos/chronos.conf.
@@ -33,35 +33,10 @@ enabled = true
 [exceptions]
 max_ttl = 600
 EOF
+
 # Now install the software.
 DEBIAN_FRONTEND=noninteractive apt-get install ralf --yes --force-yes
 DEBIAN_FRONTEND=noninteractive apt-get install clearwater-management --yes --force-yes
-# Function to give DNS record type and IP address for specified IP address
-ip2rr() {
-  if echo "$1" | grep -q -e '[^0-9.]' ; then
-    echo AAAA "$1"
-  else
-    echo A "$1"
-  fi
-}
-# Update DNS
-retries=0
-while ! { nsupdate -y "%ZONE%:%DNSSEC_KEY%" -v << EOF
-server %DNS_PRIVATE_IP%
-update add ralf-0.%ZONE%. 30 $(ip2rr %PUBLIC_IP%)
-update add ralf.%ZONE%. 30 $(ip2rr %PRIVATE_IP%)
-send
-EOF
-} && [ $retries -lt 10 ]
-do
-  retries=$((retries + 1))
-  echo 'nsupdate failed - retrying (retry '$retries')...'
-  sleep 5
-done
-# Use the DNS server.
-echo 'nameserver %DNS_PRIVATE_IP%' > /etc/dnsmasq.resolv.conf
-echo 'RESOLV_CONF=/etc/dnsmasq.resolv.conf' >> /etc/default/dnsmasq
-service dnsmasq force-reload
 }
 
 # Log all output to file.

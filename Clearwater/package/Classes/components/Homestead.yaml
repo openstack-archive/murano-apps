@@ -19,7 +19,7 @@ Name: Homestead
 Extends: base:ClearwaterComponentBase
 
 Methods:
-  _createSecurityGroupRules:
+  getSecurityRules:
     Body:
       - $rules:
         # REST-ful Provisioning API
@@ -46,8 +46,3 @@ Methods:
           ToPort: 7199
           External: false
       - Return: $rules
-
-  getDeployScriptName:
-    Body:
-      - Return: "deployHomestead.sh"
-

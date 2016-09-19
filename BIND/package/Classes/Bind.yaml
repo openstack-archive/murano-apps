@@ -32,39 +32,19 @@ Properties:
     Contract: $.string().notNull()
     Usage: InOut
 
-  privateIp:
-    Contract: $.string()
-    Usage: Out
-
-
 Methods:
   .init:
     Body:
       - $.environment: $.find(std:Environment).require()
-      - $.dnsSecKey: base64encode($.dnsSecKey)
 
   _createReplacements:
     Body:
       - Return:
           "%PUBLIC_IP%": $.instance.floatingIpAddress
-          "%PRIVATE_IP%": $.privateIp
+          "%PRIVATE_IP%": $.instance.joinedNetworks.first().ipList.where($ != $this.instance.floatingIpAddress).first()
           "%ZONE%": $.zoneName
           "%DNSSEC_KEY%": $.dnsSecKey
-          "%PRIVATE_NETWORK_CIDR%": $.environment.defaultNetworks.environment.describe().cidr
-
-  _getIp4ForNetwork:
-    #Works only for IPv4 network with 255.255.255.0 netmask
-    Arguments:
-      - network:
-          Contract: $.class(res:NeutronNetwork).notNull()
-    Body:
-      - $gateIp: $network.describe().gateway
-      - $netAddr: $gateIp.split('.').take(3)
-      - Return: $.instance.ipAddresses.where(list($.split('.').take(3)) = $netAddr).first(null)
-
-  _getPrivateIp:
-    Body:
-      - Return: $._getIp4ForNetwork($.environment.defaultNetworks.environment)
+          "%PRIVATE_NETWORK_CIDR%": $.instance.joinedNetworks.first().network.describe().cidr
 
   _addSecurityGroupRules:
     Body:
@@ -88,7 +68,6 @@ Methods:
           - $._addSecurityGroupRules()
           - $.instance.deploy()
           - $._report('Run install script')
-          - $.privateIp: $._getPrivateIp()
           - $replacements: $._createReplacements()
           - $file: sys:Resources.string('deployBind.sh').replace($replacements)
           - conf:Linux.runCommand($.instance.agent, $file)

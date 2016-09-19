@@ -20,7 +20,7 @@ Extends: base:ClearwaterComponentBase
 
 Methods:
 
-  _createSecurityGroupRules:
+  getSecurityRules:
     Body:
       - $rules:
         # HTTP
@@ -34,7 +34,3 @@ Methods:
           IpProtocol: udp
           External: true
       - Return: $rules
-
-  getDeployScriptName:
-    Body:
-      - Return: "deployEllis.sh"

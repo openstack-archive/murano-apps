@@ -19,7 +19,7 @@ Name: Ralf
 Extends: base:ClearwaterComponentBase
 
 Methods:
-  _createSecurityGroupRules:
+  getSecurityRules:
     Body:
       - $rules:
         # Rf-like/HTTP API
@@ -47,8 +47,3 @@ Methods:
           ToPort: 11211
           External: false
       - Return: $rules
-
-  getDeployScriptName:
-    Body:
-      - Return: "deployRalf.sh"
-
