@@ -149,4 +149,37 @@ Methods:
     Body:
       - $this.components.where($ is components:Ralf).first().scaleOut()
 
+  scaleInSprout:
+    Meta:
+      - meta:Title:
+          text: "Scale in Sprout"
+
+    Scope: Public
+    Body:
+      - $this.components.where($ is components:Sprout).first().scaleIn()
+
+  scaleInBono:
+    Meta:
+      - meta:Title:
+          text: "Scale in Bono"
+    Scope: Public
+    Body:
+      - $this.components.where($ is components:Bono).first().scaleIn()
+
+  scaleInHomestead:
+    Meta:
+      - meta:Title:
+          text: "Scale in Homestead"
+    Scope: Public
+    Body:
+      - $this.components.where($ is components:Homestead).first().scaleIn()
+
+  scaleInRalf:
+    Meta:
+      - meta:Title:
+          text: "Scale in Ralf"
+    Scope: Public
+    Body:
+      - $this.components.where($ is components:Ralf).first().scaleIn()
+
 

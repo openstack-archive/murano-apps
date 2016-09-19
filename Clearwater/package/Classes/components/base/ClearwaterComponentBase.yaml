@@ -21,6 +21,24 @@ Namespaces:
 
 
 
+--- #-------------------------------------------------------------# ---
+
+Name: ClearwaterServerProvider
+Extends: apps:TemplateServerProvider
+
+Methods:
+  releaseReplicas:
+    Arguments:
+      replicas:
+        Contract:
+          - $.class(res:Instance)
+    Body:
+      - $owner: $.find(ClearwaterComponentBase)
+      - $replicas.select($owner.releaseServer($))
+      - cast($this, apps:TemplateServerProvider).releaseReplicas($replicas)
+
+--- #-------------------------------------------------------------# ---
+
 Name: ClearwaterComponentBase
 
 Extends:
@@ -37,7 +55,7 @@ Properties:
     Usage: Out
 
   serverProvider:
-    Contract: $.class(apps:TemplateServerProvider)
+    Contract: $.class(ClearwaterServerProvider)
     Usage: Out
 
 Methods:
@@ -57,7 +75,8 @@ Methods:
           "%PRIVATE_NETWORK_GATEWAY%": $instance.joinedNetworks.first().network.describe().gateway
           "%ZONE%": $.parent.dnsApp.zoneName
           "%DNSSEC_KEY%": $.parent.dnsApp.dnsSecKey
-          "%DNS_PRIVATE_IP%": $.parent.dnsApp.instance.joinedNetworks.first().ipList.where($ = $instance.floatingIpAddress).first()
+          "%DNS_PRIVATE_IP%": $.parent.dnsApp.instance.joinedNetworks.first().ipList
+                                      .where($ = $instance.floatingIpAddress).first()
           "%ETCD_IP%": $.parent.etcdClusterIp or $instancePrivateIp
 
   getDeployScriptName:
@@ -73,7 +92,7 @@ Methods:
       - $._environment: $.find(std:Environment).require()
       - $.componentName: typeinfo($).name.split(".").last()
       - $.parent: $.find(cw:Clearwater).require()
-      - $.serverProvider: $.serverProvider or new(apps:TemplateServerProvider, $this,
+      - $.serverProvider: $.serverProvider or new(ClearwaterServerProvider, $this,
                                                   template => $.parent.instanceTemplate,
                                                   serverNamePattern => $this.componentName + "-{}")
       - $.cluster: $.cluster or new(apps:ServerReplicationGroup, $this,
@@ -108,6 +127,15 @@ Methods:
       - $instancePrivateIp: $instance.joinedNetworks.first().ipList.where($ != $instance.floatingIpAddress).first()
       - $replacements: $._createReplacements($instance, $index)
       - $file: sys:Resources.string($.getConfigureScriptName()).replace($replacements)
+      - conf:Linux.runCommand($instance.agent, $file)
+
+  releaseServer:
+    Arguments:
+      - instance:
+          Contract: $.class(res:LinuxInstance).notNull()
+    Body:
+      - $index: $.cluster.getServers().indexWhere($.name = $instance.name)
+      - $file: sys:Resources.string($.getUninstallScriptName())
       - conf:Linux.runCommand($instance.agent, $file)
 
 
