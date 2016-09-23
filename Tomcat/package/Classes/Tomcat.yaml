@@ -53,7 +53,7 @@ Methods:
           # Deploy Apache Tomcat
           - $._environment.reporter.report($this, 'Instance is created. Deploying Tomcat')
           - $file: sys:Resources.string('deployTomcat.sh')
-          - conf:Linux.runCommand($.instance.agent, $file)
+          - conf:Linux.runCommand($.instance.agent, $file, helpText => 'Deploy Tomcat')
 
           - If: $.instance.assignFloatingIp
             Then:
