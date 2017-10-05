@@ -1,0 +1,22 @@
+- project:
+    name: openstack/murano-apps
+    check:
+      jobs:
+        - murano-apps-refstackclient-unittest
+
+- job:
+    name: murano-apps-refstackclient-unittest
+    parent: legacy-dsvm-base
+    run: playbooks/legacy/murano-apps-refstackclient-unittest/run.yaml
+    post-run: playbooks/legacy/murano-apps-refstackclient-unittest/post.yaml
+    timeout: 7800
+    required-projects:
+      - openstack-infra/devstack-gate
+      - openstack/murano
+      - openstack/murano-apps
+      - openstack/murano-dashboard
+      - openstack/python-muranoclient
+      - openstack/refstack
+    voting: false
+    files:
+      - RefStackClient/.*
