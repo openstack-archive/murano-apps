@@ -1,5 +1,4 @@
 - project:
-    name: openstack/murano-apps
     check:
       jobs:
         - murano-apps-refstackclient-unittest
