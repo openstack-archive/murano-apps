@@ -51,5 +51,5 @@ If it is an initial commit for an application, the title should look like this:
 In case the commit is not related to any application, do not use a prefix.
 
 .. _`Murano Applications repository`: https://github.com/openstack/murano-apps
-.. _official guideline: http://docs.openstack.org/developer/hacking/#commit-messages
-.. _`OpenStack Style Guidelines`: http://docs.openstack.org/developer/hacking/
+.. _official guideline: https://docs.openstack.org/hacking/latest/#commit-messages
+.. _`OpenStack Style Guidelines`: https://docs.openstack.org/hacking/latest/
