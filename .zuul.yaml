@@ -15,7 +15,7 @@
     post-run: playbooks/legacy/murano-apps-refstackclient-unittest/post.yaml
     timeout: 7800
     required-projects:
-      - openstack-infra/devstack-gate
+      - openstack/devstack-gate
       - openstack/murano
       - openstack/murano-apps
       - openstack/murano-dashboard
