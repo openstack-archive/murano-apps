@@ -35,17 +35,17 @@ Project Hosting Details
     * https://wiki.openstack.org/wiki/Meetings#Murano_meeting
 
 * Code Hosting
-    * https://git.openstack.org/cgit/openstack/murano
+    * https://opendev.org/openstack/murano
 
-    * https://git.openstack.org/cgit/openstack/murano-agent
+    * https://opendev.org/openstack/murano-agent
 
-    * https://git.openstack.org/cgit/openstack/murano-dashboard
+    * https://opendev.org/openstack/murano-dashboard
 
-    * https://git.openstack.org/cgit/openstack/python-muranoclient
+    * https://opendev.org/openstack/python-muranoclient
 
-    * https://git.openstack.org/cgit/openstack/murano-apps
+    * https://opendev.org/openstack/murano-apps
 
 * Code Review
-    * https://review.openstack.org/#/q/murano+AND+status:+open,n,z
+    * https://review.opendev.org/#/q/murano+AND+status:+open,n,z
 
     * http://docs.openstack.org/infra/manual/developers.html#development-workflow

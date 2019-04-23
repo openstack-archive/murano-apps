@@ -27,7 +27,7 @@ Properties:
 
   repository:
     Contract: $.string().notNull()
-    Default: https://git.openstack.org/openstack/rally
+    Default: https://opendev.org/openstack/rally
 
   version:
     Contract: $.string().notNull()
