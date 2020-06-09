@@ -20,7 +20,7 @@
       - openstack/murano-apps
       - openstack/murano-dashboard
       - openstack/python-muranoclient
-      - openstack/refstack
+      - osf/refstack
     voting: false
     files:
       - RefStackClient/.*
