@@ -2,25 +2,26 @@
     check:
       jobs:
         - murano-apps-refstackclient-unittest
-
         - openstack-tox-linters:
             voting: false
     gate:
       jobs:
         - noop
+
 - job:
     name: murano-apps-refstackclient-unittest
-    parent: legacy-dsvm-base
-    run: playbooks/legacy/murano-apps-refstackclient-unittest/run.yaml
-    post-run: playbooks/legacy/murano-apps-refstackclient-unittest/post.yaml
+    parent: devstack-tox-functional
     timeout: 7800
     required-projects:
-      - openstack/devstack-gate
-      - openstack/murano
-      - openstack/murano-apps
-      - openstack/murano-dashboard
-      - openstack/python-muranoclient
-      - osf/refstack
+      - opendev.org/openstack/murano
+      - opendev.org/openstack/murano-apps
+      - opendev.org/openstack/python-muranoclient
+      - opendev.org/osf/refstack
     voting: false
+    vars:
+      devstack_plugins:
+        murano: https://opendev.org/openstack/murano
+      openrc_enable_export: true
+      tox_envlist: refstackclient-unittest
     files:
       - RefStackClient/.*
