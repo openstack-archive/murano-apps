@@ -1,51 +1,19 @@
-======================
-Contributing to Murano
-======================
+The source repository for this project can be found at:
 
-If you're interested in contributing to the Murano project,
-the following will help get you started.
+   https://opendev.org/openstack/murano-apps
 
-Contributor License Agreement
-=============================
+Pull requests submitted through GitHub are not monitored.
 
-In order to contribute to the Murano project, you need to have
-signed OpenStack's contributor's agreement:
+To start contributing to OpenStack, follow the steps in the contribution guide
+to set up and use Gerrit:
 
-* http://docs.openstack.org/infra/manual/developers.html
-* http://wiki.openstack.org/CLA
+   https://docs.openstack.org/contributors/code-and-documentation/quick-start.html
 
+Bugs should be filed on Launchpad:
 
-Project Hosting Details
-=======================
+   https://bugs.launchpad.net/murano-apps
 
-* Bug tracker
-    * https://launchpad.net/murano
+For more specific information about contributing to this repository, see the
+murano-apps contributor guide:
 
-    * https://launchpad.net/python-muranoclient
-
-* Mailing list (prefix subjects with ``[Murano]`` for faster responses)
-    http://lists.openstack.org/cgi-bin/mailman/listinfo/openstack-dev
-
-* Wiki
-    https://wiki.openstack.org/wiki/Murano
-
-* IRC channel
-    * #murano at FreeNode
-
-    * https://wiki.openstack.org/wiki/Meetings#Murano_meeting
-
-* Code Hosting
-    * https://opendev.org/openstack/murano
-
-    * https://opendev.org/openstack/murano-agent
-
-    * https://opendev.org/openstack/murano-dashboard
-
-    * https://opendev.org/openstack/python-muranoclient
-
-    * https://opendev.org/openstack/murano-apps
-
-* Code Review
-    * https://review.opendev.org/#/q/murano+AND+status:+open,n,z
-
-    * http://docs.openstack.org/infra/manual/developers.html#development-workflow
+   https://opendev.org/openstack/murano-apps/src/branch/master/doc/source/contributor/contributing.rst
