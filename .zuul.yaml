@@ -16,7 +16,7 @@
       - opendev.org/openstack/murano
       - opendev.org/openstack/murano-apps
       - opendev.org/openstack/python-muranoclient
-      - opendev.org/osf/refstack
+      - opendev.org/openinfra/refstack
     voting: false
     vars:
       devstack_plugins:
